@@ -1,0 +1,15 @@
+{
+  "cookMode": {
+    "title": "Modalità Cottura",
+    "stepCount": "Passo {{current}} di {{total}}",
+    "stepCompleted": "Passo completato!",
+    "completeStep": "Completa passo",
+    "finishCooking": "Termina cottura",
+    "mute": "Disattiva guida vocale",
+    "unmute": "Attiva guida vocale",
+    "noVoices": "Nessuna voce disponibile nel tuo browser",
+    "voiceError": "Guida vocale fallita. Per favore riprova.",
+    "voiceUnsupported": "Sintesi vocale non supportata dal tuo browser",
+    "selectVoice": "Seleziona voce"
+  }
+}
