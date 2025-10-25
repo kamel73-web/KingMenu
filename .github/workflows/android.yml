@@ -1,90 +1,48 @@
-name: Build Android APK & AAB (Capacitor)
+name: Build Android APK/AAB
 
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
 
 jobs:
-  build-android:
+  build:
     runs-on: ubuntu-latest
-
+    
     steps:
-      # 🧱 Étape 1 - Récupération du code
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    # Étape 1: Télécharger le code
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      # 🧰 Étape 2 - Installer Node.js
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
+    # Étape 2: Installer Java 17 (IMPORTANT pour corriger l'erreur)
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
 
-      # 📦 Étape 3 - Installer les dépendances
-      - name: Install dependencies
-        run: npm ci
+    # Étape 3: Installer Android SDK
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+      with:
+        api-level: 35
+        build-tools-version: '35.0.0'
 
-      # 🧑‍🍳 Étape 4 - Build du projet web
-      - name: Build web app
-        run: npm run build
+    # Étape 4: Rendre le script executable
+    - name: Make gradlew executable
+      run: cd android && chmod +x ./gradlew
 
-      # ⚙️ Étape 5 - Installer Capacitor Android tools
-      - name: Install Capacitor Android tools
-        run: |
-          npm install @capacitor/cli @capacitor/android --save-dev
+    # Étape 5: Construire l'application
+    - name: Build Release APK
+      run: |
+        cd android
+        ./gradlew clean assembleRelease --no-daemon --stacktrace
 
-      # 📱 Étape 6 - Ajouter la plateforme Android (si pas déjà présente)
-      - name: Add Android platform
-        run: npx cap add android || echo "Android already added"
-
-      # 🔄 Étape 7 - Synchroniser le projet
-      - name: Sync Capacitor
-        run: npx cap sync android
-
-            # 🧩 Étape 8 - Installer Java et Gradle
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-      - name: Set JAVA_HOME for Gradle
-        run: echo "org.gradle.java.home=${JAVA_HOME}" >> android/gradle.properties
-
-      # 🔐 Étape 9 - Générer un keystore temporaire
-      - name: Generate Keystore
-        run: |
-          keytool -genkeypair -v \
-            -keystore my-release-key.jks \
-            -alias kingmenu_key \
-            -keyalg RSA -keysize 2048 -validity 10000 \
-            -storepass kingpass \
-            -keypass kingpass \
-            -dname "CN=KingMenu, OU=App, O=KingMenu, L=Paris, S=IDF, C=FR"
-
-      # 🧱 Étape 10 - Construire l’APK et le AAB
-      - name: Build Android APK & AAB
-        working-directory: android
-        run: |
-          ./gradlew assembleRelease
-          ./gradlew bundleRelease
-
-      # 📦 Étape 11 - Signer les fichiers générés
-      - name: Sign APK & AAB
-        run: |
-          for file in $(find android/app/build/outputs -name "*.apk" -or -name "*.aab"); do
-            jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
-              -keystore my-release-key.jks \
-              -storepass kingpass \
-              -keypass kingpass \
-              "$file" kingmenu_key
-          done
-
-      # 📤 Étape 12 - Sauvegarder les fichiers générés
-      - name: Upload APK & AAB
-        uses: actions/upload-artifact@v4
-        with:
-          name: kingmenu-android-builds
-          path: |
-            android/app/build/outputs/**/*.apk
-            android/app/build/outputs/**/*.aab
+    # Étape 6: Sauvegarder l'APK généré
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-release
+        path: android/app/build/outputs/apk/release/*.apk
+        retention-days: 7
