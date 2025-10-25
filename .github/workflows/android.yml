@@ -42,12 +42,14 @@ jobs:
       - name: Sync Capacitor
         run: npx cap sync android
 
-      # 🧩 Étape 8 - Installer le JDK 17 proprement
-      - name: Set up JDK 17
+            # 🧩 Étape 8 - Installer Java et Gradle
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
+      - name: Set JAVA_HOME for Gradle
+        run: echo "org.gradle.java.home=${JAVA_HOME}" >> android/gradle.properties
 
       # 🔐 Étape 9 - Générer un keystore temporaire
       - name: Generate Keystore
