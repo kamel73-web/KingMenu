@@ -1,48 +1,19 @@
-name: Build Android APK/AAB
+name: Build Android
 
-on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+on: [push, pull_request]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    
     steps:
-    # Étape 1: Télécharger le code
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    # Étape 2: Installer Java 17 (IMPORTANT pour corriger l'erreur)
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
+    - uses: actions/checkout@v4
+    - uses: actions/setup-java@v4
       with:
-        distribution: 'temurin'
         java-version: '17'
-
-    # Étape 3: Installer Android SDK
-    - name: Setup Android SDK
-      uses: android-actions/setup-android@v3
+        distribution: 'temurin'
+    - run: cd android && chmod +x ./gradlew
+    - run: cd android && ./gradlew assembleRelease
+    - uses: actions/upload-artifact@v4
       with:
-        api-level: 35
-        build-tools-version: '35.0.0'
-
-    # Étape 4: Rendre le script executable
-    - name: Make gradlew executable
-      run: cd android && chmod +x ./gradlew
-
-    # Étape 5: Construire l'application
-    - name: Build Release APK
-      run: |
-        cd android
-        ./gradlew clean assembleRelease --no-daemon --stacktrace
-
-    # Étape 6: Sauvegarder l'APK généré
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: app-release
+        name: app
         path: android/app/build/outputs/apk/release/*.apk
-        retention-days: 7
