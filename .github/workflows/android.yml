@@ -17,3 +17,12 @@ jobs:
       with:
         name: app
         path: android/app/build/outputs/apk/release/*.apk
+# Éditez le workflow
+nano .github/workflows/android.yml
+
+# Copiez-collez le contenu ci-dessus
+# Puis :
+git add .github/workflows/android.yml
+git commit -m "Remove unnecessary npm steps from Android workflow"
+git push origin main
+
