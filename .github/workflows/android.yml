@@ -42,8 +42,8 @@ jobs:
       - name: Sync Capacitor
         run: npx cap sync android
 
-      # 🧩 Étape 8 - Installer Java et Gradle
-      - name: Setup Java
+      # 🧩 Étape 8 - Installer le JDK 17 proprement
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
@@ -67,7 +67,7 @@ jobs:
           ./gradlew assembleRelease
           ./gradlew bundleRelease
 
-      # 📦 Étape 11 - Signer les fichiers
+      # 📦 Étape 11 - Signer les fichiers générés
       - name: Sign APK & AAB
         run: |
           for file in $(find android/app/build/outputs -name "*.apk" -or -name "*.aab"); do
