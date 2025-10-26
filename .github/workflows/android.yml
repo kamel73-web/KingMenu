@@ -1,4 +1,4 @@
-- name: Build Android APK & AAB
+name: Build Android APK & AAB
 
 on:
   push:
@@ -37,7 +37,7 @@ jobs:
           java-version: '17'
 
       - name: 🔧 Export JAVA_HOME
-        run: echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV  # 🟢 correction ici (E et NV, pas EN)
+        run: echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV
 
       - name: 🧰 Setup Android SDK
         uses: android-actions/setup-android@v3
@@ -45,7 +45,7 @@ jobs:
           api-level: 35
           build-tools-version: '35.0.0'
 
-           - name: 🔑 Make gradlew executable
+      - name: 🔑 Make gradlew executable
         run: cd android && chmod +x ./gradlew
 
       - name: 🧹 Remove invalid org.gradle.java.home
