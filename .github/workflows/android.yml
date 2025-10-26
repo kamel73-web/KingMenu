@@ -51,6 +51,11 @@ jobs:
       - name: 🧹 Remove invalid org.gradle.java.home
         run: sed -i '/org.gradle.java.home/d' android/gradle.properties
 
+      - name: 🧩 Fix JavaVersion in capacitor.build.gradle
+        run: |
+          sed -i 's/JavaVersion.VERSION_21/JavaVersion.VERSION_17/g' android/app/capacitor.build.gradle
+
+
       - name: 📱 Build Release APK & AAB
         run: |
           cd android
