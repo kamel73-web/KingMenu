@@ -47,6 +47,9 @@ jobs:
 
       - name: 🔑 Make gradlew executable
         run: cd android && chmod +x ./gradlew
+        
+      - name: 🧹 Remove invalid org.gradle.java.home
+        run: sed -i '/org.gradle.java.home/d' android/gradle.properties
 
       - name: 📱 Build Release APK & AAB
         run: |
