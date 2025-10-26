@@ -36,6 +36,9 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
+    - name: 🔧 Export JAVA_HOME
+        run: echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_EN
+        
     - name: 🧰 Setup Android SDK
       uses: android-actions/setup-android@v3
       with:
