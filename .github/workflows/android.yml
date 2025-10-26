@@ -49,10 +49,12 @@ jobs:
       run: cd android && chmod +x ./gradlew
 
     - name: 📱 Build Release APK & AAB
-      run: |
-        cd android
-        ./gradlew clean assembleRelease --no-daemon --stacktrace
-        ./gradlew bundleRelease --no-daemon --stacktrace
+        run: |
+          cd android
+          export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
+          echo "JAVA_HOME set to $JAVA_HOME"
+          ./gradlew clean assembleRelease --no-daemon --stacktrace
+          ./gradlew bundleRelease --no-daemon --stacktrace
 
     - name: 📤 Upload build artifacts
       uses: actions/upload-artifact@v4
