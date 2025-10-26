@@ -48,7 +48,7 @@ jobs:
       - name: 🔑 Make gradlew executable
         run: cd android && chmod +x ./gradlew
 
-           - name: 🧩 Fix capacitor.build.gradle (safe patch)
+      - name: 🧩 Fix capacitor.build.gradle (safe patch)
         run: |
           echo "Patching capacitor.build.gradle safely..."
           cat > android/app/capacitor.build.gradle <<'EOF'
@@ -72,6 +72,7 @@ if (hasProperty('postBuildExtras')) {
     postBuildExtras()
 }
 EOF
+
       - name: 🧹 Remove invalid org.gradle.java.home
         run: sed -i '/org.gradle.java.home/d' android/gradle.properties
 
