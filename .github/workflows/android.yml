@@ -48,13 +48,20 @@ jobs:
       - name: 🔑 Make gradlew executable
         run: cd android && chmod +x ./gradlew
 
-      - name: 📱 Build Release APK & AAB
+      - name: 🧩 Fix capacitor.build.gradle (safe patch)
         run: |
-          cd android
-          export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
-          echo "JAVA_HOME set to $JAVA_HOME"
-          ./gradlew clean assembleRelease --no-daemon --stacktrace
-          ./gradlew bundleRelease --no-daemon --stacktrace
+          echo "Patching capacitor.build.gradle safely..."
+          if [ -f "android/app/capacitor.build.gradle" ]; then
+            sed -i 's/JavaVersion.VERSION_21/JavaVersion.VERSION_17/g' android/app/capacitor.build.gradle
+            sed -i 's/JavaVersion.VERSION_11/JavaVersion.VERSION_17/g' android/app/capacitor.build.gradle
+            echo "✅ capacitor.build.gradle patched to Java 17"
+            grep JavaVersion android/app/capacitor.build.gradle || true
+          else
+            echo "⚠️ capacitor.build.gradle not found"
+          fi
+
+      - name: 🧹 Remove invalid org.gradle.java.home
+        run: sed -i '/org.gradle.java.home/d' android/gradle.properties
 
       - name: 📤 Upload build artifacts
         uses: actions/upload-artifact@v4
