@@ -1,9 +1,7 @@
-name: Build Android APK & AAB
+name: Build & Sign Android Release
 
 on:
   push:
-    branches: [ main, master ]
-  pull_request:
     branches: [ main, master ]
   workflow_dispatch:
 
@@ -30,14 +28,11 @@ jobs:
       - name: ⚡ Sync build to Android (Capacitor)
         run: npx cap copy android
 
-      - name: ☕ Set up JDK 17
+      - name: ☕ Setup JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
-
-      - name: 🔧 Export JAVA_HOME
-        run: echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV  # 🟢 correction ici (E et NV, pas EN)
 
       - name: 🧰 Setup Android SDK
         uses: android-actions/setup-android@v3
@@ -45,29 +40,33 @@ jobs:
           api-level: 35
           build-tools-version: '35.0.0'
 
-      - name: 🔑 Make gradlew executable
+      - name: 🔑 Decode keystore from secrets
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 --decode > android/app/release-key.keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+
+      - name: 🧩 Create signing config file
+        run: |
+          cat > android/keystore.properties <<EOF
+          storeFile=release-key.keystore
+          storePassword=${{ secrets.KEYSTORE_PASSWORD }}
+          keyAlias=${{ secrets.KEY_ALIAS }}
+          keyPassword=${{ secrets.KEY_PASSWORD }}
+          EOF
+
+      - name: 🔧 Make gradlew executable
         run: cd android && chmod +x ./gradlew
 
-      - name: 🧩 Fix capacitor.build.gradle (safe patch)
+      - name: 📱 Build signed release APK & AAB
         run: |
-          echo "Patching capacitor.build.gradle safely..."
-          if [ -f "android/app/capacitor.build.gradle" ]; then
-            sed -i 's/JavaVersion.VERSION_21/JavaVersion.VERSION_17/g' android/app/capacitor.build.gradle
-            sed -i 's/JavaVersion.VERSION_11/JavaVersion.VERSION_17/g' android/app/capacitor.build.gradle
-            echo "✅ capacitor.build.gradle patched to Java 17"
-            grep JavaVersion android/app/capacitor.build.gradle || true
-          else
-            echo "⚠️ capacitor.build.gradle not found"
-          fi
-
-      - name: 🧹 Remove invalid org.gradle.java.home
-        run: sed -i '/org.gradle.java.home/d' android/gradle.properties
+          cd android
+          ./gradlew clean assembleRelease bundleRelease --no-daemon --stacktrace
 
       - name: 📤 Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: android-release-builds
+          name: android-signed-builds
           path: |
             android/app/build/outputs/apk/release/*.apk
             android/app/build/outputs/bundle/release/*.aab
-          retention-days: 7
