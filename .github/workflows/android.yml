@@ -34,7 +34,7 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-            - name: 🧰 Setup Android SDK
+      - name: 🧰 Setup Android SDK
         uses: android-actions/setup-android@v3
         with:
           accept-android-sdk-licenses: true
@@ -51,14 +51,29 @@ jobs:
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
 
-      - name: 🧩 Create signing config file
+      - name: ⚙️ Configure signing in gradle.properties
         run: |
-          cat > android/keystore.properties <<EOF
-          storeFile=release-key.keystore
-          storePassword=${{ secrets.KEYSTORE_PASSWORD }}
-          keyAlias=${{ secrets.KEY_ALIAS }}
-          keyPassword=${{ secrets.KEY_PASSWORD }}
+          cat >> android/gradle.properties <<EOF
+          MYAPP_UPLOAD_STORE_FILE=release-key.keystore
+          MYAPP_UPLOAD_KEY_ALIAS=${{ secrets.KEY_ALIAS }}
+          MYAPP_UPLOAD_STORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}
+          MYAPP_UPLOAD_KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}
           EOF
+
+      - name: 🧩 Create signing config in build.gradle
+        run: |
+          sed -i '/signingConfigs {/a\
+              release {\n\
+                  storeFile file(MYAPP_UPLOAD_STORE_FILE)\n\
+                  storePassword MYAPP_UPLOAD_STORE_PASSWORD\n\
+                  keyAlias MYAPP_UPLOAD_KEY_ALIAS\n\
+                  keyPassword MYAPP_UPLOAD_KEY_PASSWORD\n\
+              }' android/app/build.gradle
+
+          sed -i '/buildTypes {/a\
+              release {\n\
+                  signingConfig signingConfigs.release\n\
+              }' android/app/build.gradle
 
       - name: 🔧 Make gradlew executable
         run: cd android && chmod +x ./gradlew
