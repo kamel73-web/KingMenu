@@ -34,18 +34,19 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: 🧰 Setup Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          accept-android-sdk-licenses: true
-          packages: |
-            platforms;android-35
-            build-tools;35.0.0
-
-      - name: ✅ Force acceptation de toutes les licences SDK
+      # 🧰 INSTALLATION MANUELLE DU SDK ANDROID
+      - name: 📦 Install Android SDK manually
         run: |
-          yes | sudo /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null
-          yes | sudo /usr/local/lib/android/sdk/cmdline-tools/16.0/bin/sdkmanager --licenses > /dev/null || true
+          sudo mkdir -p /usr/local/lib/android/sdk
+          cd /usr/local/lib/android/sdk
+          sudo wget https://dl.google.com/android/repository/commandlinetools-linux-12266719_latest.zip -O cmdline-tools.zip
+          sudo unzip -q cmdline-tools.zip -d cmdline-tools
+          sudo mkdir -p cmdline-tools/latest
+          sudo mv cmdline-tools/* cmdline-tools/latest/ || true
+          export ANDROID_HOME=/usr/local/lib/android/sdk
+          export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
+          yes | sdkmanager --licenses || true
+          sdkmanager "platforms;android-35" "build-tools;35.0.0" "platform-tools"
 
       - name: 🔑 Decode keystore from secrets
         run: |
@@ -61,21 +62,6 @@ jobs:
           MYAPP_UPLOAD_STORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}
           MYAPP_UPLOAD_KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}
           EOF
-
-      - name: 🧩 Create signing config in build.gradle
-        run: |
-          sed -i '/signingConfigs {/a\
-              release {\n\
-                  storeFile file(MYAPP_UPLOAD_STORE_FILE)\n\
-                  storePassword MYAPP_UPLOAD_STORE_PASSWORD\n\
-                  keyAlias MYAPP_UPLOAD_KEY_ALIAS\n\
-                  keyPassword MYAPP_UPLOAD_KEY_PASSWORD\n\
-              }' android/app/build.gradle
-
-          sed -i '/buildTypes {/a\
-              release {\n\
-                  signingConfig signingConfigs.release\n\
-              }' android/app/build.gradle
 
       - name: 🔧 Make gradlew executable
         run: cd android && chmod +x ./gradlew
