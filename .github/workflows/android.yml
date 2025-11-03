@@ -34,7 +34,7 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: 🧰 Setup Android SDK
+            - name: 🧰 Setup Android SDK
         uses: android-actions/setup-android@v3
         with:
           accept-android-sdk-licenses: true
@@ -42,8 +42,8 @@ jobs:
             platforms;android-35
             build-tools;35.0.0
 
-
-
+      - name: ✅ Accept Android SDK Licenses
+        run: yes | sdkmanager --licenses
 
       - name: 🔑 Decode keystore from secrets
         run: |
