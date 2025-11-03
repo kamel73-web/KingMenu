@@ -44,7 +44,8 @@ jobs:
 
       - name: ✅ Force acceptation de toutes les licences SDK
         run: |
-          yes | sudo /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          yes | sudo /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null
+          yes | sudo /usr/local/lib/android/sdk/cmdline-tools/16.0/bin/sdkmanager --licenses > /dev/null || true
 
       - name: 🔑 Decode keystore from secrets
         run: |
