@@ -66,10 +66,11 @@ jobs:
       - name: 🔧 Make gradlew executable
         run: cd android && chmod +x ./gradlew
 
-      - name: 📱 Build signed release APK & AAB
+      - name: 📱 Build signed release APK & AAB (debug mode)
         run: |
           cd android
-          ./gradlew clean assembleRelease bundleRelease --no-daemon --stacktrace
+          ./gradlew clean assembleRelease bundleRelease --no-daemon --stacktrace --warning-mode all
+
 
       - name: 📤 Upload build artifacts
         uses: actions/upload-artifact@v4
