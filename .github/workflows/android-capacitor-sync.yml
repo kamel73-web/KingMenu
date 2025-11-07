@@ -1,0 +1,52 @@
+name: Capacitor Android Build & Sync
+
+on:
+  push:
+    branches: [ main, develop, fix/gradle-missing ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      JAVA_HOME: /usr/lib/jvm/adoptopenjdk-11-hotspot
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Android SDK (minimal)
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 33
+          target: google_apis
+          arch: x86_64
+      - name: Show java version
+        run: java -version
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build web (Vite)
+        run: npm run build
+
+      - name: Copy/Sync Capacitor Android
+        run: npx cap sync android
+
+      - name: List android dir (for debugging)
+        run: ls -la android || true
+
+      - name: Try Gradle assembleDebug
+        working-directory: android
+        run: ./gradlew assembleDebug --no-daemon -Porg.gradle.jvmargs="-Xmx1g"
+
+      - name: Upload build logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-logs
+          path: android/build/reports || android/build/outputs || android/.gradle || android/gradlew
