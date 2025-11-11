@@ -9,6 +9,7 @@ if (!globalThis.crypto) {
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: './', // 👈 essentiel pour Android (rend les chemins relatifs)
   plugins: [react()],
   optimizeDeps: {
     exclude: ['lucide-react'],
