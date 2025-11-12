@@ -22,6 +22,23 @@ const PublicLandingPage: React.FC = () => {
       {/* Overlay sombre */}
       <div className="absolute inset-0 bg-black/50"></div>
 
+      {/* Sélecteur de langue - EN HAUT À DROITE */}
+      <div className="absolute top-4 right-4 z-20 flex gap-2">
+        {["en", "fr", "es", "it", "ar"].map((lang) => (
+          <button
+            key={lang}
+            onClick={() => handleLanguageChange(lang)}
+            className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
+              i18n.language === lang
+                ? "bg-yellow-500 text-white shadow-md"
+                : "bg-white/20 text-gray-200 hover:bg-white/40"
+            }`}
+          >
+            {lang.toUpperCase()}
+          </button>
+        ))}
+      </div>
+
       {/* Contenu principal */}
       <div className="relative z-10 text-center px-6 max-w-3xl">
 
@@ -31,23 +48,6 @@ const PublicLandingPage: React.FC = () => {
           alt="King Menu Logo"
           className="mx-auto w-32 h-32 rounded-full shadow-lg mb-4 object-cover"
         />
-
-        {/* Sélecteur de langue - MAINTENANT JUSTE SOUS LE LOGO */}
-        <div className="flex justify-center gap-3 mb-6">
-          {["en", "fr", "es", "it", "ar"].map((lang) => (
-            <button
-              key={lang}
-              onClick={() => handleLanguageChange(lang)}
-              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
-                i18n.language === lang
-                  ? "bg-yellow-500 text-white shadow-md"
-                  : "bg-white/20 text-gray-200 hover:bg-white/40"
-              }`}
-            >
-              {lang.toUpperCase()}
-            </button>
-          ))}
-        </div>
 
         {/* Titre principal */}
         <h1 className="text-4xl md:text-5xl font-bold text-white drop-shadow-lg mb-4">
