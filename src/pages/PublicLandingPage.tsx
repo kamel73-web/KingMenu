@@ -28,8 +28,25 @@ const PublicLandingPage: React.FC = () => {
         <img
           src="https://vehqvqlbtotljstixklz.supabase.co/storage/v1/object/sign/Brand/logo%20KM.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8xNDFhMTczOS01YTg0LTQ0NmQtODgxMC0wNGRiNjQ2ZGRlMzciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJCcmFuZC9sb2dvIEtNLmpwZyIsImlhdCI6MTc2MTEzOTQ5OCwiZXhwIjoxNzkyNjc1NDk4fQ.Etkb-QlejLXww_i4V0dHvb3zTudbJhbNw-KAjI7pMXQ"
           alt="King Menu Logo"
-          className="mx-auto w-32 h-32 rounded-full shadow-lg mb-6 object-cover"
+          className="mx-auto w-32 h-32 rounded-full shadow-lg mb-4 object-cover"
         />
+
+        {/* Sélecteur de langue – maintenant juste sous le logo */}
+        <div className="flex justify-center gap-3 mb-8">
+          {["en", "fr", "es", "it", "ar"].map((lang) => (
+            <button
+              key={lang}
+              onClick={() => handleLanguageChange(lang)}
+              className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                i18n.language === lang
+                  ? "bg-yellow-500 text-white"
+                  : "bg-white/20 text-gray-200 hover:bg-white/40"
+              }`}
+            >
+              {lang.toUpperCase()}
+            </button>
+          ))}
+        </div>
 
         {/* Titre principal */}
         <h1 className="text-4xl md:text-5xl font-bold text-white drop-shadow-lg mb-4">
@@ -59,23 +76,6 @@ const PublicLandingPage: React.FC = () => {
         >
           {t("landing.loginButton")}
         </button>
-
-        {/* Sélecteur de langue */}
-        <div className="mt-10 flex justify-center gap-3">
-          {["en", "fr", "es", "it", "ar"].map((lang) => (
-            <button
-              key={lang}
-              onClick={() => handleLanguageChange(lang)}
-              className={`px-3 py-1 rounded-full text-sm font-medium ${
-                i18n.language === lang
-                  ? "bg-yellow-500 text-white"
-                  : "bg-white/20 text-gray-200 hover:bg-white/40"
-              }`}
-            >
-              {lang.toUpperCase()}
-            </button>
-          ))}
-        </div>
       </div>
 
       {/* Footer */}
