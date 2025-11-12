@@ -23,15 +23,15 @@ const PublicLandingPage: React.FC = () => {
       <div className="absolute inset-0 bg-black/50"></div>
 
       {/* Sélecteur de langue - EN HAUT À DROITE */}
-      <div className="absolute top-4 right-4 z-20 flex gap-2">
+      <div className="absolute top-6 right-6 z-20 flex gap-2">
         {["en", "fr", "es", "it", "ar"].map((lang) => (
           <button
             key={lang}
             onClick={() => handleLanguageChange(lang)}
-            className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
+            className={`px-3 py-2 rounded-full text-sm font-semibold transition-all ${
               i18n.language === lang
                 ? "bg-yellow-500 text-white shadow-md"
-                : "bg-white/20 text-gray-200 hover:bg-white/40"
+                : "bg-white/80 text-gray-800 hover:bg-white"
             }`}
           >
             {lang.toUpperCase()}
