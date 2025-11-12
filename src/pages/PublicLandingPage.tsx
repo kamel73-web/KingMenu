@@ -32,8 +32,8 @@ const PublicLandingPage: React.FC = () => {
           className="mx-auto w-32 h-32 rounded-full shadow-lg mb-4 object-cover"
         />
 
-        {/* Sélecteur de langue – JUSTE SOUS LE LOGO */}
-        <div className="flex justify-center gap-3 mb-10">
+        {/* Sélecteur de langue - MAINTENANT JUSTE SOUS LE LOGO */}
+        <div className="flex justify-center gap-3 mb-6">
           {["en", "fr", "es", "it", "ar"].map((lang) => (
             <button
               key={lang}
@@ -77,8 +77,6 @@ const PublicLandingPage: React.FC = () => {
         >
           {t("landing.loginButton")}
         </button>
-
-        {/* AUCUN AUTRE SÉLECTEUR DE LANGUE ICI */}
 
       </div>
 
