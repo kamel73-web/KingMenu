@@ -24,6 +24,7 @@ const PublicLandingPage: React.FC = () => {
 
       {/* Contenu principal */}
       <div className="relative z-10 text-center px-6 max-w-3xl">
+
         {/* Logo */}
         <img
           src="https://vehqvqlbtotljstixklz.supabase.co/storage/v1/object/sign/Brand/logo%20KM.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8xNDFhMTczOS01YTg0LTQ0NmQtODgxMC0wNGRiNjQ2ZGRlMzciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJCcmFuZC9sb2dvIEtNLmpwZyIsImlhdCI6MTc2MTEzOTQ5OCwiZXhwIjoxNzkyNjc1NDk4fQ.Etkb-QlejLXww_i4V0dHvb3zTudbJhbNw-KAjI7pMXQ"
@@ -31,15 +32,15 @@ const PublicLandingPage: React.FC = () => {
           className="mx-auto w-32 h-32 rounded-full shadow-lg mb-4 object-cover"
         />
 
-        {/* Sélecteur de langue – maintenant juste sous le logo */}
-        <div className="flex justify-center gap-3 mb-8">
+        {/* Sélecteur de langue – JUSTE SOUS LE LOGO */}
+        <div className="flex justify-center gap-3 mb-10">
           {["en", "fr", "es", "it", "ar"].map((lang) => (
             <button
               key={lang}
               onClick={() => handleLanguageChange(lang)}
-              className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
                 i18n.language === lang
-                  ? "bg-yellow-500 text-white"
+                  ? "bg-yellow-500 text-white shadow-md"
                   : "bg-white/20 text-gray-200 hover:bg-white/40"
               }`}
             >
@@ -62,20 +63,23 @@ const PublicLandingPage: React.FC = () => {
         <div className="bg-white/15 backdrop-blur-md rounded-2xl p-6 text-gray-100 mb-10 shadow-lg">
           <h2 className="text-2xl font-semibold mb-4">{t("landing.featuresTitle")}</h2>
           <ul className="space-y-2 text-left mx-auto max-w-md">
-            <li>🍲 {t("landing.featureRecipes")}</li>
-            <li>🥕 {t("landing.featureIngredients")}</li>
-            <li>📅 {t("landing.featurePlanner")}</li>
-            <li>🛒 {t("landing.featureShoppingList")}</li>
+            <li>Explore carefully curated and regularly updated recipes.</li>
+            <li>Find dishes based on ingredients you already have at home.</li>
+            <li>Plan your weekly meals with just a few clicks.</li>
+            <li>Automatically generate your shopping list from your chosen menu.</li>
           </ul>
         </div>
 
         {/* Bouton Connexion */}
         <button
           onClick={() => navigate("/login")}
-          className="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-full font-semibold shadow-lg transition-transform transform hover:scale-105"
+          className="bg-yellow-500 hover:bg-yellow-600 text-white px-8 py-4 rounded-full font-bold text-lg shadow-lg transition-transform transform hover:scale-105"
         >
           {t("landing.loginButton")}
         </button>
+
+        {/* AUCUN AUTRE SÉLECTEUR DE LANGUE ICI */}
+
       </div>
 
       {/* Footer */}
