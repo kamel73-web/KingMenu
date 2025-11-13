@@ -25,8 +25,15 @@ const PublicLandingPage: React.FC = () => {
       {/* Contenu principal */}
       <div className="relative z-10 text-center px-6 max-w-3xl">
 
-        {/* Sélecteur de langue — déplacé ici, centré au-dessus du logo */}
-        <div className="flex justify-center gap-3 mb-6">
+        {/* Logo */}
+        <img
+          src="https://vehqvqlbtotljstixklz.supabase.co/storage/v1/object/sign/Brand/logo%20KM.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8xNDFhMTczOS01YTg0LTQ0NmQtODgxMC0wNGRiNjQ2ZGRlMzciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJCcmFuZC9sb2dvIEtNLmpwZyIsImlhdCI6MTc2MTEzOTQ5OCwiZXhwIjoxNzkyNjc1NDk4fQ.Etkb-QlejLXww_i4V0dHvb3zTudbJhbNw-KAjI7pMXQ"
+          alt="King Menu Logo"
+          className="mx-auto w-32 h-32 rounded-full shadow-lg mb-4 object-cover"
+        />
+
+        {/* Boutons de langue centrés sous la couronne */}
+        <div className="flex justify-center gap-2 mb-6">
           {["en", "fr", "es", "it", "ar"].map((lang) => (
             <button
               key={lang}
@@ -41,13 +48,6 @@ const PublicLandingPage: React.FC = () => {
             </button>
           ))}
         </div>
-
-        {/* Logo */}
-        <img
-          src="https://vehqvqlbtotljstixklz.supabase.co/storage/v1/object/sign/Brand/logo%20KM.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8xNDFhMTczOS01YTg0LTQ0NmQtODgxMC0wNGRiNjQ2ZGRlMzciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJCcmFuZC9sb2dvIEtNLmpwZyIsImlhdCI6MTc2MTEzOTQ5OCwiZXhwIjoxNzkyNjc1NDk4fQ.Etkb-QlejLXww_i4V0dHvb3zTudbJhbNw-KAjI7pMXQ"
-          alt="King Menu Logo"
-          className="mx-auto w-32 h-32 rounded-full shadow-lg mb-4 object-cover"
-        />
 
         {/* Titre principal */}
         <h1 className="text-4xl md:text-5xl font-bold text-white drop-shadow-lg mb-4">
@@ -77,6 +77,7 @@ const PublicLandingPage: React.FC = () => {
         >
           {t("landing.loginButton")}
         </button>
+
       </div>
 
       {/* Footer */}
