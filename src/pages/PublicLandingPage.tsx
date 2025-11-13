@@ -22,25 +22,25 @@ const PublicLandingPage: React.FC = () => {
       {/* Overlay sombre */}
       <div className="absolute inset-0 bg-black/50"></div>
 
-      {/* Sélecteur de langue - EN HAUT À DROITE */}
-      <div className="absolute top-6 right-6 z-20 flex gap-2">
-        {["en", "fr", "es", "it", "ar"].map((lang) => (
-          <button
-            key={lang}
-            onClick={() => handleLanguageChange(lang)}
-            className={`px-3 py-2 rounded-full text-sm font-semibold transition-all ${
-              i18n.language === lang
-                ? "bg-yellow-500 text-white shadow-md"
-                : "bg-white/80 text-gray-800 hover:bg-white"
-            }`}
-          >
-            {lang.toUpperCase()}
-          </button>
-        ))}
-      </div>
-
       {/* Contenu principal */}
       <div className="relative z-10 text-center px-6 max-w-3xl">
+
+        {/* Sélecteur de langue — déplacé ici, centré au-dessus du logo */}
+        <div className="flex justify-center gap-3 mb-6">
+          {["en", "fr", "es", "it", "ar"].map((lang) => (
+            <button
+              key={lang}
+              onClick={() => handleLanguageChange(lang)}
+              className={`px-3 py-2 rounded-full text-sm font-semibold transition-all ${
+                i18n.language === lang
+                  ? "bg-yellow-500 text-white shadow-md"
+                  : "bg-white/80 text-gray-800 hover:bg-white"
+              }`}
+            >
+              {lang.toUpperCase()}
+            </button>
+          ))}
+        </div>
 
         {/* Logo */}
         <img
@@ -77,7 +77,6 @@ const PublicLandingPage: React.FC = () => {
         >
           {t("landing.loginButton")}
         </button>
-
       </div>
 
       {/* Footer */}
