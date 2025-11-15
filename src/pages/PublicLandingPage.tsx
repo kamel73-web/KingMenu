@@ -24,12 +24,30 @@ const PublicLandingPage: React.FC = () => {
 
       {/* Contenu principal */}
       <div className="relative z-10 text-center px-6 max-w-3xl">
+
         {/* Logo */}
         <img
           src="https://vehqvqlbtotljstixklz.supabase.co/storage/v1/object/public/Brand/logo%20KM.jpg"
           alt="King Menu Logo"
-          className="mx-auto w-32 h-32 rounded-full shadow-lg mb-6 object-cover"
+          className="mx-auto w-32 h-32 rounded-full shadow-lg mb-4 object-cover"
         />
+
+        {/* Sélecteur de langue — placé ici SOUS LE LOGO */}
+        <div className="flex justify-center gap-3 mb-6">
+          {["en", "fr", "es", "it", "ar"].map((lang) => (
+            <button
+              key={lang}
+              onClick={() => handleLanguageChange(lang)}
+              className={`px-3 py-2 rounded-full text-sm font-semibold transition-all ${
+                i18n.language === lang
+                  ? "bg-yellow-500 text-white shadow-md"
+                  : "bg-white/80 text-gray-800 hover:bg-white"
+              }`}
+            >
+              {lang.toUpperCase()}
+            </button>
+          ))}
+        </div>
 
         {/* Titre principal */}
         <h1 className="text-4xl md:text-5xl font-bold text-white drop-shadow-lg mb-4">
@@ -43,7 +61,9 @@ const PublicLandingPage: React.FC = () => {
 
         {/* Bloc des fonctionnalités */}
         <div className="bg-white/15 backdrop-blur-md rounded-2xl p-6 text-gray-100 mb-10 shadow-lg">
-          <h2 className="text-2xl font-semibold mb-4">{t("landing.featuresTitle")}</h2>
+          <h2 className="text-2xl font-semibold mb-4">
+            {t("landing.featuresTitle")}
+          </h2>
           <ul className="space-y-2 text-left mx-auto max-w-md">
             <li>🍲 {t("landing.featureRecipes")}</li>
             <li>🥕 {t("landing.featureIngredients")}</li>
@@ -60,22 +80,6 @@ const PublicLandingPage: React.FC = () => {
           {t("landing.loginButton")}
         </button>
 
-        {/* Sélecteur de langue */}
-        <div className="mt-10 flex justify-center gap-3">
-          {["en", "fr", "es", "it", "ar"].map((lang) => (
-            <button
-              key={lang}
-              onClick={() => handleLanguageChange(lang)}
-              className={`px-3 py-1 rounded-full text-sm font-medium ${
-                i18n.language === lang
-                  ? "bg-yellow-500 text-white"
-                  : "bg-white/20 text-gray-200 hover:bg-white/40"
-              }`}
-            >
-              {lang.toUpperCase()}
-            </button>
-          ))}
-        </div>
       </div>
 
       {/* Footer */}
