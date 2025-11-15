@@ -16,7 +16,7 @@ const PublicLandingPage: React.FC = () => {
       className="relative min-h-screen flex flex-col items-center justify-center bg-cover bg-center text-gray-800"
       style={{
         backgroundImage:
-          "url('https://vehqvqlbtotljstixklz.supabase.co/storage/v1/object/public/Brand/background.avif')",
+          "url('https://vehqvqlbtotljstixklz.supabase.co/storage/v1/object/public/Brand/background.jpg')",
       }}
     >
       {/* Overlay sombre */}
