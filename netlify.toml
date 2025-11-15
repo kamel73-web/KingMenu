@@ -1,0 +1,12 @@
+# netlify.toml - Configuration pour React (Vite/Webpack)
+
+[build]
+  # Répertoire où le build final sera publié
+  publish = "dist"  # Pour Vite ou Webpack, assure-toi que c'est le bon répertoire
+
+  # Commande pour compiler le projet
+  command = "npm run build"  # Si tu utilises Yarn, remplace par "yarn build"
+
+[[plugins]]
+  package = "@netlify/plugin-cache"
+  config = { cacheFiles = "dist/**/*" }
