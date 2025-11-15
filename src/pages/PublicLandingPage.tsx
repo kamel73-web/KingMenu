@@ -16,7 +16,7 @@ const PublicLandingPage: React.FC = () => {
       className="relative min-h-screen flex flex-col items-center justify-center bg-cover bg-center text-gray-800"
       style={{
         backgroundImage:
-          "url('https://vehqvqlbtotljstixklz.supabase.co/storage/v1/object/sign/Brand/background.avif?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8xNDFhMTczOS01YTg0LTQ0NmQtODgxMC0wNGRiNjQ2ZGRlMzciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJCcmFuZC9iYWNrZ3JvdW5kLmF2aWYiLCJpYXQiOjE3NjExMzg0MDAsImV4cCI6MTc5MjY3NDQwMH0.ONd-VSDJH9-_KNgHZC27ZbGqBr19GaP34kvkir0obDk')",
+          "url('https://vehqvqlbtotljstixklz.supabase.co/storage/v1/object/public/Brand/background.avif')",
       }}
     >
       {/* Overlay sombre */}
@@ -26,7 +26,7 @@ const PublicLandingPage: React.FC = () => {
       <div className="relative z-10 text-center px-6 max-w-3xl">
         {/* Logo */}
         <img
-          src="https://vehqvqlbtotljstixklz.supabase.co/storage/v1/object/sign/Brand/logo%20KM.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8xNDFhMTczOS01YTg0LTQ0NmQtODgxMC0wNGRiNjQ2ZGRlMzciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJCcmFuZC9sb2dvIEtNLmpwZyIsImlhdCI6MTc2MTEzOTQ5OCwiZXhwIjoxNzkyNjc1NDk4fQ.Etkb-QlejLXww_i4V0dHvb3zTudbJhbNw-KAjI7pMXQ"
+          src="https://vehqvqlbtotljstixklz.supabase.co/storage/v1/object/public/Brand/logo%20KM.jpg"
           alt="King Menu Logo"
           className="mx-auto w-32 h-32 rounded-full shadow-lg mb-6 object-cover"
         />
