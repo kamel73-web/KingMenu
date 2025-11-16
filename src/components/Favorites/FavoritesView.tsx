@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Heart, Loader2 } from "lucide-react";
-import { supabase } from "../../supabaseClient";
+import { supabase } from '@/lib/supabase';
 import RecipeModal from "../Recipe/RecipeModal";
 
 export default function FavoritesView() {
