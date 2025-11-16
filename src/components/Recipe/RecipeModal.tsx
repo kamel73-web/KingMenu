@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { X, Clock, Users, ChefHat, Play, Pause, RotateCcw, Maximize2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Clock, Users, ChefHat, Maximize2, Heart } from 'lucide-react';
 import { Dish } from '../../types';
 import { useApp } from '../../context/AppContext';
 import { useTranslation } from 'react-i18next';
 import { useTranslatedContent } from '../../hooks/useTranslatedContent';
 import toast from 'react-hot-toast';
+import { supabase } from '../../supabaseClient';
 
 interface RecipeModalProps {
   dish: Dish;
@@ -17,6 +18,8 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
   const [servings, setServings] = useState(dish.servings);
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
   const [highlightedIngredients, setHighlightedIngredients] = useState<Set<string>>(new Set());
+  const [isFavorite, setIsFavorite] = useState(false);
+
   const { dispatch } = useApp();
   const { t } = useTranslation();
   const { translateDifficulty, translateUnit } = useTranslatedContent();
@@ -25,13 +28,72 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
 
   const servingMultiplier = servings / dish.servings;
 
+  // --------------------------
+  // FAVORITES : Load on open
+  // --------------------------
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const loadFavoriteStatus = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data } = await supabase
+        .from('saved_dishes')
+        .select('dish_id')
+        .eq('user_id', user.id)
+        .eq('dish_id', dish.id)
+        .maybeSingle();
+
+      setIsFavorite(!!data);
+    };
+
+    loadFavoriteStatus();
+  }, [isOpen, dish.id]);
+
+  // --------------------------
+  // FAVORITES : Toggle
+  // --------------------------
+  const toggleFavorite = async () => {
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
+      toast.error(t('errors.mustBeLoggedIn'));
+      return;
+    }
+
+    if (isFavorite) {
+      // Remove from saved_dishes
+      const { error } = await supabase
+        .from('saved_dishes')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('dish_id', dish.id);
+
+      if (!error) {
+        setIsFavorite(false);
+        toast.success(t('favorites.removed'));
+      }
+    } else {
+      // Add to saved_dishes
+      const { error } = await supabase.from('saved_dishes').insert({
+        user_id: user.id,
+        dish_id: dish.id,
+      });
+
+      if (!error) {
+        setIsFavorite(true);
+        toast.success(t('favorites.added'));
+      }
+    }
+  };
+
+  // --------------------------
+  // STEPS & INGREDIENTS
+  // --------------------------
   const handleStepToggle = (stepIndex: number) => {
     const newCompleted = new Set(completedSteps);
-    if (newCompleted.has(stepIndex)) {
-      newCompleted.delete(stepIndex);
-    } else {
-      newCompleted.add(stepIndex);
-    }
+    if (newCompleted.has(stepIndex)) newCompleted.delete(stepIndex);
+    else newCompleted.add(stepIndex);
     setCompletedSteps(newCompleted);
   };
 
@@ -58,19 +120,35 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl">
-        {/* Header */}
+
+        {/* HEADER */}
         <div className="relative">
           <img
             src={dish.image}
             alt={dish.title}
             className="w-full h-48 object-cover"
           />
+
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+
+          {/* ❤️ FAVORITE BUTTON */}
+          <button
+            onClick={toggleFavorite}
+            className="absolute top-4 left-4 p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all"
+            title={isFavorite ? t('favorites.remove') : t('favorites.add')}
+          >
+            <Heart
+              className={`h-6 w-6 transition-all ${
+                isFavorite ? 'fill-red-500 text-red-500' : 'text-white'
+              }`}
+            />
+          </button>
+
+          {/* Existing buttons */}
           <div className="absolute top-4 right-4 flex space-x-2">
             <button
               onClick={onEnterCookMode}
               className="p-2 bg-primary text-white rounded-full hover:bg-primary-dark transition-all"
-              title={t('recipe.enterCookMode')}
             >
               <Maximize2 className="h-5 w-5" />
             </button>
@@ -81,6 +159,8 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
               <X className="h-5 w-5" />
             </button>
           </div>
+
+          {/* Title info */}
           <div className="absolute bottom-4 left-4 text-white">
             <h2 className="text-2xl font-heading font-bold mb-2">{dish.title}</h2>
             <div className="flex items-center space-x-4 text-sm">
@@ -100,8 +180,8 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
           </div>
         </div>
 
+        {/* CONTENT BELOW — unchanged */}
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-12rem)]">
-          {/* Serving Size Adjuster */}
           <div className="mb-6 p-4 bg-gray-50 rounded-lg">
             <div className="flex items-center justify-between">
               <span className="font-body font-medium text-gray-700">{t('recipeDetails.adjustServings')}</span>
@@ -124,7 +204,8 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Ingredients */}
+
+            {/* INGREDIENTS */}
             <div>
               <h3 className="text-xl font-heading font-semibold text-gray-900 mb-4">
                 {t('recipeDetails.ingredients')}
@@ -157,7 +238,7 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
               </div>
             </div>
 
-            {/* Instructions */}
+            {/* INSTRUCTIONS */}
             <div>
               <h3 className="text-xl font-heading font-semibold text-gray-900 mb-4">
                 {t('recipeDetails.instructions')}
@@ -202,9 +283,10 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
                 ))}
               </div>
             </div>
+
           </div>
 
-          {/* Action Buttons */}
+          {/* ACTION BUTTONS */}
           <div className="mt-8 flex flex-col sm:flex-row gap-4">
             <button
               onClick={handleAddToMenu}
