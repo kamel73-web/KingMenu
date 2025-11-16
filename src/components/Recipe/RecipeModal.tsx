@@ -5,7 +5,7 @@ import { useApp } from '../../context/AppContext';
 import { useTranslation } from 'react-i18next';
 import { useTranslatedContent } from '../../hooks/useTranslatedContent';
 import toast from 'react-hot-toast';
-import { supabase } from '../../supabaseClient';
+import { supabase } from '@/lib/supabase';
 
 interface RecipeModalProps {
   dish: Dish;
