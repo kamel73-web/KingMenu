@@ -1,26 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { Heart, Loader2 } from "lucide-react";
-import { supabase } from "../../supabaseClient"; // adapte le chemin selon ton projet
+import { supabase } from "../../supabaseClient";
+import RecipeModal from "../Recipe/RecipeModal";
 
 export default function FavoritesView() {
   const [favorites, setFavorites] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
+  const [selectedDish, setSelectedDish] = useState<any>(null); // Pour ouvrir RecipeModal
 
+  // Charger l'utilisateur
   useEffect(() => {
-    // Récupérer l'utilisateur connecté
     supabase.auth.getUser().then(({ data }) => {
       setUser(data.user);
     });
   }, []);
 
+  // Charger les favoris
   useEffect(() => {
     if (!user) return;
 
     const fetchFavorites = async () => {
       setLoading(true);
 
-      // 1️⃣ Récupérer les dish_id favoris de l'utilisateur
       const { data: saved, error: savedError } = await supabase
         .from("saved_dishes")
         .select("dish_id")
@@ -40,7 +42,6 @@ export default function FavoritesView() {
 
       const dishIds = saved.map((f) => f.dish_id);
 
-      // 2️⃣ Récupérer les informations complètes des plats
       const { data: dishes, error: dishesError } = await supabase
         .from("dishes")
         .select("*")
@@ -58,6 +59,31 @@ export default function FavoritesView() {
     fetchFavorites();
   }, [user]);
 
+  // Retirer un favori depuis la page
+  const removeFavorite = async (dishId: number) => {
+    if (!user) return;
+
+    await supabase
+      .from("saved_dishes")
+      .delete()
+      .eq("user_id", user.id)
+      .eq("dish_id", dishId);
+
+    setFavorites((prev) => prev.filter((f) => f.id !== dishId));
+  };
+
+  // Mapper un plat DB → format attendu par RecipeModal
+  const formatForRecipeModal = (dish: any) => ({
+    id: dish.id,
+    title: dish.name?.fr || dish.name?.en || "Sans nom",
+    image: dish.image_url,
+    ingredients: dish.ingredients || [],
+    instructions: dish.steps || [],
+    difficulty: dish.difficulty,
+    cookingTime: dish.cooking_time,
+    servings: dish.servings,
+  });
+
   if (loading) {
     return (
       <div className="flex justify-center py-20">
@@ -66,7 +92,6 @@ export default function FavoritesView() {
     );
   }
 
-  // Aucun favori
   if (!favorites.length) {
     return (
       <div className="max-w-4xl mx-auto p-6">
@@ -91,18 +116,29 @@ export default function FavoritesView() {
     );
   }
 
-  // Affichage des favoris
   return (
     <div className="max-w-5xl mx-auto p-6">
       <h2 className="text-3xl font-heading font-bold mb-6">Vos favoris ❤️</h2>
 
+      {/* Grille des favoris */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {favorites.map((dish) => (
-          <a
+          <div
             key={dish.id}
-            href={`/dish/${dish.id}`}
-            className="bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition-all"
+            className="bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition-all relative cursor-pointer"
+            onClick={() => setSelectedDish(formatForRecipeModal(dish))}
           >
+            {/* Bouton retirer favori */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation(); // évite d’ouvrir le modal
+                removeFavorite(dish.id);
+              }}
+              className="absolute top-3 right-3 p-2 bg-white rounded-full shadow hover:bg-gray-100"
+            >
+              <Heart className="h-5 w-5 text-red-500 fill-red-500" />
+            </button>
+
             <img
               src={dish.image_url || "/placeholder.jpg"}
               alt=""
@@ -111,9 +147,19 @@ export default function FavoritesView() {
             <h3 className="font-bold text-lg">
               {dish.name?.fr || dish.name?.en || "Sans nom"}
             </h3>
-          </a>
+          </div>
         ))}
       </div>
+
+      {/* Recipe Modal */}
+      {selectedDish && (
+        <RecipeModal
+          dish={selectedDish}
+          isOpen={true}
+          onClose={() => setSelectedDish(null)}
+          onEnterCookMode={() => {}}
+        />
+      )}
     </div>
   );
 }
