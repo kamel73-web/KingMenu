@@ -9,6 +9,9 @@ import CookModeModal from '../Recipe/CookModeModal';
 import ScheduleDishModal from '../MealPlanning/ScheduleDishModal';
 import toast from 'react-hot-toast';
 
+// ❤️ Import favoris
+import AddToFavoritesButton from '../Favorites/AddToFavoritesButton';
+
 interface DishCardProps {
   dish: Dish;
 }
@@ -56,6 +59,7 @@ export default function DishCard({ dish }: DishCardProps) {
   return (
     <>
       <div className="bg-white rounded-3xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group flex flex-col w-full font-sans">
+        
         {/* Image principale */}
         <div className="relative">
           <img
@@ -64,6 +68,7 @@ export default function DishCard({ dish }: DishCardProps) {
             className="w-full h-72 object-cover group-hover:scale-105 transition-transform duration-500 rounded-t-3xl"
             loading="lazy"
           />
+
           {/* Overlay violet doux */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-3xl" />
 
@@ -79,7 +84,11 @@ export default function DishCard({ dish }: DishCardProps) {
           </div>
 
           {/* Badge cuisine */}
-          <div className="absolute top-4 right-4">
+          <div className="absolute top-4 right-4 flex items-center gap-2">
+
+            {/* ❤️ Bouton favoris */}
+            <AddToFavoritesButton dishId={dish.id} />
+
             <span className="bg-white/90 px-3 py-1.5 rounded-full text-xs font-semibold text-gray-700 shadow">
               {translatedDish.cuisine}
             </span>
