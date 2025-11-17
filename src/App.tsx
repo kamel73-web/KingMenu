@@ -37,9 +37,10 @@ function AppRoutes() {
   const { isRTL } = useRTL();
   const navigate = useNavigate();
   const location = useLocation();
+
   const [hasRedirected, setHasRedirected] = useState(false);
 
-  // 🌍 Charger langue + direction
+  /** 🌍 Charger langue + direction */
   useEffect(() => {
     const savedLanguage = localStorage.getItem("gusto-language");
     const savedDirection = localStorage.getItem("gusto-direction");
@@ -57,14 +58,10 @@ function AppRoutes() {
     }
   }, [i18n]);
 
-  // 🚀 Rediriger après connexion
+  /** 🚀 Redirection automatique après login */
   useEffect(() => {
     if (state.user && !hasRedirected) {
-      // Si l’utilisateur vient de /login ou /welcome → aller à la HomePage
-      if (
-        location.pathname === "/login" ||
-        location.pathname === "/welcome"
-      ) {
+      if (location.pathname === "/login" || location.pathname === "/welcome") {
         navigate("/");
         setHasRedirected(true);
       }
@@ -73,18 +70,18 @@ function AppRoutes() {
 
   return (
     <div className={`min-h-screen bg-gray-50 ${isRTL ? "rtl" : "ltr"}`}>
-      {/* Navbar uniquement si connecté */}
+      {/* Navbar visible seulement si connecté */}
       {state.user && <Navbar />}
 
       <main>
         <Routes>
-          {/* 🔓 Page publique (accueil sans connexion) */}
+          {/* 🔓 Page publique */}
           <Route
             path="/welcome"
             element={!state.user ? <PublicLandingPage /> : <Navigate to="/" />}
           />
 
-          {/* 🔐 Routes protégées */}
+          {/* 🔐 Zones protégées */}
           <Route
             path="/"
             element={state.user ? <HomePage /> : <Navigate to="/welcome" />}
@@ -92,7 +89,11 @@ function AppRoutes() {
           <Route
             path="/use-my-ingredients"
             element={
-              state.user ? <UseMyIngredientsPage /> : <Navigate to="/welcome" />
+              state.user ? (
+                <UseMyIngredientsPage />
+              ) : (
+                <Navigate to="/welcome" />
+              )
             }
           />
           <Route
@@ -123,7 +124,7 @@ function AppRoutes() {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-use" element={<TermsOfUse />} />
 
-          {/* Fallback : si rien ne correspond */}
+          {/* Fallback */}
           <Route
             path="*"
             element={<Navigate to={state.user ? "/" : "/welcome"} />}
@@ -131,7 +132,7 @@ function AppRoutes() {
         </Routes>
       </main>
 
-      {/* ✅ Footer */}
+      {/* Footer */}
       <footer className="p-4 text-center text-gray-500 border-t">
         <a href="/privacy-policy" className="mx-2 hover:underline">
           {t("footer.privacy")}
@@ -144,14 +145,13 @@ function AppRoutes() {
   );
 }
 
-function App() {
+export default function App() {
   return (
     <AppProvider>
       <Router>
         <AppRoutes />
       </Router>
 
-      {/* ✅ Toast configuration */}
       <Toaster
         position="top-right"
         toastOptions={{
@@ -164,5 +164,3 @@ function App() {
     </AppProvider>
   );
 }
-
-export default App;
