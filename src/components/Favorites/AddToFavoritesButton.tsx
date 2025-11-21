@@ -5,11 +5,14 @@ import { useFavorites } from "../../hooks/useFavorites";
 export default function AddToFavoritesButton({ dishId, size = 22 }) {
   const { favorites, toggleFavorite } = useFavorites();
 
-  const isFav = favorites.includes(dishId);
+  // Normalise l’ID (évite le bug string vs number)
+  const numericId = Number(dishId);
+
+  const isFav = favorites.includes(numericId);
 
   return (
     <button
-      onClick={() => toggleFavorite(dishId)}
+      onClick={() => toggleFavorite(numericId)}
       className="p-1 transition"
       aria-label="Add to favorites"
     >
