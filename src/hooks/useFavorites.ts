@@ -10,6 +10,7 @@ export function useFavorites() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       setUser(data.session?.user ?? null);
+      console.log("AUTH USER:", data.session?.user);
     });
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
