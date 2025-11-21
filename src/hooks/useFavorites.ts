@@ -1,19 +1,23 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { supabase } from '@/lib/supabase';
 
 export function useFavorites() {
   const [favorites, setFavorites] = useState<number[]>([]);
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // Charger l'utilisateur connecté
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user);
+    supabase.auth.getSession().then(({ data }) => {
+      setUser(data.session?.user ?? null);
     });
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => listener.subscription.unsubscribe();
   }, []);
 
-  // Charger les favoris de l'utilisateur
   useEffect(() => {
     if (!user) return;
 
@@ -26,9 +30,7 @@ export function useFavorites() {
         .eq("user_id", user.id);
 
       if (!error && data) {
-        // FORCER LE TYPE → number
-        const normalized = data.map((f) => Number(f.dish_id));
-        setFavorites(normalized);
+        setFavorites(data.map((f) => f.dish_id));
       }
 
       setLoading(false);
@@ -37,32 +39,28 @@ export function useFavorites() {
     loadFavorites();
   }, [user]);
 
-  // Ajouter/Supprimer un favori
-  const toggleFavorite = async (dishId: number | string) => {
+  const toggleFavorite = async (dishId: number) => {
     if (!user) return;
 
-    // Normaliser
-    const numericId = Number(dishId);
-
-    const isFavorite = favorites.includes(numericId);
+    const isFavorite = favorites.includes(dishId);
 
     if (isFavorite) {
       await supabase
         .from("saved_dishes")
         .delete()
         .eq("user_id", user.id)
-        .eq("dish_id", numericId);
+        .eq("dish_id", dishId);
 
-      setFavorites((prev) => prev.filter((id) => id !== numericId));
+      setFavorites((prev) => prev.filter((id) => id !== dishId));
     } else {
       await supabase
         .from("saved_dishes")
-        .insert({
-          user_id: user.id,
-          dish_id: numericId,
-        });
+        .upsert(
+          { user_id: user.id, dish_id: dishId },
+          { onConflict: "user_id,dish_id" }
+        );
 
-      setFavorites((prev) => [...prev, numericId]);
+      setFavorites((prev) => [...prev, dishId]);
     }
   };
 
