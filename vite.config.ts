@@ -1,28 +1,30 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
-// ✅ Correction pour Codespaces / Node sans crypto global
-import { webcrypto } from 'crypto';
+// ✅ Correction crypto (nécessaire pour Capacitor / Android)
+import { webcrypto } from "crypto";
 if (!globalThis.crypto) {
   globalThis.crypto = webcrypto;
 }
 
+// 🔥 Détection automatique pour GitHub Pages
+const isGithubPages = process.env.GITHUB_PAGES === "true";
+
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: './', // 👈 essentiel pour Android (rend les chemins relatifs)
+  base: isGithubPages ? "/KingMenu/" : "./",
   plugins: [react()],
   optimizeDeps: {
-    exclude: ['lucide-react'],
+    exclude: ["lucide-react"],
   },
   build: {
     rollupOptions: {
-      // si tu utilises un module pdfGenerator externe, garde ceci
-      external: ['../utils/pdfGenerator'],
+      external: ["../utils/pdfGenerator"],
     },
   },
   resolve: {
     alias: {
-      '@': '/src',
+      "@": "/src",
     },
   },
 });
