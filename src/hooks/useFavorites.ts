@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from '@/lib/supabase';
+import { supabase } from "@/lib/supabase";
 
 export function useFavorites() {
   const [favorites, setFavorites] = useState<number[]>([]);
@@ -26,7 +26,9 @@ export function useFavorites() {
         .eq("user_id", user.id);
 
       if (!error && data) {
-        setFavorites(data.map((f) => f.dish_id));
+        // FORCER LE TYPE → number
+        const normalized = data.map((f) => Number(f.dish_id));
+        setFavorites(normalized);
       }
 
       setLoading(false);
@@ -35,27 +37,32 @@ export function useFavorites() {
     loadFavorites();
   }, [user]);
 
-  // Ajouter/supprimer
-  const toggleFavorite = async (dishId: number) => {
+  // Ajouter/Supprimer un favori
+  const toggleFavorite = async (dishId: number | string) => {
     if (!user) return;
 
-    const isFavorite = favorites.includes(dishId);
+    // Normaliser
+    const numericId = Number(dishId);
+
+    const isFavorite = favorites.includes(numericId);
 
     if (isFavorite) {
       await supabase
         .from("saved_dishes")
         .delete()
         .eq("user_id", user.id)
-        .eq("dish_id", dishId);
+        .eq("dish_id", numericId);
 
-      setFavorites((prev) => prev.filter((id) => id !== dishId));
+      setFavorites((prev) => prev.filter((id) => id !== numericId));
     } else {
-      await supabase.from("saved_dishes").insert({
-        user_id: user.id,
-        dish_id: dishId,
-      });
+      await supabase
+        .from("saved_dishes")
+        .insert({
+          user_id: user.id,
+          dish_id: numericId,
+        });
 
-      setFavorites((prev) => [...prev, dishId]);
+      setFavorites((prev) => [...prev, numericId]);
     }
   };
 
