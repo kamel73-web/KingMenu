@@ -1,27 +1,33 @@
 import { useEffect, useState } from "react";
-import { supabase } from '@/lib/supabase';
+import { supabase } from "@/lib/supabase";
 
 export function useFavorites() {
   const [favorites, setFavorites] = useState<number[]>([]);
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
+  // Charger session + écouter les changements
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       setUser(data.session?.user ?? null);
     });
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null);
+      }
+    );
 
-    return () => listener.subscription.unsubscribe();
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
   }, []);
 
+  // Charger favoris de l'utilisateur
   useEffect(() => {
     if (!user) return;
 
-    const loadFavorites = async () => {
+    const load = async () => {
       setLoading(true);
 
       const { data, error } = await supabase
@@ -30,21 +36,25 @@ export function useFavorites() {
         .eq("user_id", user.id);
 
       if (!error && data) {
-        setFavorites(data.map((f) => f.dish_id));
+        setFavorites(data.map((x) => x.dish_id));
       }
 
       setLoading(false);
     };
 
-    loadFavorites();
+    load();
   }, [user]);
 
+  // Ajouter / supprimer un favori
   const toggleFavorite = async (dishId: number) => {
-    if (!user) return;
+    if (!user) {
+      console.log("❌ No user logged in! Cannot toggle favorite.");
+      return;
+    }
 
-    const isFavorite = favorites.includes(dishId);
+    const isFav = favorites.includes(dishId);
 
-    if (isFavorite) {
+    if (isFav) {
       await supabase
         .from("saved_dishes")
         .delete()
