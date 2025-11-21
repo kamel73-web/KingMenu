@@ -1,88 +1,69 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
-export function useFavorites() {
+export const useFavorites = (userId: string) => {
   const [favorites, setFavorites] = useState<number[]>([]);
-  const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // Charger session + écouter les changements
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setUser(data.session?.user ?? null);
-      console.log("AUTH USER:", data.session?.user);
-    });
+  // Charger tous les favoris
+  const loadFavorites = async () => {
+    setLoading(true);
 
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null);
-      }
-    );
-
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
-  }, []);
-
-  // Charger favoris de l'utilisateur
-  useEffect(() => {
-    if (!user) return;
-
-    const load = async () => {
-      setLoading(true);
-
-      const { data, error } = await supabase
-        .from("saved_dishes")
-        .select("dish_id")
-        .eq("user_id", user.id);
-
-      if (!error && data) {
-        setFavorites(data.map((x) => x.dish_id));
-      }
-
-      setLoading(false);
-    };
-
-    load();
-  }, [user]);
-
-  // Ajouter / supprimer un favori
-  const toggleFavorite = async (dishId: number) => {
-  if (!user) {
-    console.log("❌ No user logged in! Cannot toggle favorite.");
-    return;
-  }
-
-  const isFav = favorites.includes(dishId);
-
-  if (isFav) {
-    await supabase
+    const { data, error } = await supabase
       .from("saved_dishes")
-      .delete()
-      .eq("user_id", user.id)
-      .eq("dish_id", dishId);
+      .select("dish_id")
+      .eq("user_id", userId);
 
-    setFavorites((prev) => prev.filter((id) => id !== dishId));
-  } else {
-    // vérifier si existe déjà (évite les 409)
-    const { data: existing } = await supabase
+    if (!error && data) {
+      setFavorites(data.map((item) => item.dish_id));
+    }
+
+    setLoading(false);
+  };
+
+  // Ajouter un favori
+  const addFavorite = async (dishId: number) => {
+    const { error } = await supabase
       .from("saved_dishes")
-      .select("id")
-      .eq("user_id", user.id)
-      .eq("dish_id", dishId)
-      .maybeSingle();
+      .insert([{ user_id: userId, dish_id: dishId }])
+      .select();
 
-    if (!existing) {
-      await supabase.from("saved_dishes").insert({
-        user_id: user.id,
-        dish_id: dishId,
-      });
+    // ⚠️ erreur 409 = entrée déjà existante -> on ignore
+    if (error && error.code !== "23505") {
+      console.error("Insert error:", error);
+      return;
     }
 
     setFavorites((prev) => [...prev, dishId]);
-  }
+  };
+
+  // Retirer un favori
+  const removeFavorite = async (dishId: number) => {
+    const { error } = await supabase
+      .from("saved_dishes")
+      .delete()
+      .match({ user_id: userId, dish_id: dishId });
+
+    if (error) {
+      console.error("Delete error:", error);
+      return;
+    }
+
+    setFavorites((prev) => prev.filter((id) => id !== dishId));
+  };
+
+  // Toggle
+  const toggleFavorite = async (dishId: number) => {
+    if (favorites.includes(dishId)) {
+      await removeFavorite(dishId);
+    } else {
+      await addFavorite(dishId);
+    }
+  };
+
+  useEffect(() => {
+    if (userId) loadFavorites();
+  }, [userId]);
+
+  return { favorites, toggleFavorite, loading, addFavorite, removeFavorite };
 };
-
-
-  return { favorites, toggleFavorite, loading, user };
-}
