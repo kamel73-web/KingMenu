@@ -48,32 +48,41 @@ export function useFavorites() {
 
   // Ajouter / supprimer un favori
   const toggleFavorite = async (dishId: number) => {
-    if (!user) {
-      console.log("❌ No user logged in! Cannot toggle favorite.");
-      return;
+  if (!user) {
+    console.log("❌ No user logged in! Cannot toggle favorite.");
+    return;
+  }
+
+  const isFav = favorites.includes(dishId);
+
+  if (isFav) {
+    await supabase
+      .from("saved_dishes")
+      .delete()
+      .eq("user_id", user.id)
+      .eq("dish_id", dishId);
+
+    setFavorites((prev) => prev.filter((id) => id !== dishId));
+  } else {
+    // vérifier si existe déjà (évite les 409)
+    const { data: existing } = await supabase
+      .from("saved_dishes")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("dish_id", dishId)
+      .maybeSingle();
+
+    if (!existing) {
+      await supabase.from("saved_dishes").insert({
+        user_id: user.id,
+        dish_id: dishId,
+      });
     }
 
-    const isFav = favorites.includes(dishId);
+    setFavorites((prev) => [...prev, dishId]);
+  }
+};
 
-    if (isFav) {
-      await supabase
-        .from("saved_dishes")
-        .delete()
-        .eq("user_id", user.id)
-        .eq("dish_id", dishId);
-
-      setFavorites((prev) => prev.filter((id) => id !== dishId));
-    } else {
-      await supabase
-        .from("saved_dishes")
-        .upsert(
-          { user_id: user.id, dish_id: dishId },
-          { onConflict: "user_id,dish_id" }
-        );
-
-      setFavorites((prev) => [...prev, dishId]);
-    }
-  };
 
   return { favorites, toggleFavorite, loading, user };
 }
