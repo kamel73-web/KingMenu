@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Ingredient, IngredientCategory, OwnedIngredient } from '../../types';
+import { Ingredient, OwnedIngredient } from '../../types';
 import { useApp } from '../../context/AppContext';
 import { supabase } from '../../lib/supabase';
 import { useTranslatedContent } from '../../hooks/useTranslatedContent';
@@ -13,9 +13,12 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
   const { t, i18n } = useTranslation();
   const { state, dispatch } = useApp();
   const { translateCategoryName, translateIngredientName } = useTranslatedContent();
+
   const selectedIngredients = state.selectedIngredients ?? [];
+
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState(''); // ← AJOUTÉ
 
   useEffect(() => {
     const fetchIngredients = async () => {
@@ -28,7 +31,7 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
         setIngredients(
           data.map((ing: any) => ({
             ...ing,
-            id: ing.id?.toString() ?? Math.random().toString(), // fallback id
+            id: ing.id?.toString() ?? Math.random().toString(),
             name: ing.name ?? { en: 'Unknown' },
             category: ing.category ?? { en: 'Other' },
           }))
@@ -36,14 +39,10 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
       }
       setLoading(false);
     };
-
     fetchIngredients();
   }, []);
 
-  const getCategoryName = (category: string) => {
-    return t(`ingredientsSection.categories.${category.toLowerCase()}`, category);
-  };
-
+  // AJOUTÉ : groupement par catégorie (inchangé, juste déplacé avant le filtre)
   const groupedIngredients = ingredients.reduce((acc, ingredient) => {
     const category =
       typeof ingredient.category === 'string'
@@ -55,6 +54,30 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
     acc[category].push(ingredient);
     return acc;
   }, {} as Record<string, Ingredient[]>);
+
+  // AJOUTÉ : version filtrée de la liste selon la recherche
+  const filteredGrouped = useMemo(() => {
+    if (!search.trim()) return groupedIngredients;
+
+    const term = search.toLowerCase().trim();
+    const result: Record<string, Ingredient[]> = {};
+
+    Object.entries(groupedIngredients).forEach(([cat, items]) => {
+      const matching = items.filter(ing => {
+        const name = translateIngredientName(ing)?.toLowerCase() || '';
+        return name.includes(term);
+      });
+      if (matching.length > 0) {
+        result[cat] = matching;
+      }
+    });
+
+    return result;
+  }, [search, groupedIngredients, translateIngredientName]);
+
+  const getCategoryName = (category: string) => {
+    return t(`ingredientsSection.categories.${category.toLowerCase()}`, category);
+  };
 
   const handleFindDishes = () => {
     if (onFindDishes) {
@@ -80,13 +103,23 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
     <div className="p-4">
       <h2 className="text-xl font-semibold mb-4">{t('ingredientsSection.whatsInKitchen')}</h2>
       <p className="text-gray-600 mb-6">{t('ingredientsSection.whatsInKitchenDesc')}</p>
+
+      {/* AJOUTÉ : la barre de recherche simple */}
+      <input
+        type="text"
+        value={search}
+        onChange={e => setSearch(e.target.value)}
+        placeholder="Rechercher un ingrédient…"
+        className="w-full px-4 py-3 mb-6 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+      />
+
       {loading ? (
         <p>{t('common.loading')}</p>
       ) : ingredients.length === 0 ? (
         <p>{t('common.error')}</p>
       ) : (
         <>
-          {Object.entries(groupedIngredients).map(([category, items]) => (
+          {Object.entries(filteredGrouped).map(([category, items]) => (
             <div key={category} className="mb-6">
               <h3 className="text-lg font-medium mb-2">
                 {getCategoryName(category.toLowerCase())}
@@ -117,6 +150,7 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
               </div>
             </div>
           ))}
+
           <button
             onClick={handleFindDishes}
             className="mt-4 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-all font-body font-medium"
