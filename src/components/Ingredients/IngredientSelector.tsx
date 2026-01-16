@@ -42,7 +42,6 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
     fetchIngredients();
   }, []);
 
-  // Groupement par catégorie (inchangé)
   const groupedIngredients = useMemo(() => {
     return ingredients.reduce((acc, ingredient) => {
       const category =
@@ -55,7 +54,6 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
     }, {} as Record<string, Ingredient[]>);
   }, [ingredients, i18n.language]);
 
-  // Filtre corrigé : tolérant aux undefined et insensible à la casse
   const filteredGrouped = useMemo(() => {
     if (!search.trim()) return groupedIngredients;
 
@@ -63,12 +61,12 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
     const result: Record<string, Ingredient[]> = {};
 
     Object.entries(groupedIngredients).forEach(([category, items]) => {
-      const filteredItems = items.filter((ing) => {
+      const matching = items.filter((ing) => {
         const name = translateIngredientName(ing);
         return name && name.toLowerCase().includes(term);
       });
-      if (filteredItems.length > 0) {
-        result[category] = filteredItems;
+      if (matching.length > 0) {
+        result[category] = matching;
       }
     });
 
@@ -84,7 +82,9 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
     if (onFindDishes) {
       const ownedIngredients = selectedIngredients.map((ing) => ({
         id: ing.id,
-        name: translateIngredientName(ing) || ing.name?.[i18n.language] ?? ing.name?.en ?? 'Unknown',
+        name:
+          translateIngredientName(ing) ||
+          (ing.name?.[i18n.language] ?? ing.name?.en ?? 'Unknown'),
         quantity: 1,
         unit: 'piece',
         category:
@@ -102,7 +102,6 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
       <h2 className="text-xl font-semibold mb-4">{t('ingredientsSection.whatsInKitchen')}</h2>
       <p className="text-gray-600 mb-6">{t('ingredientsSection.whatsInKitchenDesc')}</p>
 
-      {/* Barre de recherche */}
       <input
         type="text"
         value={search}
@@ -125,7 +124,7 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
             Object.entries(filteredGrouped).map(([category, items]) => (
               <div key={category} className="mb-6">
                 <h3 className="text-lg font-medium mb-2">
-                  {getCategoryName(category.toLowerCase())}
+                  {getCategoryName(category)}
                 </h3>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                   {items.map((ingredient) => (
@@ -151,7 +150,6 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
             ))
           )}
 
-          {/* Bouton de validation – exactement comme avant */}
           <button
             onClick={handleFindDishes}
             className="mt-4 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-all font-body font-medium"
