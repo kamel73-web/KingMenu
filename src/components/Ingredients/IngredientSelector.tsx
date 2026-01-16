@@ -18,7 +18,7 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
 
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState(''); // ← AJOUTÉ
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     const fetchIngredients = async () => {
@@ -42,33 +42,33 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
     fetchIngredients();
   }, []);
 
-  // AJOUTÉ : groupement par catégorie (inchangé, juste déplacé avant le filtre)
-  const groupedIngredients = ingredients.reduce((acc, ingredient) => {
-    const category =
-      typeof ingredient.category === 'string'
-        ? ingredient.category
-        : ingredient.category[i18n.language] ??
-          ingredient.category.en ??
-          'Other';
-    if (!acc[category]) acc[category] = [];
-    acc[category].push(ingredient);
-    return acc;
-  }, {} as Record<string, Ingredient[]>);
+  // Groupement par catégorie (inchangé)
+  const groupedIngredients = useMemo(() => {
+    return ingredients.reduce((acc, ingredient) => {
+      const category =
+        typeof ingredient.category === 'string'
+          ? ingredient.category
+          : ingredient.category[i18n.language] ?? ingredient.category.en ?? 'Other';
+      if (!acc[category]) acc[category] = [];
+      acc[category].push(ingredient);
+      return acc;
+    }, {} as Record<string, Ingredient[]>);
+  }, [ingredients, i18n.language]);
 
-  // AJOUTÉ : version filtrée de la liste selon la recherche
+  // Filtre corrigé : tolérant aux undefined et insensible à la casse
   const filteredGrouped = useMemo(() => {
     if (!search.trim()) return groupedIngredients;
 
     const term = search.toLowerCase().trim();
     const result: Record<string, Ingredient[]> = {};
 
-    Object.entries(groupedIngredients).forEach(([cat, items]) => {
-      const matching = items.filter(ing => {
-        const name = translateIngredientName(ing)?.toLowerCase() || '';
-        return name.includes(term);
+    Object.entries(groupedIngredients).forEach(([category, items]) => {
+      const filteredItems = items.filter((ing) => {
+        const name = translateIngredientName(ing);
+        return name && name.toLowerCase().includes(term);
       });
-      if (matching.length > 0) {
-        result[cat] = matching;
+      if (filteredItems.length > 0) {
+        result[category] = filteredItems;
       }
     });
 
@@ -76,17 +76,15 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
   }, [search, groupedIngredients, translateIngredientName]);
 
   const getCategoryName = (category: string) => {
-    return t(`ingredientsSection.categories.${category.toLowerCase()}`, category);
+    return translateCategoryName({ category }) ||
+           t(`ingredientsSection.categories.${category.toLowerCase()}`, { defaultValue: category });
   };
 
   const handleFindDishes = () => {
     if (onFindDishes) {
       const ownedIngredients = selectedIngredients.map((ing) => ({
         id: ing.id,
-        name:
-          typeof ing.name === 'string'
-            ? ing.name
-            : ing.name?.[i18n.language] ?? ing.name?.en ?? 'Unknown',
+        name: translateIngredientName(ing) || ing.name?.[i18n.language] ?? ing.name?.en ?? 'Unknown',
         quantity: 1,
         unit: 'piece',
         category:
@@ -104,12 +102,12 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
       <h2 className="text-xl font-semibold mb-4">{t('ingredientsSection.whatsInKitchen')}</h2>
       <p className="text-gray-600 mb-6">{t('ingredientsSection.whatsInKitchenDesc')}</p>
 
-      {/* AJOUTÉ : la barre de recherche simple */}
+      {/* Barre de recherche */}
       <input
         type="text"
         value={search}
-        onChange={e => setSearch(e.target.value)}
-        placeholder="Rechercher un ingrédient…"
+        onChange={(e) => setSearch(e.target.value)}
+        placeholder="Rechercher un ingrédient..."
         className="w-full px-4 py-3 mb-6 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
       />
 
@@ -119,38 +117,41 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
         <p>{t('common.error')}</p>
       ) : (
         <>
-          {Object.entries(filteredGrouped).map(([category, items]) => (
-            <div key={category} className="mb-6">
-              <h3 className="text-lg font-medium mb-2">
-                {getCategoryName(category.toLowerCase())}
-              </h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                {items.map((ingredient) => (
-                  <button
-                    key={ingredient.id}
-                    onClick={() =>
-                      dispatch({
-                        type: 'TOGGLE_SELECTED_INGREDIENT',
-                        payload: ingredient,
-                      })
-                    }
-                    className={`px-3 py-2 border rounded-full text-sm transition ${
-                      selectedIngredients.some((i) => i.id === ingredient.id)
-                        ? 'bg-green-200 border-green-400'
-                        : 'bg-white border-gray-300'
-                    }`}
-                  >
-                    {typeof ingredient.name === 'string'
-                      ? ingredient.name
-                      : ingredient.name?.[i18n.language] ??
-                        ingredient.name?.en ??
-                        t('common.unknown', 'Unknown')}
-                  </button>
-                ))}
+          {Object.keys(filteredGrouped).length === 0 && search.trim() ? (
+            <p className="text-gray-500 text-center py-4">
+              Aucun ingrédient trouvé pour "{search}"
+            </p>
+          ) : (
+            Object.entries(filteredGrouped).map(([category, items]) => (
+              <div key={category} className="mb-6">
+                <h3 className="text-lg font-medium mb-2">
+                  {getCategoryName(category.toLowerCase())}
+                </h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                  {items.map((ingredient) => (
+                    <button
+                      key={ingredient.id}
+                      onClick={() =>
+                        dispatch({
+                          type: 'TOGGLE_SELECTED_INGREDIENT',
+                          payload: ingredient,
+                        })
+                      }
+                      className={`px-3 py-2 border rounded-full text-sm transition ${
+                        selectedIngredients.some((i) => i.id === ingredient.id)
+                          ? 'bg-green-200 border-green-400'
+                          : 'bg-white border-gray-300'
+                      }`}
+                    >
+                      {translateIngredientName(ingredient)}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
 
+          {/* Bouton de validation – exactement comme avant */}
           <button
             onClick={handleFindDishes}
             className="mt-4 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-all font-body font-medium"
