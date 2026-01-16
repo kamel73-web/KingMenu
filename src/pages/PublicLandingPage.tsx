@@ -75,7 +75,7 @@ const PublicLandingPage: React.FC = () => {
         {/* Bouton Connexion */}
         <button
           onClick={() => navigate("/login")}
-          className="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-full font-semibold shadow-lg transition-transform transform hover:scale-105"
+          className="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-full font-semibold shadow-lg transition-transform transform hover:scale-105"
         >
           {t("landing.loginButton")}
         </button>
