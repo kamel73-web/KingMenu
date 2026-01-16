@@ -36,7 +36,7 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
     fetchIngredients();
   }, []);
   const getCategoryName = (category: string) => {
-    return t(ingredientsSection.categories.${category.toLowerCase()}, category);
+    return t(`ingredientsSection.categories.${category.toLowerCase()}`, category);
   };
   const groupedIngredients = ingredients.reduce((acc, ingredient) => {
     const category =
