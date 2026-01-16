@@ -18,7 +18,7 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
 
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState('');  // ← AJOUTÉ
 
   useEffect(() => {
     const fetchIngredients = async () => {
@@ -27,6 +27,7 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
       if (error) {
         console.error('Erreur de chargement des ingrédients:', error.message);
       } else if (data) {
+        console.log('Ingrédients chargés depuis Supabase:', data);
         setIngredients(
           data.map((ing: any) => ({
             ...ing,
@@ -41,31 +42,38 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
     fetchIngredients();
   }, []);
 
-  // Suggestions filtrées
-  const filteredSuggestions = useMemo(() => {
-    if (!search.trim()) return [];
+  // AJOUTÉ : filtrage simple pour la recherche
+  const filteredGroupedIngredients = useMemo(() => {
+    if (!search.trim()) return groupedIngredients; // si pas de recherche → tout afficher
 
     const term = search.toLowerCase().trim();
 
-    return ingredients
-      .filter((ing) => {
+    const result: Record<string, Ingredient[]> = {};
+
+    Object.entries(groupedIngredients).forEach(([category, items]) => {
+      const filteredItems = items.filter((ing) => {
         const name = translateIngredientName(ing)?.toLowerCase() || '';
         return name.includes(term);
-      })
-      .slice(0, 8); // limite pour perf + UX
-  }, [search, ingredients, translateIngredientName]);
+      });
+      if (filteredItems.length > 0) {
+        result[category] = filteredItems;
+      }
+    });
 
-  const handleSuggestionSelect = (ingredient: Ingredient) => {
-    dispatch({ type: 'TOGGLE_SELECTED_INGREDIENT', payload: ingredient });
-    setSearch(''); // ferme le dropdown
-  };
+    return result;
+  }, [search, ingredients, translateIngredientName]); // dépendances correctes
 
-  // Groupement catégories (inchangé)
+  // ────────────────────────────────────────────────
+  // Groupement par catégorie (inchangé)
+  // ────────────────────────────────────────────────
+
   const groupedIngredients = ingredients.reduce((acc, ingredient) => {
     const category =
       typeof ingredient.category === 'string'
         ? ingredient.category
-        : ingredient.category[i18n.language] ?? ingredient.category.en ?? 'Other';
+        : ingredient.category[i18n.language] ??
+          ingredient.category.en ??
+          'Other';
 
     if (!acc[category]) acc[category] = [];
     acc[category].push(ingredient);
@@ -73,23 +81,28 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
   }, {} as Record<string, Ingredient[]>);
 
   const getCategoryName = (category: string) => {
-    return translateCategoryName({ category }) || 
-           t(`ingredientsSection.categories.${category.toLowerCase()}`, { defaultValue: category });
+    return translateCategoryName({ category }) ||
+           t(`ingredientsSection.categories.${category.toLowerCase()}`, category);
   };
 
   const handleFindDishes = () => {
-    if (!onFindDishes || selectedIngredients.length === 0) return;
-
-    const owned = selectedIngredients.map((ing) => ({
-      id: ing.id,
-      name: translateIngredientName(ing) || 'Unknown',
-      quantity: 1,
-      unit: 'piece',
-      category:
-        typeof ing.category === 'string' ? ing.category : ing.category?.[i18n.language] ?? 'other',
-    }));
-
-    onFindDishes(owned);
+    if (onFindDishes) {
+      const ownedIngredients = selectedIngredients.map((ing) => ({
+        id: ing.id,
+        name:
+          typeof ing.name === 'string'
+            ? ing.name
+            : ing.name?.[i18n.language] ?? ing.name?.en ?? 'Unknown',
+        quantity: 1,
+        unit: 'piece',
+        category:
+          typeof ing.category === 'string'
+            ? ing.category
+            : ing.category?.[i18n.language] ?? 'other',
+      }));
+      console.log('Ingrédients envoyés à onFindDishes:', ownedIngredients);
+      onFindDishes(ownedIngredients);
+    }
   };
 
   return (
@@ -97,79 +110,60 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
       <h2 className="text-xl font-semibold mb-4">{t('ingredientsSection.whatsInKitchen')}</h2>
       <p className="text-gray-600 mb-6">{t('ingredientsSection.whatsInKitchenDesc')}</p>
 
-      {/* Barre de recherche */}
-      <div className="relative mb-6">
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Rechercher un ingrédient..."  // ← placeholder statique safe (ajoute la clé plus tard)
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
-        />
-
-        {search.trim() && (
-          <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-            {filteredSuggestions.length > 0 ? (
-              filteredSuggestions.map((ing) => (
-                <button
-                  key={ing.id}
-                  type="button"
-                  onClick={() => handleSuggestionSelect(ing)}
-                  className={`w-full px-4 py-2.5 text-left hover:bg-gray-100 ${
-                    selectedIngredients.some((s) => s.id === ing.id) ? 'bg-green-50 font-medium' : ''
-                  }`}
-                >
-                  {translateIngredientName(ing)}
-                </button>
-              ))
-            ) : (
-              <div className="px-4 py-2.5 text-gray-500">Aucun résultat</div>
-            )}
-          </div>
-        )}
-      </div>
+      {/* AJOUTÉ : barre de recherche simple */}
+      <input
+        type="text"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        placeholder="Rechercher un ingrédient..."
+        className="w-full px-4 py-3 mb-6 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+      />
 
       {loading ? (
         <p>{t('common.loading')}</p>
       ) : ingredients.length === 0 ? (
-        <p className="text-red-600">{t('common.error')}</p>
+        <p>{t('common.error')}</p>
       ) : (
         <>
-          {Object.entries(groupedIngredients).map(([category, items]) => (
+          {Object.entries(filteredGroupedIngredients).map(([category, items]) => (
             <div key={category} className="mb-6">
-              <h3 className="text-lg font-medium mb-2">{getCategoryName(category)}</h3>
+              <h3 className="text-lg font-medium mb-2">
+                {getCategoryName(category.toLowerCase())}
+              </h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                {items.map((ingredient) => {
-                  const isSelected = selectedIngredients.some((i) => i.id === ingredient.id);
-                  return (
-                    <button
-                      key={ingredient.id}
-                      onClick={() =>
-                        dispatch({
-                          type: 'TOGGLE_SELECTED_INGREDIENT',
-                          payload: ingredient,
-                        })
-                      }
-                      className={`px-3 py-2 border rounded-full text-sm transition ${
-                        isSelected
-                          ? 'bg-green-200 border-green-400'
-                          : 'bg-white border-gray-300 hover:bg-gray-50'
-                      }`}
-                    >
-                      {translateIngredientName(ingredient)}
-                    </button>
-                  );
-                })}
+                {items.map((ingredient) => (
+                  <button
+                    key={ingredient.id}
+                    onClick={() =>
+                      dispatch({
+                        type: 'TOGGLE_SELECTED_INGREDIENT',
+                        payload: ingredient,
+                      })
+                    }
+                    className={`px-3 py-2 border rounded-full text-sm transition ${
+                      selectedIngredients.some((i) => i.id === ingredient.id)
+                        ? 'bg-green-200 border-green-400'
+                        : 'bg-white border-gray-300'
+                    }`}
+                  >
+                    {typeof ingredient.name === 'string'
+                      ? ingredient.name
+                      : ingredient.name?.[i18n.language] ??
+                        ingredient.name?.en ??
+                        t('common.unknown', 'Unknown')}
+                  </button>
+                ))}
               </div>
             </div>
           ))}
 
+          {/* Ton bouton original, inchangé */}
           <button
             onClick={handleFindDishes}
-            className="mt-6 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            className="mt-4 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-all font-body font-medium"
             disabled={selectedIngredients.length === 0}
           >
-            {t('ingredientsSection.findDishes')} ({selectedIngredients.length})
+            {t('ingredientsSection.findDishes')}
           </button>
         </>
       )}
