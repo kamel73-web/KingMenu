@@ -23,7 +23,7 @@ const PublicLandingPage: React.FC = () => {
       <div className="absolute inset-0 bg-black/55 z-0" />
 
       {/* Contenu principal avec flex-grow */}
-      <main className="relative z-10 flex-grow flex flex-col items-center justify-center px-5 sm:px-8 py-10 md:py-16 pb-28">
+      <main className="relative z-10 flex-grow flex flex-col items-center justify-center px-5 sm:px-8 py-10 md:py-16">
         <div className="w-full max-w-3xl text-center">
           {/* Logo */}
           <img
@@ -77,31 +77,29 @@ const PublicLandingPage: React.FC = () => {
             </ul>
           </div>
 
-          {/* Bouton principal – plus gros sur mobile */}
-          <button
-            onClick={() => navigate("/login")}
-            className={`
-              bg-yellow-500 hover:bg-yellow-600 active:bg-yellow-700
-              text-white text-lg sm:text-xl font-bold
-              px-8 sm:px-10 py-4 sm:py-5 rounded-full
-              shadow-xl shadow-yellow-600/40 hover:shadow-2xl
-              transition-all duration-200 transform hover:scale-105 active:scale-95
-              focus:outline-none focus:ring-4 focus:ring-yellow-400 focus:ring-offset-4 focus:ring-offset-black/50
-            `}
-          >
-            {t("landing.loginButton")}
-          </button>
-        </div>
+          {/* Zone bouton – séparée du contenu */}
+<div className="mt-12 mb-16 flex justify-center">
+  <button
+    onClick={() => navigate("/login")}
+    className="
+      bg-yellow-500 hover:bg-yellow-600 active:bg-yellow-700
+      text-white text-lg sm:text-xl font-bold
+      px-8 sm:px-10 py-4 sm:py-5 rounded-full
+      shadow-xl shadow-yellow-600/40 hover:shadow-2xl
+      transition-all duration-200 transform hover:scale-105 active:scale-95
+      focus:outline-none focus:ring-4 focus:ring-yellow-400
+    "
+  >
+    {t("landing.loginButton")}
+  </button>
+</div>
+          
       </main>
 
       {/* Footer – plus lisible, ajout de copyright, contraste amélioré */}
       <footer className="relative z-10 bg-black/70 backdrop-blur-sm px-6 py-6 text-gray-300 border-t border-white/10">
   <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
     
-    {/* Copyright */}
-    <div className="text-center sm:text-left">
-      © {new Date().getFullYear()} King Menu — Plan. Cook. Enjoy
-    </div>
 
     {/* Liens légaux */}
     <div className="flex gap-4">
@@ -118,7 +116,11 @@ const PublicLandingPage: React.FC = () => {
         Terms of Use
       </a>
     </div>
-
+ {/* Copyright */}
+    <div className="text-center sm:text-left">
+      © {new Date().getFullYear()} King Menu — Plan. Cook. Enjoy
+    </div>
+    
   </div>
 </footer>
     </div>
