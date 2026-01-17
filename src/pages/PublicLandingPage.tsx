@@ -13,7 +13,7 @@ const PublicLandingPage: React.FC = () => {
 
   return (
     <div
-      className="min-h-screen flex flex-col bg-cover bg-center bg-fixed"
+      className="relative min-h-screen flex flex-col bg-cover bg-center bg-fixed"
       style={{
         backgroundImage:
           "url('https://vehqvqlbtotljstixklz.supabase.co/storage/v1/object/public/Brand/Background%20v2.jpg')",
