@@ -2,31 +2,14 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { webcrypto } from "crypto";
 
-// Crypto fallback (Capacitor / Android)
+// Fallback crypto (Capacitor / Android / Node)
 if (!globalThis.crypto) {
-  globalThis.crypto = webcrypto as Crypto;
+  globalThis.crypto = webcrypto as unknown as Crypto;
 }
 
+// Détection GitHub Pages
+const isGithubPages = process.env.GITHUB_PAGES === "true";
+
 export default defineConfig({
-  base: "/KingMenu/",
-
-  plugins: [react()],
-
-  // ⚠️ IMPORTANT : laisser Vite gérer lucide-react
-  optimizeDeps: {
-    include: ["lucide-react"],
-  },
-
-  build: {
-    rollupOptions: {
-      // Garde seulement si tu en as réellement besoin
-      external: [],
-    },
-  },
-
-  resolve: {
-    alias: {
-      "@": "/src",
-    },
-  },
-});
+  base: isGithubPages ? "/KingMenu/" : "/",
+ 
