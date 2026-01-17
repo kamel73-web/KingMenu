@@ -4,20 +4,26 @@ import { webcrypto } from "crypto";
 
 // Crypto fallback (Capacitor / Android)
 if (!globalThis.crypto) {
-  globalThis.crypto = webcrypto;
+  globalThis.crypto = webcrypto as Crypto;
 }
 
 export default defineConfig({
   base: "/KingMenu/",
+
   plugins: [react()],
+
+  // ⚠️ IMPORTANT : laisser Vite gérer lucide-react
   optimizeDeps: {
-    exclude: ["lucide-react"],
+    include: ["lucide-react"],
   },
+
   build: {
     rollupOptions: {
-      external: ["../utils/pdfGenerator"],
+      // Garde seulement si tu en as réellement besoin
+      external: [],
     },
   },
+
   resolve: {
     alias: {
       "@": "/src",
