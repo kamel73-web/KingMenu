@@ -23,7 +23,7 @@ const PublicLandingPage: React.FC = () => {
       <div className="absolute inset-0 bg-black/55 z-0" />
 
       {/* Contenu principal avec flex-grow */}
-      <main className="relative z-10 flex-grow flex flex-col items-center justify-start px-5 sm:px-8 py-10 md:py-16 pb-28">
+      <main className="relative z-10 flex-grow flex flex-col items-center justify-center px-5 sm:px-8 py-10 md:py-16 pb-28">
         <div className="w-full max-w-3xl text-center">
           {/* Logo */}
           <img
