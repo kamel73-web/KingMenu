@@ -23,7 +23,7 @@ const PublicLandingPage: React.FC = () => {
       <div className="absolute inset-0 bg-black/55 z-0" />
 
       {/* Contenu principal avec flex-grow */}
-      <main className="relative z-10 flex-grow flex flex-col items-center justify-start px-5 sm:px-8 py-10 md:py-16">
+      <main className="relative z-10 flex-grow flex flex-col items-center justify-start px-5 sm:px-8 py-10 md:py-16 pb-28">
         <div className="w-full max-w-3xl text-center">
           {/* Logo */}
           <img
@@ -94,10 +94,33 @@ const PublicLandingPage: React.FC = () => {
         </div>
       </main>
 
-      {/* Footer – plus lisible, contraste amélioré */}
-      <footer className="relative z-10 bg-black/60 backdrop-blur-sm py-5 px-6 text-center text-gray-200 text-sm sm:text-base border-t border-white/10">
-        © {new Date().getFullYear()} King Menu — {t("landing.footer")}
-      </footer>
+      {/* Footer – plus lisible, ajout de copyright, contraste amélioré */}
+      <footer className="relative z-10 bg-black/70 backdrop-blur-sm px-6 py-6 text-gray-300 border-t border-white/10">
+  <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
+    
+    {/* Copyright */}
+    <div className="text-center sm:text-left">
+      © {new Date().getFullYear()} King Menu — Plan. Cook. Enjoy
+    </div>
+
+    {/* Liens légaux */}
+    <div className="flex gap-4">
+      <a
+        href="/privacy"
+        className="hover:text-white underline-offset-4 hover:underline transition"
+      >
+        Privacy Policy
+      </a>
+      <a
+        href="/terms"
+        className="hover:text-white underline-offset-4 hover:underline transition"
+      >
+        Terms of Use
+      </a>
+    </div>
+
+  </div>
+</footer>
     </div>
   );
 };
