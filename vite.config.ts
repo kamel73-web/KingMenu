@@ -7,11 +7,8 @@ if (!globalThis.crypto) {
   globalThis.crypto = webcrypto;
 }
 
-// Detect GitHub Pages deploy
-const isGithubPages = process.env.GITHUB_PAGES === "true";
-
 export default defineConfig({
-  base: isGithubPages ? "/KingMenu/" : "./",
+  base: "/KingMenu/",
   plugins: [react()],
   optimizeDeps: {
     exclude: ["lucide-react"],
