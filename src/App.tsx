@@ -33,7 +33,7 @@ import "./i18n";
 
 function AppRoutes() {
   const { state } = useApp();
-  const { i18n, t } = useTranslation();
+  const { i18n } = useTranslation();
   const { isRTL } = useRTL();
   const navigate = useNavigate();
   const location = useLocation();
@@ -69,78 +69,66 @@ function AppRoutes() {
   }, [state.user, hasRedirected, location.pathname, navigate]);
 
   return (
-    <div className={`min-h-screen bg-gray-50 ${isRTL ? "rtl" : "ltr"}`}>
-      {/* Navbar visible seulement si connecté */}
+    <div className={`min-h-screen ${isRTL ? "rtl" : "ltr"}`}>
+      {/* Navbar visible uniquement si connecté */}
       {state.user && <Navbar />}
 
-      <main>
-        <Routes>
-          {/* 🔓 Page publique */}
-          <Route
-            path="/welcome"
-            element={!state.user ? <PublicLandingPage /> : <Navigate to="/" />}
-          />
+      <Routes>
+        {/* 🔓 Landing publique */}
+        <Route
+          path="/welcome"
+          element={!state.user ? <PublicLandingPage /> : <Navigate to="/" />}
+        />
 
-          {/* 🔐 Zones protégées */}
-          <Route
-            path="/"
-            element={state.user ? <HomePage /> : <Navigate to="/welcome" />}
-          />
-          <Route
-            path="/use-my-ingredients"
-            element={
-              state.user ? (
-                <UseMyIngredientsPage />
-              ) : (
-                <Navigate to="/welcome" />
-              )
-            }
-          />
-          <Route
-            path="/meal-plan"
-            element={state.user ? <MealPlanPage /> : <Navigate to="/welcome" />}
-          />
-          <Route
-            path="/profile"
-            element={state.user ? <ProfileView /> : <Navigate to="/welcome" />}
-          />
-          <Route
-            path="/favorites"
-            element={state.user ? <FavoritesView /> : <Navigate to="/welcome" />}
-          />
-          <Route
-            path="/my-recipes"
-            element={state.user ? <MyRecipesPage /> : <Navigate to="/welcome" />}
-          />
-          <Route
-            path="/shopping-list"
-            element={
-              state.user ? <ShoppingListView /> : <Navigate to="/welcome" />
-            }
-          />
+        {/* 🔐 Routes protégées */}
+        <Route
+          path="/"
+          element={state.user ? <HomePage /> : <Navigate to="/welcome" />}
+        />
+        <Route
+          path="/use-my-ingredients"
+          element={
+            state.user ? (
+              <UseMyIngredientsPage />
+            ) : (
+              <Navigate to="/welcome" />
+            )
+          }
+        />
+        <Route
+          path="/meal-plan"
+          element={state.user ? <MealPlanPage /> : <Navigate to="/welcome" />}
+        />
+        <Route
+          path="/profile"
+          element={state.user ? <ProfileView /> : <Navigate to="/welcome" />}
+        />
+        <Route
+          path="/favorites"
+          element={state.user ? <FavoritesView /> : <Navigate to="/welcome" />}
+        />
+        <Route
+          path="/my-recipes"
+          element={state.user ? <MyRecipesPage /> : <Navigate to="/welcome" />}
+        />
+        <Route
+          path="/shopping-list"
+          element={
+            state.user ? <ShoppingListView /> : <Navigate to="/welcome" />
+          }
+        />
 
-          {/* 🔓 Routes publiques */}
-          <Route path="/login" element={<LoginForm />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/terms-of-use" element={<TermsOfUse />} />
+        {/* 🔓 Routes publiques */}
+        <Route path="/login" element={<LoginForm />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-of-use" element={<TermsOfUse />} />
 
-          {/* Fallback */}
-          <Route
-            path="*"
-            element={<Navigate to={state.user ? "/" : "/welcome"} />}
-          />
-        </Routes>
-      </main>
-
-      {/* Footer */}
-      <footer className="p-4 text-center text-gray-500 border-t">
-        <a href="/privacy-policy" className="mx-2 hover:underline">
-          {t("footer.privacy")}
-        </a>
-        <a href="/terms-of-use" className="mx-2 hover:underline">
-          {t("footer.terms")}
-        </a>
-      </footer>
+        {/* Fallback */}
+        <Route
+          path="*"
+          element={<Navigate to={state.user ? "/" : "/welcome"} />}
+        />
+      </Routes>
     </div>
   );
 }
