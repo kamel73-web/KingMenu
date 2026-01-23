@@ -30,7 +30,7 @@ const PublicLandingPage: React.FC = () => {
       <div className="fixed inset-0 bg-black/55" />
 
       {/* Main content */}
-      <main className="relative z-10 flex-grow flex flex-col items-center justify-center px-5 sm:px-8 py-12">
+      <main className="relative z-10 flex flex-col items-center justify-center px-5 sm:px-8 py-12 pb-32">
         <div className="w-full max-w-3xl text-center">
           {/* Logo */}
           <img
@@ -116,22 +116,22 @@ const PublicLandingPage: React.FC = () => {
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 bg-black/70 backdrop-blur-sm px-6 py-6 text-gray-300 border-t border-white/10">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
-          <div className="flex gap-4 order-2 sm:order-1">
-            <a href="/privacy" className="hover:text-white hover:underline">
-              Privacy Policy
-            </a>
-            <a href="/terms" className="hover:text-white hover:underline">
-              Terms of Use
-            </a>
-          </div>
+     <footer className="relative z-10 bg-black/70 backdrop-blur-sm px-6 py-6 text-gray-300 border-t border-white/10">
+  <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
+    <div className="flex gap-4">
+      <a href="/privacy" className="hover:text-white hover:underline">
+        Privacy Policy
+      </a>
+      <a href="/terms" className="hover:text-white hover:underline">
+        Terms of Use
+      </a>
+    </div>
 
-          <div className="order-1 sm:order-2 text-center sm:text-left">
-            © {new Date().getFullYear()} King Menu — Plan. Cook. Enjoy
-          </div>
-        </div>
-      </footer>
+    <div className="text-center sm:text-right">
+      © {new Date().getFullYear()} King Menu — Plan. Cook. Enjoy
+    </div>
+  </div>
+</footer>
     </div>
   );
 };
