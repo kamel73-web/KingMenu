@@ -72,7 +72,9 @@ const PublicLandingPage: React.FC = () => {
             <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6">
               {t("landing.featuresTitle")}
             </h2>
-
+            <h1 className="text-4xl text-red-500">
+               TEST VERSION NOUVELLE
+             </h1>
             <ul className="space-y-4 text-left text-gray-100 text-base sm:text-lg max-w-md mx-auto">
               <li className="flex items-center gap-3">
                 <CookingPot className="w-5 h-5 text-yellow-400" />
