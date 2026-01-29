@@ -5,7 +5,15 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase environment variables');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+import { createClient } from "@supabase/supabase-js";
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: false, // 🔐 clé pour GitHub Pages
+  },
+});
 
 // Helper function to get current user
 export const getCurrentUser = async () => {
