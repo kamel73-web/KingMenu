@@ -179,20 +179,20 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const { user: supabaseUser, loading: authLoading } = useSupabaseAuth();
 
   React.useEffect(() => {
-    if (supabaseUser && !state.user) {
-      const user: User = {
-        id: supabaseUser.id,
-        email: supabaseUser.email || '',
-        name: supabaseUser.user_metadata?.full_name || 'User',
-        preferences: [],
-        dislikedIngredients: [],
-        ownedIngredients: [],
-      };
-      dispatch({ type: 'SET_USER', payload: user });
-    } else if (!supabaseUser && state.user) {
-      dispatch({ type: 'SET_USER', payload: null });
-    }
-  }, [supabaseUser, state.user]);
+  if (supabaseUser) {
+    const user: User = {
+      id: supabaseUser.id,
+      email: supabaseUser.email || '',
+      name: supabaseUser.user_metadata?.full_name || 'User',
+      preferences: [],
+      dislikedIngredients: [],
+      ownedIngredients: [],
+    };
+    dispatch({ type: 'SET_USER', payload: user });
+  } else {
+    dispatch({ type: 'SET_USER', payload: null });
+  }
+}, [supabaseUser]);
 
   if (authLoading) {
     return (
