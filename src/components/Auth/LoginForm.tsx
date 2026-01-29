@@ -70,7 +70,7 @@ export default function LoginForm() {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
-        redirectTo: `${window.location.origin}/KingMenu`,
+        redirectTo: window.location.origin,
       });
 
       if (error) {
