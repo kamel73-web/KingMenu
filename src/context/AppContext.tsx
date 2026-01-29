@@ -193,7 +193,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'SET_USER', payload: null });
   }
 }, [supabaseUser]);
-
+  
+ // ✅ Sync loading
+  React.useEffect(() => {
+    dispatch({ type: 'SET_LOADING', payload: authLoading });
+  }, [authLoading]);
+  
   if (authLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -211,9 +216,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     </AppContext.Provider>
   );
 }
-React.useEffect(() => {
-  dispatch({ type: 'SET_LOADING', payload: authLoading });
-}, [authLoading]);
 
 export function useApp() {
   const context = useContext(AppContext);
