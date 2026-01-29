@@ -67,6 +67,13 @@ function AppRoutes() {
       }
     }
   }, [state.user, hasRedirected, location.pathname, navigate]);
+  
+  /** 🔄 Reset redirect flag on logout */
+useEffect(() => {
+  if (!state.user) {
+    setHasRedirected(false);
+  }
+}, [state.user]);
 
   return (
     <div className={`min-h-screen ${isRTL ? "rtl" : "ltr"}`}>
