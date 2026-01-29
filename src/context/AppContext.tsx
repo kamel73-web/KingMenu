@@ -211,6 +211,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     </AppContext.Provider>
   );
 }
+React.useEffect(() => {
+  dispatch({ type: 'SET_LOADING', payload: authLoading });
+}, [authLoading]);
 
 export function useApp() {
   const context = useContext(AppContext);
