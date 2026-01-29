@@ -32,8 +32,10 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
   // FAVORITES : Load on open
   // --------------------------
   useEffect(() => {
-    if (!isOpen) return;
-
+  // 1. La condition est maintenant DANS la fonction du hook
+  if (!isOpen) {
+    return; // On sort simplement de la fonction, pas du hook
+  }
     const loadFavoriteStatus = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
