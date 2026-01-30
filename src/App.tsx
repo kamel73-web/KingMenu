@@ -35,97 +35,79 @@ function AppRoutes() {
   const { state } = useApp();
   const { i18n } = useTranslation();
   const { isRTL } = useRTL();
-  const navigate = useNavigate();
-  const location = useLocation();
 
-  const [hasRedirected, setHasRedirected] = useState(false);
-
-  /** 🌍 Charger langue + direction */
-  useEffect(() => {
-    const savedLanguage = localStorage.getItem("gusto-language");
-    const savedDirection = localStorage.getItem("gusto-direction");
-
-    if (savedLanguage && savedLanguage !== i18n.language) {
-      i18n.changeLanguage(savedLanguage);
-    }
-
-    if (savedDirection) {
-      document.documentElement.dir = savedDirection;
-      document.documentElement.classList.toggle(
-        "rtl",
-        savedDirection === "rtl"
-      );
-    }
-  }, [i18n]);
-
-  /** 🚀 Redirection automatique après login */
-  useEffect(() => {
-    if (state.user && !hasRedirected) {
-      if (location.pathname === "/login" || location.pathname === "/welcome") {
-        navigate("/");
-        setHasRedirected(true);
-      }
-    }
-  }, [state.user, hasRedirected, location.pathname, navigate]);
-  
-  /** 🔄 Reset redirect flag on logout */
-useEffect(() => {
-  if (!state.user) {
-    setHasRedirected(false);
+  if (state.isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin h-10 w-10 rounded-full border-4 border-orange-500 border-t-transparent" />
+      </div>
+    );
   }
-}, [state.user]);
 
   return (
     <div className={`min-h-screen ${isRTL ? "rtl" : "ltr"}`}>
-      {/* Navbar visible uniquement si connecté */}
       {state.user && <Navbar />}
 
       <Routes>
-        {/* 🔓 Landing publique */}
+        {/* Landing publique */}
         <Route
           path="/welcome"
-          element={!state.user ? <PublicLandingPage /> : <Navigate to="/" />}
+          element={
+            state.user ? <Navigate to="/" replace /> : <PublicLandingPage />
+          }
         />
 
-        {/* 🔐 Routes protégées */}
+        {/* Routes protégées */}
         <Route
           path="/"
-          element={state.user ? <HomePage /> : <Navigate to="/welcome" />}
+          element={
+            state.user ? <HomePage /> : <Navigate to="/welcome" replace />
+          }
         />
+
         <Route
           path="/use-my-ingredients"
           element={
-            state.user ? (
-              <UseMyIngredientsPage />
-            ) : (
-              <Navigate to="/welcome" />
-            )
-          }
-        />
-        <Route
-          path="/meal-plan"
-          element={state.user ? <MealPlanPage /> : <Navigate to="/welcome" />}
-        />
-        <Route
-          path="/profile"
-          element={state.user ? <ProfileView /> : <Navigate to="/welcome" />}
-        />
-        <Route
-          path="/favorites"
-          element={state.user ? <FavoritesView /> : <Navigate to="/welcome" />}
-        />
-        <Route
-          path="/my-recipes"
-          element={state.user ? <MyRecipesPage /> : <Navigate to="/welcome" />}
-        />
-        <Route
-          path="/shopping-list"
-          element={
-            state.user ? <ShoppingListView /> : <Navigate to="/welcome" />
+            state.user ? <UseMyIngredientsPage /> : <Navigate to="/welcome" replace />
           }
         />
 
-        {/* 🔓 Routes publiques */}
+        <Route
+          path="/meal-plan"
+          element={
+            state.user ? <MealPlanPage /> : <Navigate to="/welcome" replace />
+          }
+        />
+
+        <Route
+          path="/profile"
+          element={
+            state.user ? <ProfileView /> : <Navigate to="/welcome" replace />
+          }
+        />
+
+        <Route
+          path="/favorites"
+          element={
+            state.user ? <FavoritesView /> : <Navigate to="/welcome" replace />
+          }
+        />
+
+        <Route
+          path="/my-recipes"
+          element={
+            state.user ? <MyRecipesPage /> : <Navigate to="/welcome" replace />
+          }
+        />
+
+        <Route
+          path="/shopping-list"
+          element={
+            state.user ? <ShoppingListView /> : <Navigate to="/welcome" replace />
+          }
+        />
+
+        {/* Routes publiques */}
         <Route path="/login" element={<LoginForm />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-of-use" element={<TermsOfUse />} />
@@ -133,7 +115,7 @@ useEffect(() => {
         {/* Fallback */}
         <Route
           path="*"
-          element={<Navigate to={state.user ? "/" : "/welcome"} />}
+          element={<Navigate to={state.user ? "/" : "/welcome"} replace />}
         />
       </Routes>
     </div>
