@@ -1,17 +1,15 @@
 // src/lib/supabase.ts
 import { createClient } from "@supabase/supabase-js";
 
-/**
- * ⚠️ IMPORTANT POUR GITHUB PAGES
- * Les variables doivent être disponibles AU BUILD.
- * En prod GitHub Pages, on prévoit un fallback sécurisé.
- */
+/* =====================================================
+   CONFIGURATION SUPABASE (GitHub Pages SAFE)
+===================================================== */
 
-// 🔐 1️⃣ Variables d’environnement (local / CI)
+// Variables d’environnement (local / CI)
 const envUrl = import.meta.env.VITE_SUPABASE_URL;
 const envAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// 🔐 2️⃣ FALLBACK (obligatoire pour éviter undefined en prod)
+// Fallback obligatoire pour éviter undefined en production
 const supabaseUrl =
   envUrl || "https://vehqvqlbtotljstixklz.supabase.co";
 
@@ -22,17 +20,15 @@ if (!supabaseUrl || !supabaseAnonKey) {
   console.error("❌ Supabase configuration is missing");
 }
 
-/**
- * ✅ CLIENT SUPABASE
- * - persistSession: garde la session après refresh
- * - autoRefreshToken: renouvelle le token
- * - detectSessionInUrl: FALSE pour GitHub Pages + HashRouter
- */
+/* =====================================================
+   CLIENT SUPABASE
+===================================================== */
+
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
-    detectSessionInUrl: false,
+    detectSessionInUrl: false, // OBLIGATOIRE pour GitHub Pages + HashRouter
   },
 });
 
@@ -76,7 +72,7 @@ export const signOut = async () => {
 };
 
 /* =====================================================
-   DATA HELPERS
+   DISHES
 ===================================================== */
 
 export const getDishes = async (language: string = "en") => {
@@ -138,6 +134,10 @@ export const getDishes = async (language: string = "en") => {
   );
 };
 
+/* =====================================================
+   INGREDIENTS
+===================================================== */
+
 export const getIngredientsForDish = async (
   dishId: number,
   language: string = "en"
@@ -191,6 +191,10 @@ export const getIngredients = async (language: string = "en") => {
   );
 };
 
+/* =====================================================
+   USER PREFERENCES
+===================================================== */
+
 export const getUserPreferences = async (userId: string) => {
   return await supabase
     .from("user_preferences")
@@ -200,4 +204,75 @@ export const getUserPreferences = async (userId: string) => {
 };
 
 export const updateUserPreferences = async (
- 
+  userId: string,
+  preferences: any
+) => {
+  return await supabase.from("user_preferences").upsert({
+    user_id: userId,
+    ...preferences,
+  });
+};
+
+/* =====================================================
+   SAVED DISHES
+===================================================== */
+
+export const getSavedDishes = async (
+  userId: string,
+  language: string = "en"
+) => {
+  const { data, error } = await supabase
+    .from("saved_dishes")
+    .select(`*, dishes (*)`)
+    .eq("user_id", userId);
+
+  if (error) throw error;
+
+  return (
+    data?.map((saved) => ({
+      ...saved,
+      dish: {
+        ...saved.dishes,
+        title:
+          saved.dishes.name?.[language] ||
+          saved.dishes.name?.en ||
+          "Untitled",
+        description:
+          saved.dishes.description?.[language] ||
+          saved.dishes.description?.en ||
+          "",
+        instructions:
+          saved.dishes.steps?.[language] ||
+          saved.dishes.steps?.en ||
+          [],
+        cuisineId: saved.dishes.cuisine_type_id
+          ? String(saved.dishes.cuisine_type_id)
+          : saved.dishes.cuisine_type?.id
+          ? String(saved.dishes.cuisine_type.id)
+          : null,
+        cuisine:
+          saved.dishes.cuisine_type?.[language] ||
+          saved.dishes.cuisine_type?.en ||
+          "Unknown",
+      },
+    })) || []
+  );
+};
+
+export const saveDish = async (userId: string, dishId: number) => {
+  return await supabase.from("saved_dishes").insert({
+    user_id: userId,
+    dish_id: dishId,
+  });
+};
+
+export const removeSavedDish = async (
+  userId: string,
+  dishId: number
+) => {
+  return await supabase
+    .from("saved_dishes")
+    .delete()
+    .eq("user_id", userId)
+    .eq("dish_id", dishId);
+};
