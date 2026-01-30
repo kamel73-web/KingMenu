@@ -63,20 +63,18 @@ export default function LoginForm() {
   /* =========================
      OAuth (Google)
   ========================= */
-  const handleSocialLogin = async () => {
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: window.location.origin + "/#/login",
-        },
-      });
+  const handleSocialLogin = async (provider: 'google') => {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider,
+    options: {
+      redirectTo: window.location.origin + "/#/",
+    },
+  });
 
-      if (error) toast.error(error.message);
-    } catch {
-      toast.error("Une erreur inattendue est survenue");
-    }
-  };
+  if (error) {
+    toast.error(error.message);
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 via-white to-yellow-50 p-4">
