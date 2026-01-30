@@ -2,22 +2,24 @@
 import { createClient } from "@supabase/supabase-js";
 
 /* =====================================================
-   CONFIGURATION SUPABASE (GitHub Pages SAFE)
+   CONFIGURATION SUPABASE (GitHub Pages + HashRouter)
 ===================================================== */
 
 // Variables d’environnement (local / CI)
 const envUrl = import.meta.env.VITE_SUPABASE_URL;
 const envAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Fallback obligatoire pour éviter undefined en production
+// Fallback sécurisé (autorisé pour clé ANON publique)
 const supabaseUrl =
-  envUrl || "https://vehqvqlbtotljstixklz.supabase.co";
+  envUrl ?? "https://vehqvqlbtotljstixklz.supabase.co";
 
 const supabaseAnonKey =
-  envAnonKey || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlaHF2cWxidG90bGpzdGl4a2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1OTAxOTEsImV4cCI6MjA2NjE2NjE5MX0.TnSx9bjz8wqo3pBPHaW11YtFcNYHg7Fckuo8z32rG4w";
+  envAnonKey ??
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlaHF2cWxidG90bGpzdGl4a2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1OTAxOTEsImV4cCI6MjA2NjE2NjE5MX0.TnSx9bjz8wqo3pBPHaW11YtFcNYHg7Fckuo8z32rG4w";
 
 if (!supabaseUrl || !supabaseAnonKey) {
   console.error("❌ Supabase configuration is missing");
+  throw new Error("Supabase configuration is missing");
 }
 
 /* =====================================================
@@ -28,7 +30,12 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
-    detectSessionInUrl: false, // OBLIGATOIRE pour GitHub Pages + HashRouter
+
+    // ✅ OBLIGATOIRE POUR :
+    // - GitHub Pages
+    // - HashRouter
+    // - OAuth Google
+    detectSessionInUrl: true,
   },
 });
 
@@ -37,10 +44,13 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 ===================================================== */
 
 export const getCurrentUser = async () => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  return user;
+  const { data } = await supabase.auth.getUser();
+  return data.user;
+};
+
+export const getCurrentSession = async () => {
+  const { data } = await supabase.auth.getSession();
+  return data.session;
 };
 
 export const signInWithEmail = async (
