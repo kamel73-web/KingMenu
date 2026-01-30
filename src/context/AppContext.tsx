@@ -1,6 +1,16 @@
-import React, { createContext, useContext, useReducer, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useReducer,
+  ReactNode,
+  useEffect,
+} from 'react';
 import { useSupabaseAuth } from '../hooks/useSupabaseData';
 import { User, Dish, Ingredient, OwnedIngredient, MealPlan } from '../types';
+
+/* =========================
+   Types
+========================= */
 
 interface AppState {
   user: User | null;
@@ -26,6 +36,10 @@ type AppAction =
   | { type: 'SET_MEAL_PLAN'; payload: MealPlan[] }
   | { type: 'TOGGLE_SELECTED_INGREDIENT'; payload: Ingredient };
 
+/* =========================
+   Initial State
+========================= */
+
 const initialState: AppState = {
   user: null,
   selectedDishes: [],
@@ -35,41 +49,63 @@ const initialState: AppState = {
   selectedIngredients: [],
 };
 
+/* =========================
+   Context
+========================= */
+
 const AppContext = createContext<{
   state: AppState;
   dispatch: React.Dispatch<AppAction>;
 } | null>(null);
 
+/* =========================
+   Reducer
+========================= */
+
 function appReducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {
     case 'SET_USER':
       return { ...state, user: action.payload };
-    case 'ADD_DISH':
+
+    case 'SET_LOADING':
+      return { ...state, isLoading: action.payload };
+
+    case 'ADD_DISH': {
       const dishToAdd = {
         ...action.payload,
         ingredients: action.payload.ingredients.map(ingredient => ({
           ...ingredient,
-          id: ingredient.id || `${action.payload.id}-${ingredient.name.toLowerCase().replace(/\s+/g, '-')}`,
-          isOwned: false
-        }))
+          id:
+            ingredient.id ||
+            `${action.payload.id}-${ingredient.name
+              .toLowerCase()
+              .replace(/\s+/g, '-')}`,
+          isOwned: false,
+        })),
       };
-      const newSelectedDishes = [...state.selectedDishes, dishToAdd];
-      const newShoppingList = generateShoppingList(newSelectedDishes);
+
+      const selectedDishes = [...state.selectedDishes, dishToAdd];
       return {
         ...state,
-        selectedDishes: newSelectedDishes,
-        shoppingList: newShoppingList,
+        selectedDishes,
+        shoppingList: generateShoppingList(selectedDishes),
       };
-    case 'REMOVE_DISH':
-      const filteredDishes = state.selectedDishes.filter(dish => dish.id !== action.payload);
-      const updatedShoppingList = generateShoppingList(filteredDishes);
+    }
+
+    case 'REMOVE_DISH': {
+      const selectedDishes = state.selectedDishes.filter(
+        dish => dish.id !== action.payload
+      );
       return {
         ...state,
-        selectedDishes: filteredDishes,
-        shoppingList: updatedShoppingList,
+        selectedDishes,
+        shoppingList: generateShoppingList(selectedDishes),
       };
+    }
+
     case 'UPDATE_SHOPPING_LIST':
       return { ...state, shoppingList: action.payload };
+
     case 'TOGGLE_INGREDIENT_OWNED':
       return {
         ...state,
@@ -79,133 +115,131 @@ function appReducer(state: AppState, action: AppAction): AppState {
             : ingredient
         ),
       };
-    case 'SET_LOADING':
-      return { ...state, isLoading: action.payload };
+
     case 'UPDATE_OWNED_INGREDIENTS':
       if (!state.user) return state;
       return {
         ...state,
-        user: {
-          ...state.user,
-          ownedIngredients: action.payload,
-        },
+        user: { ...state.user, ownedIngredients: action.payload },
       };
+
     case 'CLEAR_SELECTED_DISHES':
       return { ...state, selectedDishes: [], shoppingList: [] };
+
     case 'ADD_MEAL_PLAN':
-      return {
-        ...state,
-        mealPlan: [...state.mealPlan, action.payload],
-      };
+      return { ...state, mealPlan: [...state.mealPlan, action.payload] };
+
     case 'REMOVE_MEAL_PLAN':
       return {
         ...state,
-        mealPlan: state.mealPlan.filter(meal => meal.id !== action.payload),
+        mealPlan: state.mealPlan.filter(m => m.id !== action.payload),
       };
+
     case 'UPDATE_MEAL_PLAN':
       return {
         ...state,
-        mealPlan: state.mealPlan.map(meal =>
-          meal.id === action.payload.id ? action.payload : meal
+        mealPlan: state.mealPlan.map(m =>
+          m.id === action.payload.id ? action.payload : m
         ),
       };
+
     case 'SET_MEAL_PLAN':
       return { ...state, mealPlan: action.payload };
-    case 'TOGGLE_SELECTED_INGREDIENT':
-      const normalizedIngredient = {
-        ...action.payload,
-        id: action.payload.id.toString(),
-      };
-      const exists = state.selectedIngredients.some(i => i.id === normalizedIngredient.id);
-      const updatedIngredients = exists
-        ? state.selectedIngredients.filter(i => i.id !== normalizedIngredient.id)
-        : [...state.selectedIngredients, normalizedIngredient];
-      console.log('Ingrédients sélectionnés mis à jour:', updatedIngredients);
+
+    case 'TOGGLE_SELECTED_INGREDIENT': {
+      const ingredient = { ...action.payload, id: String(action.payload.id) };
+      const exists = state.selectedIngredients.some(i => i.id === ingredient.id);
+
       return {
         ...state,
-        selectedIngredients: updatedIngredients,
+        selectedIngredients: exists
+          ? state.selectedIngredients.filter(i => i.id !== ingredient.id)
+          : [...state.selectedIngredients, ingredient],
       };
+    }
+
     default:
       return state;
   }
 }
 
+/* =========================
+   Helpers
+========================= */
+
 function generateShoppingList(dishes: Dish[]): Ingredient[] {
-  console.log('Generating shopping list for dishes:', dishes.length);
-  
-  if (dishes.length === 0) {
-    return [];
-  }
-
-  const allIngredients = dishes.flatMap(dish => {
-    console.log(`Processing dish: ${dish.title} with ${dish.ingredients.length} ingredients`);
-    return dish.ingredients.map(ingredient => ({
-      ...ingredient,
-      id: ingredient.id || `${dish.id}-${ingredient.name.toLowerCase().replace(/\s+/g, '-')}`,
-      isOwned: false,
-      dishId: dish.id,
-      dishTitle: dish.title
-    }));
-  });
-
-  console.log('All ingredients extracted:', allIngredients.length);
+  if (!dishes.length) return [];
 
   const consolidated = new Map<string, Ingredient>();
-  
-  allIngredients.forEach(ingredient => {
-    const key = ingredient.name.toLowerCase();
-    if (consolidated.has(key)) {
-      const existing = consolidated.get(key)!;
-      const existingNum = parseFloat(existing.amount) || 0;
-      const newNum = parseFloat(ingredient.amount) || 0;
-      const summedAmount = (existingNum + newNum).toString();
-      consolidated.set(key, {
-        ...existing,
-        amount: summedAmount,
-      });
-    } else {
-      consolidated.set(key, { ...ingredient });
-    }
+
+  dishes.forEach(dish => {
+    dish.ingredients.forEach(ingredient => {
+      const key = ingredient.name.toLowerCase();
+      const existing = consolidated.get(key);
+
+      if (existing) {
+        const sum =
+          (parseFloat(existing.amount) || 0) +
+          (parseFloat(ingredient.amount) || 0);
+
+        consolidated.set(key, {
+          ...existing,
+          amount: sum.toString(),
+        });
+      } else {
+        consolidated.set(key, {
+          ...ingredient,
+          id:
+            ingredient.id ||
+            `${dish.id}-${ingredient.name
+              .toLowerCase()
+              .replace(/\s+/g, '-')}`,
+          isOwned: false,
+          dishId: dish.id,
+          dishTitle: dish.title,
+        });
+      }
+    });
   });
-  
-  const result = Array.from(consolidated.values());
-  console.log('Consolidated shopping list:', result.length, 'items');
-  
-  return result;
+
+  return Array.from(consolidated.values());
 }
+
+/* =========================
+   Provider
+========================= */
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(appReducer, initialState);
   const { user: supabaseUser, loading: authLoading } = useSupabaseAuth();
 
-  React.useEffect(() => {
-  if (supabaseUser) {
-    const user: User = {
-      id: supabaseUser.id,
-      email: supabaseUser.email || '',
-      name: supabaseUser.user_metadata?.full_name || 'User',
-      preferences: [],
-      dislikedIngredients: [],
-      ownedIngredients: [],
-    };
-    dispatch({ type: 'SET_USER', payload: user });
-  } else {
-    dispatch({ type: 'SET_USER', payload: null });
-  }
-}, [supabaseUser]);
-  
- // ✅ Sync loading
-  React.useEffect(() => {
+  // 🔐 Sync Supabase user → App user
+  useEffect(() => {
+    if (supabaseUser) {
+      const user: User = {
+        id: supabaseUser.id,
+        email: supabaseUser.email || '',
+        name: supabaseUser.user_metadata?.full_name || 'User',
+        preferences: [],
+        dislikedIngredients: [],
+        ownedIngredients: [],
+      };
+      dispatch({ type: 'SET_USER', payload: user });
+    } else {
+      dispatch({ type: 'SET_USER', payload: null });
+    }
+  }, [supabaseUser]);
+
+  // ⏳ Sync auth loading → global loading
+  useEffect(() => {
     dispatch({ type: 'SET_LOADING', payload: authLoading });
   }, [authLoading]);
-  
+
+  // ⛔ Garde le loader ici (temporaire et sûr)
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin h-10 w-10 rounded-full border-4 border-orange-500 border-t-transparent" />
       </div>
     );
   }
@@ -216,6 +250,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     </AppContext.Provider>
   );
 }
+
+/* =========================
+   Hook
+========================= */
 
 export function useApp() {
   const context = useContext(AppContext);
