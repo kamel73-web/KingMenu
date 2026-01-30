@@ -23,11 +23,11 @@ interface AppState {
 
 type AppAction =
   | { type: 'SET_USER'; payload: User | null }
+  | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'ADD_DISH'; payload: Dish }
   | { type: 'REMOVE_DISH'; payload: string }
   | { type: 'UPDATE_SHOPPING_LIST'; payload: Ingredient[] }
   | { type: 'TOGGLE_INGREDIENT_OWNED'; payload: string }
-  | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'UPDATE_OWNED_INGREDIENTS'; payload: OwnedIngredient[] }
   | { type: 'CLEAR_SELECTED_DISHES' }
   | { type: 'ADD_MEAL_PLAN'; payload: MealPlan }
@@ -45,7 +45,7 @@ const initialState: AppState = {
   selectedDishes: [],
   shoppingList: [],
   mealPlan: [],
-  isLoading: false,
+  isLoading: true, // 🔑 CRITIQUE : TRUE au démarrage
   selectedIngredients: [],
 };
 
@@ -213,36 +213,27 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(appReducer, initialState);
   const { user: supabaseUser, loading: authLoading } = useSupabaseAuth();
 
-  // 🔐 Sync Supabase user → App user
+  // 🔐 Supabase → App state
   useEffect(() => {
     if (supabaseUser) {
-      const user: User = {
-        id: supabaseUser.id,
-        email: supabaseUser.email || '',
-        name: supabaseUser.user_metadata?.full_name || 'User',
-        preferences: [],
-        dislikedIngredients: [],
-        ownedIngredients: [],
-      };
-      dispatch({ type: 'SET_USER', payload: user });
+      dispatch({
+        type: 'SET_USER',
+        payload: {
+          id: supabaseUser.id,
+          email: supabaseUser.email || '',
+          name: supabaseUser.user_metadata?.full_name || 'User',
+          preferences: [],
+          dislikedIngredients: [],
+          ownedIngredients: [],
+        },
+      });
     } else {
       dispatch({ type: 'SET_USER', payload: null });
     }
+
+    // ✅ AUTH RÉSOLUE ICI, UNE SEULE FOIS
+    dispatch({ type: 'SET_LOADING', payload: false });
   }, [supabaseUser]);
-
-  // ⏳ Sync auth loading → global loading
-  useEffect(() => {
-    dispatch({ type: 'SET_LOADING', payload: authLoading });
-  }, [authLoading]);
-
-  // ⛔ Garde le loader ici (temporaire et sûr)
-  if (authLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin h-10 w-10 rounded-full border-4 border-orange-500 border-t-transparent" />
-      </div>
-    );
-  }
 
   return (
     <AppContext.Provider value={{ state, dispatch }}>
