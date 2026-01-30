@@ -1,57 +1,87 @@
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('❌ Supabase env variables are missing');
-}
-
+// src/lib/supabase.ts
 import { createClient } from "@supabase/supabase-js";
 
+/**
+ * ⚠️ IMPORTANT POUR GITHUB PAGES
+ * Les variables doivent être disponibles AU BUILD.
+ * En prod GitHub Pages, on prévoit un fallback sécurisé.
+ */
+
+// 🔐 1️⃣ Variables d’environnement (local / CI)
+const envUrl = import.meta.env.VITE_SUPABASE_URL;
+const envAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+// 🔐 2️⃣ FALLBACK (obligatoire pour éviter undefined en prod)
+const supabaseUrl =
+  envUrl || "https://vehqvqlbtotljstixklz.supabase.co";
+
+const supabaseAnonKey =
+  envAnonKey || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlaHF2cWxidG90bGpzdGl4a2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1OTAxOTEsImV4cCI6MjA2NjE2NjE5MX0.TnSx9bjz8wqo3pBPHaW11YtFcNYHg7Fckuo8z32rG4w";
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error("❌ Supabase configuration is missing");
+}
+
+/**
+ * ✅ CLIENT SUPABASE
+ * - persistSession: garde la session après refresh
+ * - autoRefreshToken: renouvelle le token
+ * - detectSessionInUrl: FALSE pour GitHub Pages + HashRouter
+ */
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
-    detectSessionInUrl: false, // 🔐 clé pour GitHub Pages
+    detectSessionInUrl: false,
   },
 });
 
-// Helper function to get current user
+/* =====================================================
+   AUTH HELPERS
+===================================================== */
+
 export const getCurrentUser = async () => {
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   return user;
 };
 
-// Helper function to sign in with email/password
-export const signInWithEmail = async (email: string, password: string) => {
-  const { data, error } = await supabase.auth.signInWithPassword({
+export const signInWithEmail = async (
+  email: string,
+  password: string
+) => {
+  return await supabase.auth.signInWithPassword({
     email,
     password,
   });
-  return { data, error };
 };
 
-// Helper function to sign up with email/password
-export const signUpWithEmail = async (email: string, password: string, metadata?: any) => {
-  const { data, error } = await supabase.auth.signUp({
+export const signUpWithEmail = async (
+  email: string,
+  password: string,
+  metadata?: any
+) => {
+  return await supabase.auth.signUp({
     email,
     password,
     options: {
       data: metadata,
     },
   });
-  return { data, error };
 };
 
-// Helper function to sign out
 export const signOut = async () => {
-  const { error } = await supabase.auth.signOut();
-  return { error };
+  return await supabase.auth.signOut();
 };
 
-// Helper function to get dishes with translations and ingredients
-export const getDishes = async (language: string = 'en') => {
+/* =====================================================
+   DATA HELPERS
+===================================================== */
+
+export const getDishes = async (language: string = "en") => {
   const { data, error } = await supabase
-    .from('dishes')
+    .from("dishes")
     .select(`
       *,
       dish_ingredients (
@@ -66,43 +96,54 @@ export const getDishes = async (language: string = 'en') => {
     `);
 
   if (error) {
-    console.error('Erreur dans getDishes:', error);
+    console.error("❌ getDishes error:", error);
     throw error;
   }
 
-  // Transform the data to extract the correct language and include ingredients
-  return data?.map(dish => {
-    // Attempt to derive a stable cuisineId:
-    // priority: dish.cuisine_type_id (explicit FK) -> dish.cuisine_type.id -> null
-    const cuisineId = dish.cuisine_type_id ?? dish.cuisine_type?.id ?? null;
+  return (
+    data?.map((dish) => {
+      const cuisineId =
+        dish.cuisine_type_id ?? dish.cuisine_type?.id ?? null;
 
-    return {
-      ...dish,
-      // keep original fields but add normalized ones:
-      title: dish.name?.[language] || dish.name?.en || 'Untitled',
-      description: dish.description?.[language] || dish.description?.en || '',
-      instructions: dish.steps?.[language] || dish.steps?.en || [],
-      cuisineId: cuisineId ? String(cuisineId) : null, // stable id for logic
-      // translated display name (for UI)
-      cuisine: dish.cuisine_type?.[language] || dish.cuisine_type?.en || dish.cuisine || 'Unknown',
-      ingredients: dish.dish_ingredients?.map(item => ({
-        id: String(item.ingredient.id),
-        name: item.ingredient.name?.[language] || item.ingredient.name?.en || 'Unknown',
-        category: item.ingredient.category?.[language] || '',
-        amount: item.quantity?.toString() || '1',
-        unit: item.unit?.[language] || 'piece',
-        isOptional: false
-      })) || []
-    };
-  }) || [];
+      return {
+        ...dish,
+        title: dish.name?.[language] || dish.name?.en || "Untitled",
+        description:
+          dish.description?.[language] ||
+          dish.description?.en ||
+          "",
+        instructions:
+          dish.steps?.[language] || dish.steps?.en || [],
+        cuisineId: cuisineId ? String(cuisineId) : null,
+        cuisine:
+          dish.cuisine_type?.[language] ||
+          dish.cuisine_type?.en ||
+          dish.cuisine ||
+          "Unknown",
+        ingredients:
+          dish.dish_ingredients?.map((item) => ({
+            id: String(item.ingredient.id),
+            name:
+              item.ingredient.name?.[language] ||
+              item.ingredient.name?.en ||
+              "Unknown",
+            category:
+              item.ingredient.category?.[language] || "",
+            amount: item.quantity?.toString() || "1",
+            unit: item.unit?.[language] || "piece",
+            isOptional: false,
+          })) || [],
+      };
+    }) || []
+  );
 };
 
-// Helper function to get ingredients for a specific dish with debugging logs
-export const getIngredientsForDish = async (dishId: number, language: string = 'en') => {
-  console.log('Appel de getIngredientsForDish avec dishId:', dishId, 'et langue:', language);
-  
+export const getIngredientsForDish = async (
+  dishId: number,
+  language: string = "en"
+) => {
   const { data, error } = await supabase
-    .from('dish_ingredients')
+    .from("dish_ingredients")
     .select(`
       quantity,
       unit,
@@ -112,111 +153,51 @@ export const getIngredientsForDish = async (dishId: number, language: string = '
         category
       )
     `)
-    .eq('dish_id', dishId);
-
-  console.log('Données brutes de dish_ingredients:', data);
-  console.log('Erreur:', error);
+    .eq("dish_id", dishId);
 
   if (error) {
-    console.error('Erreur lors de la récupération des ingrédients:', error);
+    console.error("❌ getIngredientsForDish error:", error);
     return [];
   }
 
-  const transformedData = data.map(item => ({
+  return data.map((item) => ({
     id: item.ingredient.id,
-    name: item.ingredient.name?.[language] || item.ingredient.name?.en || 'Unknown',
-    category: item.ingredient.category?.[language] || '',
+    name:
+      item.ingredient.name?.[language] ||
+      item.ingredient.name?.en ||
+      "Unknown",
+    category:
+      item.ingredient.category?.[language] || "",
     amount: item.quantity,
-    unit: item.unit?.[language] || ''
+    unit: item.unit?.[language] || "",
   }));
-
-  console.log('Données transformées:', transformedData);
-  return transformedData;
 };
 
-// Helper function to get ingredients with translations
-export const getIngredients = async (language: string = 'en') => {
+export const getIngredients = async (language: string = "en") => {
   const { data, error } = await supabase
-    .from('ingredients')
-    .select('*');
+    .from("ingredients")
+    .select("*");
 
   if (error) throw error;
 
-  return data?.map(ingredient => ({
-    ...ingredient,
-    name: ingredient.name?.[language] || ingredient.name?.en || 'Unknown ingredient'
-  })) || [];
+  return (
+    data?.map((ingredient) => ({
+      ...ingredient,
+      name:
+        ingredient.name?.[language] ||
+        ingredient.name?.en ||
+        "Unknown ingredient",
+    })) || []
+  );
 };
 
-// Helper function to get user preferences
 export const getUserPreferences = async (userId: string) => {
-  const { data, error } = await supabase
-    .from('user_preferences')
-    .select('*')
-    .eq('user_id', userId)
+  return await supabase
+    .from("user_preferences")
+    .select("*")
+    .eq("user_id", userId)
     .single();
-
-  return { data, error };
 };
 
-// Helper function to update user preferences
-export const updateUserPreferences = async (userId: string, preferences: any) => {
-  const { data, error } = await supabase
-    .from('user_preferences')
-    .upsert({
-      user_id: userId,
-      ...preferences
-    });
-
-  return { data, error };
-};
-
-// Helper function to get user's saved dishes
-export const getSavedDishes = async (userId: string, language: string = 'en') => {
-  const { data, error } = await supabase
-    .from('saved_dishes')
-    .select(`
-      *,
-      dishes (*)
-    `)
-    .eq('user_id', userId);
-
-  if (error) throw error;
-
-  return data?.map(saved => ({
-    ...saved,
-    dish: {
-      ...saved.dishes,
-      title: saved.dishes.name?.[language] || saved.dishes.name?.en || 'Untitled',
-      description: saved.dishes.description?.[language] || saved.dishes.description?.en || '',
-      instructions: saved.dishes.steps?.[language] || saved.dishes.steps?.en || [],
-      cuisineId: saved.dishes.cuisine_type_id 
-        ? String(saved.dishes.cuisine_type_id) 
-        : (saved.dishes.cuisine_type?.id ? String(saved.dishes.cuisine_type.id) : null),
-      cuisine: saved.dishes.cuisine_type?.[language] || saved.dishes.cuisine_type?.en || 'Unknown'
-    }
-  })) || [];
-};
-
-// Helper function to save a dish
-export const saveDish = async (userId: string, dishId: number) => {
-  const { data, error } = await supabase
-    .from('saved_dishes')
-    .insert({
-      user_id: userId,
-      dish_id: dishId
-    });
-
-  return { data, error };
-};
-
-// Helper function to remove a saved dish
-export const removeSavedDish = async (userId: string, dishId: number) => {
-  const { error } = await supabase
-    .from('saved_dishes')
-    .delete()
-    .eq('user_id', userId)
-    .eq('dish_id', dishId);
-
-  return { error };
-};
+export const updateUserPreferences = async (
+ 
