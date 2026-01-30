@@ -1,12 +1,10 @@
 // src/App.tsx
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   HashRouter as Router,
   Routes,
   Route,
   Navigate,
-  useNavigate,
-  useLocation,
 } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -25,20 +23,28 @@ import ShoppingListView from "./components/ShoppingList/ShoppingListView";
 import MyRecipesPage from "./pages/MyRecipesPage";
 import MealPlanPage from "./pages/MealPlanPage";
 
-// Contenus légaux
+// Legal
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfUse from "./pages/TermsOfUse";
 
 import "./i18n";
 
+/* =========================
+   Routes wrapper
+========================= */
+
 function AppRoutes() {
   const { state } = useApp();
-  const { i18n } = useTranslation();
   const { isRTL } = useRTL();
+  useTranslation(); // force init i18n
 
+  /* ⛔ IMPORTANT
+     Tant que l’auth Supabase n’est pas résolue,
+     ON NE REND PAS LES ROUTES
+  */
   if (state.isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="animate-spin h-10 w-10 rounded-full border-4 border-orange-500 border-t-transparent" />
       </div>
     );
@@ -46,10 +52,11 @@ function AppRoutes() {
 
   return (
     <div className={`min-h-screen ${isRTL ? "rtl" : "ltr"}`}>
+      {/* Navbar uniquement si connecté */}
       {state.user && <Navbar />}
 
       <Routes>
-        {/* Landing publique */}
+        {/* 🌍 Landing publique */}
         <Route
           path="/welcome"
           element={
@@ -57,7 +64,7 @@ function AppRoutes() {
           }
         />
 
-        {/* Routes protégées */}
+        {/* 🔐 Routes protégées */}
         <Route
           path="/"
           element={
@@ -107,12 +114,12 @@ function AppRoutes() {
           }
         />
 
-        {/* Routes publiques */}
+        {/* 🔓 Routes publiques */}
         <Route path="/login" element={<LoginForm />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-of-use" element={<TermsOfUse />} />
 
-        {/* Fallback */}
+        {/* 🔁 Fallback */}
         <Route
           path="*"
           element={<Navigate to={state.user ? "/" : "/welcome"} replace />}
@@ -121,6 +128,10 @@ function AppRoutes() {
     </div>
   );
 }
+
+/* =========================
+   App root
+========================= */
 
 export default function App() {
   return (
