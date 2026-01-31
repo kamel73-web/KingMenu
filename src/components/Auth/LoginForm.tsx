@@ -63,16 +63,22 @@ export default function LoginForm() {
   /* =========================
      OAuth (Google)
   ========================= */
-  const handleSocialLogin = async (provider: 'google') => {
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider,
-    options: {
-      redirectTo: window.location.origin + "/#/",
-    },
-  });
+ const handleSocialLogin = async (provider: 'google') => {
+  try {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
 
-  if (error) {
-    toast.error(error.message);
+      options: {
+        redirectTo: `${window.location.origin}/KingMenu/`
+      }
+    });
+
+    if (error) {
+      toast.error(error.message);
+    }
+
+  } catch (err) {
+    toast.error('Erreur OAuth');
   }
 };
 
