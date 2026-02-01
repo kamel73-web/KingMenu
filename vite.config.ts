@@ -14,8 +14,11 @@ export default defineConfig({
   },
 
   define: {
-    "import.meta.env.VITE_SUPABASE_URL": JSON.stringify("https://vehqvqlbtotljstixklz.supabase.co"),
-    "import.meta.env.VITE_SUPABASE_ANON_KEY": JSON.stringify("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlaHF2cWxidG90bGpzdGl4a2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1OTAxOTEsImV4cCI6MjA2NjE2NjE5MX0.TnSx9bjz8wqo3pBPHaW11YtFcNYHg7Fckuo8z32rG4w"),
-    "import.meta.env.VITE_SUPABASE_STORAGE_URL": JSON.stringify("https://vehqvqlbtotljstixklz.supabase.co/storage/v1/object/public/dishes"),
+    "import.meta.env.VITE_SUPABASE_URL": JSON.stringify(
+      "https://vehqvqlbtotljstixklz.supabase.co"
+    ),
+    "import.meta.env.VITE_SUPABASE_ANON_KEY": JSON.stringify(
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlaHF2cWxidG90bGpzdGl4a2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1OTAxOTEsImV4cCI6MjA2NjE2NjE5MX0.TnSx9bjz8wqo3pBPHaW11YtFcNYHg7Fckuo8z32rG4w"
+    ),
   },
 });
