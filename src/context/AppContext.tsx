@@ -40,14 +40,39 @@ const AppContext = createContext<any>(null);
 export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  /* 🔑 REHYDRATATION SESSION SUPABASE */
   useEffect(() => {
-    const loadSession = async () => {
-      dispatch({ type: "SET_LOADING", payload: true });
+    let isMounted = true;
 
+    /* ✅ 1️⃣ Écoute IMMÉDIATEMENT les changements auth */
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!isMounted) return;
+
+      if (session?.user) {
+        dispatch({
+          type: "SET_USER",
+          payload: {
+            id: session.user.id,
+            email: session.user.email || "",
+            name:
+              session.user.user_metadata?.full_name ||
+              session.user.email ||
+              "User",
+          },
+        });
+      } else {
+        dispatch({ type: "LOGOUT" });
+      }
+    });
+
+    /* ✅ 2️⃣ Puis on hydrate la session existante */
+    const hydrateSession = async () => {
       const {
         data: { session },
       } = await supabase.auth.getSession();
+
+      if (!isMounted) return;
 
       if (session?.user) {
         dispatch({
@@ -66,30 +91,12 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
       }
     };
 
-    loadSession();
+    hydrateSession();
 
-    /* 🔄 écoute les changements auth (Google, logout, refresh) */
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        dispatch({
-          type: "SET_USER",
-          payload: {
-            id: session.user.id,
-            email: session.user.email || "",
-            name:
-              session.user.user_metadata?.full_name ||
-              session.user.email ||
-              "User",
-          },
-        });
-      } else {
-        dispatch({ type: "LOGOUT" });
-      }
-    });
-
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   return (
