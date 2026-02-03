@@ -169,7 +169,7 @@ export default function LoginForm() {
           </div>
 
           <button
-            onClick={handleSocialLogin}
+            onClick={() => handleSocialLogin("google")}
             className="w-full border py-2 rounded-lg"
           >
             Continuer avec Google
