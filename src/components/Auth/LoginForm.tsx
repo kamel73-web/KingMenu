@@ -69,7 +69,7 @@ export default function LoginForm() {
       provider,
 
       options: {
-        redirectTo: `${window.location.origin}/KingMenu/#/`
+        redirectTo: window.location.origin
       }
     });
 
