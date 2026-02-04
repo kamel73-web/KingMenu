@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase, getDishes, getIngredients } from '../lib/supabase';
 import { Dish, Ingredient } from '../types';
 import { useTranslation } from 'react-i18next';
+import { useApp } from '../context/AppContext'; // ← pour accéder aux préférences utilisateur si besoin
 
 export const useSupabaseData = () => {
   const [dishes, setDishes] = useState<Dish[]>([]);
@@ -9,102 +10,80 @@ export const useSupabaseData = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { i18n } = useTranslation();
+  const { state: { user } } = useApp(); // Optionnel : pour refetch sur changement de prefs
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
-      // Fetch dishes from Supabase
-      const dishesData: any[] = await getDishes(i18n.language);
+      // Récupération des plats
+      const rawDishes = await getDishes(i18n.language);
 
-      // Normalize data
-      const transformedDishes: Dish[] = dishesData.map((dish: any) => {
-        let difficultyValue = 'Medium';
+      if (!Array.isArray(rawDishes)) {
+        throw new Error('Données plats invalides (pas un tableau)');
+      }
+
+      const transformed: Dish[] = rawDishes.map((dish: any) => {
+        // Sécurité sur ID (pas d'aléatoire !)
+        const id = dish.id ? String(dish.id) : null;
+        if (!id) {
+          console.warn('Plat sans ID valide ignoré:', dish);
+          return null;
+        }
+
+        // Normalisation difficulty (simplifiée)
+        let difficulty = 'medium';
         if (dish.difficulty) {
           if (typeof dish.difficulty === 'string') {
-            difficultyValue = dish.difficulty;
+            difficulty = dish.difficulty.toLowerCase();
           } else if (typeof dish.difficulty === 'object') {
-            difficultyValue =
-              dish.difficulty[i18n.language] ||
-              dish.difficulty.en ||
-              Object.values(dish.difficulty)[0] ||
-              'Medium';
+            difficulty =
+              dish.difficulty[i18n.language]?.toLowerCase() ||
+              dish.difficulty.en?.toLowerCase() ||
+              'medium';
           }
         }
 
         return {
-          id: dish.id ? String(dish.id) : Math.random().toString(36).slice(2),
-          title: dish.title || dish.name || 'Untitled',
-          image:
-            dish.image_url ||
-            dish.image ||
-            (import.meta.env.VITE_SUPABASE_STORAGE_URL
-              ? `${import.meta.env.VITE_SUPABASE_STORAGE_URL}/${dish.image}`
-              : ''),
-          cuisine: dish.cuisine || 'Unknown',
+          id,
+          title: dish.title || 'Plat sans titre',
+          image: dish.image
+            ? `${dish.image}?width=600&quality=80&format=webp` // ← optimisation image
+            : '/placeholder-dish.jpg',
+          cuisine: dish.cuisine || 'Inconnue',
           cuisineId: dish.cuisineId ? String(dish.cuisineId) : null,
-          cookingTime: dish.cooking_time || dish.cookingTime || 30,
-          rating: dish.rating || 4.5,
-          difficulty: difficultyValue,
-          servings: dish.servings || 4,
-          calories: dish.calories || 400,
-          tags: dish.tags || [],
-          ingredients: dish.ingredients || [],
-          instructions: dish.instructions || [],
-          translations: {
-            title: dish.name,
-            description: dish.description,
-            cuisine: dish.cuisine_type,
-          },
-          instructionTranslations: dish.steps,
+          cookingTime: Number(dish.cookingTime) || 30,
+          rating: Number(dish.rating) || 4.5,
+          difficulty,
+          servings: Number(dish.servings) || 4,
+          calories: Number(dish.calories) || 400,
+          tags: Array.isArray(dish.tags) ? dish.tags : [],
+          ingredients: Array.isArray(dish.ingredients) ? dish.ingredients : [],
+          instructions: Array.isArray(dish.instructions) ? dish.instructions : [],
+          translations: dish.translations || {},
+          instructionTranslations: dish.instructionTranslations || {},
           _originalDifficulty: dish.difficulty,
-        };
-      });
+        } as Dish;
+      }).filter((d): d is Dish => d !== null); // filtre les plats invalides
 
-      setDishes(transformedDishes);
+      setDishes(transformed);
 
-      // Fetch ingredients
-      const ingredientsData = await getIngredients(i18n.language);
-      setIngredients(ingredientsData);
-    } catch (err) {
-      console.error('Error fetching data from Supabase:', err);
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      // Ingrédients
+      const ingData = await getIngredients(i18n.language);
+      setIngredients(Array.isArray(ingData) ? ingData : []);
+
+    } catch (err: any) {
+      console.error('Erreur chargement Supabase:', err);
+      setError(err.message || 'Erreur lors du chargement des données');
     } finally {
       setLoading(false);
     }
-  };
+  }, [i18n.language]); // Dépendance : langue uniquement (ou + user.preferences si besoin)
 
   useEffect(() => {
     fetchData();
-  }, [i18n.language]);
+  }, [fetchData]);
 
   return { dishes, ingredients, loading, error, refetch: fetchData };
-};
-
-export const useSupabaseAuth = () => {
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    // Subscribe to auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
-
-  return { user, loading };
 };
