@@ -1,3 +1,4 @@
+// src/context/AppContext.tsx
 import React, { createContext, useContext, useEffect, useReducer } from "react";
 import { supabase } from "../lib/supabase";
 
@@ -43,7 +44,9 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     let isMounted = true;
 
-    /* ✅ 1️⃣ Écoute IMMÉDIATEMENT les changements auth */
+    /* =========================
+       1️⃣ Écoute immédiate des changements auth
+    ========================= */
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -66,7 +69,9 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
       }
     });
 
-    /* ✅ 2️⃣ Puis on hydrate la session existante */
+    /* =========================
+       2️⃣ Hydrate session existante
+    ========================= */
     const hydrateSession = async () => {
       const {
         data: { session },
@@ -92,6 +97,39 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     hydrateSession();
+
+    /* =========================
+       3️⃣ Gérer le redirect OAuth Google
+    ========================= */
+    const handleOAuthRedirect = async () => {
+      try {
+        const { data, error } = await supabase.auth.getSessionFromUrl();
+        if (error) {
+          console.error("Erreur OAuth redirect:", error.message);
+          return;
+        }
+        if (data?.session?.user) {
+          dispatch({
+            type: "SET_USER",
+            payload: {
+              id: data.session.user.id,
+              email: data.session.user.email || "",
+              name:
+                data.session.user.user_metadata?.full_name ||
+                data.session.user.email ||
+                "User",
+            },
+          });
+
+          // Nettoyer le hash dans l'URL
+          window.history.replaceState({}, document.title, "/");
+        }
+      } catch (err) {
+        console.error("Erreur OAuth redirect:", err);
+      }
+    };
+
+    handleOAuthRedirect();
 
     return () => {
       isMounted = false;
