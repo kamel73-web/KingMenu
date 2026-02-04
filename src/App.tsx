@@ -1,4 +1,3 @@
-// src/App.tsx
 import React from "react";
 import {
   HashRouter as Router,
@@ -10,8 +9,6 @@ import { Toaster } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { AppProvider, useApp } from "./context/AppContext";
 import { useRTL } from "./hooks/useRTL";
-
-// Layout & pages
 import Navbar from "./components/Layout/Navbar";
 import LoginForm from "./components/Auth/LoginForm";
 import PublicLandingPage from "./pages/PublicLandingPage";
@@ -22,26 +19,70 @@ import FavoritesView from "./components/Favorites/FavoritesView";
 import ShoppingListView from "./components/ShoppingList/ShoppingListView";
 import MyRecipesPage from "./pages/MyRecipesPage";
 import MealPlanPage from "./pages/MealPlanPage";
-
-// Legal
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfUse from "./pages/TermsOfUse";
-
 import "./i18n";
+import { Capacitor } from '@capacitor/core';
+import { App as CapacitorApp } from '@capacitor/app';
+import { supabase } from "./lib/supabase";
+import toast from "react-hot-toast";
 
-/* =========================
-   Routes wrapper
-========================= */
+// Error Boundary simple
+class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
+  state = { hasError: false };
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen flex items-center justify-center text-red-600 p-4 text-center">
+          Une erreur inattendue s'est produite.<br />
+          Veuillez recharger la page ou contacter le support.
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 function AppRoutes() {
   const { state } = useApp();
   const { isRTL } = useRTL();
-  useTranslation(); // force init i18n
+  useTranslation();
 
-  /* ⛔ IMPORTANT
-     Tant que l’auth Supabase n’est pas résolue,
-     ON NE REND PAS LES ROUTES
-  */
+  // Listener deep-link OAuth (mobile uniquement)
+  React.useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+
+    const listener = CapacitorApp.addListener('appUrlOpen', async (event) => {
+      try {
+        const url = new URL(event.url);
+        const params = new URLSearchParams(url.hash.substring(1));
+
+        const access_token = params.get('access_token');
+        const refresh_token = params.get('refresh_token');
+
+        if (access_token && refresh_token) {
+          const { error } = await supabase.auth.setSession({
+            access_token,
+            refresh_token,
+          });
+
+          if (error) throw error;
+          toast.success("Connexion Google réussie");
+        }
+      } catch (err) {
+        console.error("Erreur deep-link OAuth:", err);
+        toast.error("Échec de la connexion après retour");
+      }
+    });
+
+    return () => listener.remove();
+  }, []);
+
   if (state.isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -52,86 +93,53 @@ function AppRoutes() {
 
   return (
     <div className={`min-h-screen ${isRTL ? "rtl" : "ltr"}`}>
-      {/* Navbar uniquement si connecté */}
-      {state.user && <Navbar />}
-
-      <Routes>
-        {/* 🌍 Landing publique */}
-        <Route
-          path="/welcome"
-          element={
-            state.user ? <Navigate to="/" replace /> : <PublicLandingPage />
-          }
-        />
-
-        {/* 🔐 Routes protégées */}
-        <Route
-          path="/"
-          element={
-            state.user ? <HomePage /> : <Navigate to="/welcome" replace />
-          }
-        />
-
-        <Route
-          path="/use-my-ingredients"
-          element={
-            state.user ? <UseMyIngredientsPage /> : <Navigate to="/welcome" replace />
-          }
-        />
-
-        <Route
-          path="/meal-plan"
-          element={
-            state.user ? <MealPlanPage /> : <Navigate to="/welcome" replace />
-          }
-        />
-
-        <Route
-          path="/profile"
-          element={
-            state.user ? <ProfileView /> : <Navigate to="/welcome" replace />
-          }
-        />
-
-        <Route
-          path="/favorites"
-          element={
-            state.user ? <FavoritesView /> : <Navigate to="/welcome" replace />
-          }
-        />
-
-        <Route
-          path="/my-recipes"
-          element={
-            state.user ? <MyRecipesPage /> : <Navigate to="/welcome" replace />
-          }
-        />
-
-        <Route
-          path="/shopping-list"
-          element={
-            state.user ? <ShoppingListView /> : <Navigate to="/welcome" replace />
-          }
-        />
-
-        {/* 🔓 Routes publiques */}
-        <Route path="/login" element={<LoginForm />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="/terms-of-use" element={<TermsOfUse />} />
-
-        {/* 🔁 Fallback */}
-        <Route
-          path="*"
-          element={<Navigate to={state.user ? "/" : "/welcome"} replace />}
-        />
-      </Routes>
+      <ErrorBoundary>
+        {state.user && <Navbar />}
+        <Routes>
+          <Route
+            path="/welcome"
+            element={state.user ? <Navigate to="/" replace /> : <PublicLandingPage />}
+          />
+          <Route
+            path="/"
+            element={state.user ? <HomePage /> : <Navigate to="/welcome" replace />}
+          />
+          <Route
+            path="/use-my-ingredients"
+            element={state.user ? <UseMyIngredientsPage /> : <Navigate to="/welcome" replace />}
+          />
+          <Route
+            path="/meal-plan"
+            element={state.user ? <MealPlanPage /> : <Navigate to="/welcome" replace />}
+          />
+          <Route
+            path="/profile"
+            element={state.user ? <ProfileView /> : <Navigate to="/welcome" replace />}
+          />
+          <Route
+            path="/favorites"
+            element={state.user ? <FavoritesView /> : <Navigate to="/welcome" replace />}
+          />
+          <Route
+            path="/my-recipes"
+            element={state.user ? <MyRecipesPage /> : <Navigate to="/welcome" replace />}
+          />
+          <Route
+            path="/shopping-list"
+            element={state.user ? <ShoppingListView /> : <Navigate to="/welcome" replace />}
+          />
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-of-use" element={<TermsOfUse />} />
+          <Route
+            path="*"
+            element={<Navigate to={state.user ? "/" : "/welcome"} replace />}
+          />
+        </Routes>
+      </ErrorBoundary>
     </div>
   );
 }
-
-/* =========================
-   App root
-========================= */
 
 export default function App() {
   return (
@@ -139,7 +147,6 @@ export default function App() {
       <Router>
         <AppRoutes />
       </Router>
-
       <Toaster
         position="top-right"
         toastOptions={{
