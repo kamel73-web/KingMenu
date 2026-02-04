@@ -1,4 +1,136 @@
-// src/lib/supabase.ts
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error(
+    "Configuration Supabase incomplète. Vérifiez VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY dans .env"
+  );
+}
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true, // Important pour GitHub Pages + HashRouter
+    storageKey: "kingmenu.auth.token", // Optionnel : prefix custom pour éviter conflits
+  },
+});
+
+// ────────────────────────────────────────────────
+// Helpers Auth
+// ────────────────────────────────────────────────
+export const getCurrentUser = async () => {
+  const { data: { user } } = await supabase.auth.getUser();
+  return user;
+};
+
+export const getCurrentSession = async () => {
+  const { data: { session } } = await supabase.auth.getSession();
+  return session;
+};
+
+export const signInWithEmail = async (email: string, password: string) => {
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  return { data, error };
+};
+
+export const signUpWithEmail = async (
+  email: string,
+  password: string,
+  metadata: any = {}
+) => {
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: { data: metadata },
+  });
+  return { data, error };
+};
+
+export const signOut = async () => {
+  const { error } = await supabase.auth.signOut();
+  return { error };
+};
+
+// ────────────────────────────────────────────────
+// Dishes (avec typage plus strict + pagination possible)
+// ────────────────────────────────────────────────
+export interface DishFromDB {
+  id: number;
+  name: Record<string, string>;
+  description?: Record<string, string>;
+  steps?: Record<string, string[]>;
+  cuisine_type_id?: string | number;
+  cuisine_type?: Record<string, string>;
+  cooking_time?: number;
+  calories?: number;
+  rating?: number;
+  difficulty?: string;
+  // ... autres champs
+}
+
+export const getDishes = async (language: string = "en", limit = 100, offset = 0) => {
+  const { data, error } = await supabase
+    .from("dishes")
+    .select(`
+      *,
+      dish_ingredients (
+        quantity,
+        unit,
+        ingredient:ingredient_id (id, name, category)
+      )
+    `)
+    .range(offset, offset + limit - 1);
+
+  if (error) {
+    console.error("Erreur getDishes:", error);
+    throw error;
+  }
+
+  return (data || []).map((dish: DishFromDB) => ({
+    ...dish,
+    id: dish.id,
+    title: dish.name?.[language] || dish.name?.en || "Plat sans titre",
+    description: dish.description?.[language] || dish.description?.en || "",
+    instructions: dish.steps?.[language] || dish.steps?.en || [],
+    cuisineId: dish.cuisine_type_id
+      ? String(dish.cuisine_type_id)
+      : dish.cuisine_type?.id
+      ? String(dish.cuisine_type.id)
+      : null,
+    cuisine:
+      dish.cuisine_type?.[language] ||
+      dish.cuisine_type?.en ||
+      "Cuisine inconnue",
+    cookingTime: dish.cooking_time || 30,
+    calories: dish.calories || 0,
+    rating: dish.rating || 4.0,
+    ingredients: (dish.dish_ingredients || []).map((item: any) => ({
+      id: String(item.ingredient.id),
+      name: item.ingredient.name?.[language] || item.ingredient.name?.en || "Ingrédient inconnu",
+      category: item.ingredient.category?.[language] || "",
+      amount: String(item.quantity || "1"),
+      unit: item.unit?.[language] || item.unit?.en || "pièce",
+      isOptional: false,
+    })),
+  }));
+};
+
+// Les autres fonctions (getIngredientsForDish, getIngredients, etc.) restent très bien.
+// Vous pouvez les garder telles quelles ou ajouter des try/catch + logs similaires.
+
+export const getUserPreferences = async (userId: string) => {
+  const { data, error } = await supabase
+    .from("user_preferences")
+    .select("*")
+    .eq("user_id", userId)
+    .maybeSingle(); // ← mieux que .single() si pas de ligne
+
+  if (error) console.error("Erreur preferences:", error);
+  return { data, error };
+};// src/lib/supabase.ts
 import { createClient } from "@supabase/supabase-js";
 
 /* =====================================================
