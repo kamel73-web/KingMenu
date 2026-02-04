@@ -1,4 +1,3 @@
-// src/context/AppContext.tsx
 import React, { createContext, useContext, useEffect, useReducer } from "react";
 import { supabase } from "../lib/supabase";
 
@@ -44,24 +43,16 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     let isMounted = true;
 
-    /* =========================
-       1️⃣ Écoute immédiate des changements auth
-    ========================= */
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    // Listener auth en temps réel
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!isMounted) return;
-
       if (session?.user) {
         dispatch({
           type: "SET_USER",
           payload: {
             id: session.user.id,
             email: session.user.email || "",
-            name:
-              session.user.user_metadata?.full_name ||
-              session.user.email ||
-              "User",
+            name: session.user.user_metadata?.full_name || session.user.email || "User",
           },
         });
       } else {
@@ -69,67 +60,30 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
       }
     });
 
-    /* =========================
-       2️⃣ Hydrate session existante
-    ========================= */
+    // Hydratation session initiale
     const hydrateSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
-      if (!isMounted) return;
-
-      if (session?.user) {
-        dispatch({
-          type: "SET_USER",
-          payload: {
-            id: session.user.id,
-            email: session.user.email || "",
-            name:
-              session.user.user_metadata?.full_name ||
-              session.user.email ||
-              "User",
-          },
-        });
-      } else {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!isMounted) return;
+        if (session?.user) {
+          dispatch({
+            type: "SET_USER",
+            payload: {
+              id: session.user.id,
+              email: session.user.email || "",
+              name: session.user.user_metadata?.full_name || session.user.email || "User",
+            },
+          });
+        } else {
+          dispatch({ type: "SET_LOADING", payload: false });
+        }
+      } catch (err) {
+        console.error("Erreur hydratation session:", err);
         dispatch({ type: "SET_LOADING", payload: false });
       }
     };
 
     hydrateSession();
-
-    /* =========================
-       3️⃣ Gérer le redirect OAuth Google
-    ========================= */
-    const handleOAuthRedirect = async () => {
-      try {
-        const { data, error } = await supabase.auth.getSessionFromUrl();
-        if (error) {
-          console.error("Erreur OAuth redirect:", error.message);
-          return;
-        }
-        if (data?.session?.user) {
-          dispatch({
-            type: "SET_USER",
-            payload: {
-              id: data.session.user.id,
-              email: data.session.user.email || "",
-              name:
-                data.session.user.user_metadata?.full_name ||
-                data.session.user.email ||
-                "User",
-            },
-          });
-
-          // Nettoyer le hash dans l'URL
-          window.history.replaceState({}, document.title, "/");
-        }
-      } catch (err) {
-        console.error("Erreur OAuth redirect:", err);
-      }
-    };
-
-    handleOAuthRedirect();
 
     return () => {
       isMounted = false;
