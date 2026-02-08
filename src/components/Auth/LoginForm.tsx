@@ -50,17 +50,19 @@ const handleSocialLogin = async (provider: 'google') => {
     let redirectTo: string;
 
     if (isNative) {
-      // Mobile : deep-link scheme
-      redirectTo = 'com.kingmenu.app://';
+      redirectTo = 'com.kingmenu.app://'; // ← votre scheme mobile
     } else {
-      // Web / GitHub Pages : URL complète actuelle (inclut /KingMenu/)
-      const base = window.location.origin + window.location.pathname;
-      redirectTo = base.split('#')[0]; // enlève hash existant
+      // Web / GitHub Pages : chemin complet avec /KingMenu/
+      const currentPath = window.location.pathname;
+      // Si déjà sur /KingMenu/..., on garde ; sinon on force
+      const basePath = currentPath.startsWith('/KingMenu') ? currentPath : '/KingMenu' + currentPath;
+      redirectTo = `${window.location.origin}${basePath}`;
+      redirectTo = redirectTo.split('#')[0]; // enlève hash existant
     }
 
-    console.log('[OAuth Debug] redirectTo envoyé à Supabase :', redirectTo);
+    console.log('[OAuth Debug] redirectTo envoyé :', redirectTo);
 
-    const { data, error } = await supabase.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
         redirectTo,
@@ -71,15 +73,10 @@ const handleSocialLogin = async (provider: 'google') => {
       },
     });
 
-    if (error) {
-      console.error('[OAuth Supabase Error]', error);
-      throw error;
-    }
-
-    console.log('[OAuth] Succès initiation, attente redirect...');
+    if (error) throw error;
   } catch (err) {
-    console.error('[OAuth] Erreur complète :', err);
-    toast.error('Erreur connexion Google. Veuillez réessayer.');
+    console.error('Erreur OAuth:', err);
+    toast.error('Erreur connexion Google');
   }
 };
 
