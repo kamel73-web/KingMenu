@@ -62,14 +62,14 @@ function AppRoutes() {
 
     const listener = CapacitorApp.addListener('appUrlOpen', async (event) => {
       try {
-        console.log('[Mobile Deep Link] URL reçue :', event.url);
+        console.log('[Mobile OAuth] Deep link reçu :', event.url);
         const url = new URL(event.url);
         const params = new URLSearchParams(url.hash.substring(1));
         const access_token = params.get('access_token');
         const refresh_token = params.get('refresh_token');
 
         if (access_token && refresh_token) {
-          console.log('[Mobile Deep Link] Tokens trouvés → setSession');
+          console.log('[Mobile OAuth] Tokens trouvés → mise en session');
           const { error } = await supabase.auth.setSession({
             access_token,
             refresh_token,
@@ -78,10 +78,7 @@ function AppRoutes() {
           if (error) throw error;
 
           toast.success("Connexion Google réussie");
-          // Force navigation vers accueil
           navigate('/', { replace: true });
-        } else {
-          console.log('[Mobile Deep Link] Pas de tokens dans le hash');
         }
       } catch (err) {
         console.error("Erreur deep-link OAuth:", err);
@@ -92,24 +89,29 @@ function AppRoutes() {
     return () => listener.remove();
   }, [navigate]);
 
-  // Correction race condition web : force navigation après connexion
+  // Force navigation quand state.user change et qu'on est sur une page publique
   React.useEffect(() => {
-    if (!state.isLoading && state.user) {
-      const currentPath = window.location.pathname + window.location.hash;
-      console.log(
-        '[AppRoutes Debug] Utilisateur connecté. Chemin actuel :',
-        currentPath,
-        '→ Vérification redirection forcée...'
-      );
+    if (state.isLoading) return;
 
+    const currentPath = window.location.pathname + window.location.hash;
+    console.log(
+      '[AppRoutes Debug] Rendu avec user :',
+      !!state.user,
+      'isLoading :',
+      state.isLoading,
+      'chemin actuel :',
+      currentPath
+    );
+
+    if (state.user) {
       if (
         currentPath.includes('/welcome') ||
         currentPath === '/' + window.location.hash ||
         currentPath === '/#' ||
         currentPath === '' ||
-        currentPath === '/#' + window.location.hash
+        currentPath.includes('/login')
       ) {
-        console.log('[AppRoutes] Redirection forcée vers / (accueil protégé)');
+        console.log('[AppRoutes] Utilisateur connecté → FORCED REDIRECT vers /');
         navigate('/', { replace: true });
       }
     }
@@ -119,7 +121,7 @@ function AppRoutes() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
         <div className="animate-spin h-12 w-12 rounded-full border-4 border-orange-500 border-t-transparent mb-4" />
-        <p className="text-gray-600 font-medium">Vérification de la session en cours...</p>
+        <p className="text-gray-600 font-medium">Vérification de la session...</p>
       </div>
     );
   }
