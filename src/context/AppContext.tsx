@@ -44,18 +44,20 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     let isMounted = true;
 
-    console.log("[AppContext] Démarrage du contexte d'authentification");
+    console.log("🔥 [AppContext] Démarrage du contexte d'authentification");
 
-    // Listener principal en temps réel
+    // 1. Listener principal en temps réel (SIGNED_IN, SIGNED_OUT, etc.)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         if (!isMounted) return;
 
         console.log(
-          "[AppContext] Événement auth reçu :",
-          event,
-          "→ session :",
-          session ? "présente" : "absente"
+          `🔥 [AppContext] Événement AUTH reçu : ${event} à ${new Date().toLocaleTimeString()}`
+        );
+        console.log(
+          "   → session présente ?",
+          !!session,
+          session?.user ? ` (ID: ${session.user.id})` : ""
         );
 
         if (session?.user) {
@@ -68,23 +70,27 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
               "Utilisateur",
           };
           dispatch({ type: "SET_USER", payload: userData });
+          // Petit délai pour laisser React Router respirer
+          setTimeout(() => {
+            console.log("   → SET_USER dispatché");
+          }, 0);
         } else {
           dispatch({ type: "LOGOUT" });
         }
       }
     );
 
-    // Hydratation + correction race condition après OAuth redirect
+    // 2. Hydratation initiale + gestion race condition OAuth
     const hydrateSession = async () => {
       try {
-        console.log("[AppContext] Hydratation initiale via getSession()");
+        console.log("🔥 [AppContext] Hydratation initiale via getSession()");
         const { data: { session }, error } = await supabase.auth.getSession();
 
         if (error) throw error;
 
         if (isMounted) {
           if (session?.user) {
-            console.log("[AppContext] Session valide trouvée au chargement");
+            console.log("🔥 [AppContext] Session valide trouvée au chargement");
             const userData: User = {
               id: session.user.id,
               email: session.user.email || "",
@@ -98,19 +104,18 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
             // Cas critique : hash OAuth présent mais session non détectée
             if (window.location.hash.includes("access_token")) {
               console.log(
-                "[AppContext] Hash OAuth détecté mais session non chargée → FORCED RELOAD pour traiter le hash"
+                "🔥 [AppContext] Hash OAuth détecté mais pas de session → FORCED RELOAD"
               );
-              // Force le rechargement pour que detectSessionInUrl fasse son travail
               window.location.reload();
-              return; // On sort pour ne pas continuer
+              return;
             }
 
-            console.log("[AppContext] Aucune session au démarrage");
+            console.log("🔥 [AppContext] Aucune session au démarrage");
             dispatch({ type: "SET_LOADING", payload: false });
           }
         }
       } catch (err) {
-        console.error("[AppContext] Erreur lors de l'hydratation :", err);
+        console.error("❌ [AppContext] Erreur hydratation :", err);
         if (isMounted) {
           dispatch({ type: "SET_LOADING", payload: false });
         }
@@ -119,12 +124,10 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
     hydrateSession();
 
-    // Sécurité anti-blocage : timeout max 5 secondes
+    // 3. Sécurité : timeout max 5s pour éviter blocage loading
     const safetyTimeout = setTimeout(() => {
       if (isMounted && state.isLoading) {
-        console.warn(
-          "[AppContext] Timeout de chargement dépassé (5s) → forçage fin du loading"
-        );
+        console.warn("⚠️ [AppContext] Timeout loading (5s) → forçage false");
         dispatch({ type: "SET_LOADING", payload: false });
       }
     }, 5000);
@@ -133,9 +136,9 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
       isMounted = false;
       subscription.unsubscribe();
       clearTimeout(safetyTimeout);
-      console.log("[AppContext] Nettoyage du contexte effectué");
+      console.log("🧹 [AppContext] Nettoyage terminé");
     };
-  }, []); // ← C'EST ICI : le seul useEffect qui gère l'auth
+  }, []);
 
   return (
     <AppContext.Provider value={{ state, dispatch }}>
