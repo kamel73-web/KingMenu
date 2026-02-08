@@ -50,23 +50,20 @@ const handleSocialLogin = async (provider: 'google') => {
     let redirectTo: string;
 
     if (isNative) {
-      // Mobile (Capacitor) : scheme custom pour deep-link
-      redirectTo = 'com.kingmenu.app://'; // ← VÉRIFIEZ que c'est EXACTEMENT votre appId dans capacitor.config.ts / json
-      console.log('[OAuth Mobile] redirectTo :', redirectTo);
+      // Mobile : deep-link scheme
+      redirectTo = 'com.kingmenu.app://';
     } else {
-      // Web (GitHub Pages) : URL actuelle complète, sans hash, pour rester sur la bonne page
-      const currentPath = window.location.pathname;
-      redirectTo = `${window.location.origin}${currentPath}`;
-      // Enlève tout hash existant pour éviter conflits
-      redirectTo = redirectTo.split('#')[0];
-      console.log('[OAuth Web] redirectTo :', redirectTo);
+      // Web / GitHub Pages : URL complète actuelle (inclut /KingMenu/)
+      const base = window.location.origin + window.location.pathname;
+      redirectTo = base.split('#')[0]; // enlève hash existant
     }
+
+    console.log('[OAuth Debug] redirectTo envoyé à Supabase :', redirectTo);
 
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
         redirectTo,
-        // Amélioration Google : demande refresh token (utile pour sessions longues)
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',
@@ -75,14 +72,14 @@ const handleSocialLogin = async (provider: 'google') => {
     });
 
     if (error) {
-      console.error('[Supabase OAuth Error]', error.message, error);
+      console.error('[OAuth Supabase Error]', error);
       throw error;
     }
 
-    console.log('[OAuth Success] Données :', data);
-  } catch (err: any) {
-    console.error('Erreur OAuth complète :', err);
-    toast.error(t('auth.socialError') || 'Erreur lors de la connexion Google. Réessayez.');
+    console.log('[OAuth] Succès initiation, attente redirect...');
+  } catch (err) {
+    console.error('[OAuth] Erreur complète :', err);
+    toast.error('Erreur connexion Google. Veuillez réessayer.');
   }
 };
 
