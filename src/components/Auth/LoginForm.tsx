@@ -43,26 +43,48 @@ export default function LoginForm() {
     }
   };
 
-  const handleSocialLogin = async (provider: 'google') => {
-    try {
-      const isNative = Capacitor.isNativePlatform();
-      const redirectTo = isNative
-        ? 'com.kingmenu.app://'           // ← MODIFIEZ ICI avec votre vrai scheme (capacitor.config.ts → appId)
-        : window.location.origin + '/welcome';
+const handleSocialLogin = async (provider: 'google') => {
+  try {
+    const isNative = Capacitor.isNativePlatform();
 
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider,
-        options: {
-          redirectTo,
-        },
-      });
+    let redirectTo: string;
 
-      if (error) throw error;
-    } catch (err) {
-      console.error("Erreur OAuth:", err);
-      toast.error(t('auth.socialError') || 'Erreur lors de la connexion sociale');
+    if (isNative) {
+      // Mobile (Capacitor) : scheme custom pour deep-link
+      redirectTo = 'com.kingmenu.app://'; // ← VÉRIFIEZ que c'est EXACTEMENT votre appId dans capacitor.config.ts / json
+      console.log('[OAuth Mobile] redirectTo :', redirectTo);
+    } else {
+      // Web (GitHub Pages) : URL actuelle complète, sans hash, pour rester sur la bonne page
+      const currentPath = window.location.pathname;
+      redirectTo = `${window.location.origin}${currentPath}`;
+      // Enlève tout hash existant pour éviter conflits
+      redirectTo = redirectTo.split('#')[0];
+      console.log('[OAuth Web] redirectTo :', redirectTo);
     }
-  };
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo,
+        // Amélioration Google : demande refresh token (utile pour sessions longues)
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
+      },
+    });
+
+    if (error) {
+      console.error('[Supabase OAuth Error]', error.message, error);
+      throw error;
+    }
+
+    console.log('[OAuth Success] Données :', data);
+  } catch (err: any) {
+    console.error('Erreur OAuth complète :', err);
+    toast.error(t('auth.socialError') || 'Erreur lors de la connexion Google. Réessayez.');
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 via-white to-yellow-50 p-4">
