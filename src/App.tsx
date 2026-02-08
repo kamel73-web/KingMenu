@@ -1,9 +1,11 @@
+// src/App.tsx
 import React from "react";
 import {
   HashRouter as Router,
   Routes,
   Route,
   Navigate,
+  useNavigate,
 } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -52,7 +54,7 @@ function AppRoutes() {
   const { state } = useApp();
   const { isRTL } = useRTL();
   useTranslation();
-  const navigate = useNavigate(); // ← Ajout important !
+  const navigate = useNavigate();
 
   // Listener deep-link OAuth (mobile uniquement)
   React.useEffect(() => {
@@ -60,12 +62,14 @@ function AppRoutes() {
 
     const listener = CapacitorApp.addListener('appUrlOpen', async (event) => {
       try {
+        console.log('[Mobile Deep Link] URL reçue :', event.url);
         const url = new URL(event.url);
         const params = new URLSearchParams(url.hash.substring(1));
         const access_token = params.get('access_token');
         const refresh_token = params.get('refresh_token');
 
         if (access_token && refresh_token) {
+          console.log('[Mobile Deep Link] Tokens trouvés → setSession');
           const { error } = await supabase.auth.setSession({
             access_token,
             refresh_token,
@@ -74,8 +78,10 @@ function AppRoutes() {
           if (error) throw error;
 
           toast.success("Connexion Google réussie");
-          // Force navigation vers accueil après setSession
+          // Force navigation vers accueil
           navigate('/', { replace: true });
+        } else {
+          console.log('[Mobile Deep Link] Pas de tokens dans le hash');
         }
       } catch (err) {
         console.error("Erreur deep-link OAuth:", err);
@@ -86,18 +92,24 @@ function AppRoutes() {
     return () => listener.remove();
   }, [navigate]);
 
-  // Correction race condition : surveille state.user et force navigation
+  // Correction race condition web : force navigation après connexion
   React.useEffect(() => {
     if (!state.isLoading && state.user) {
-      // Si connecté et on est sur /welcome ou une page non protégée
       const currentPath = window.location.pathname + window.location.hash;
+      console.log(
+        '[AppRoutes Debug] Utilisateur connecté. Chemin actuel :',
+        currentPath,
+        '→ Vérification redirection forcée...'
+      );
+
       if (
         currentPath.includes('/welcome') ||
         currentPath === '/' + window.location.hash ||
         currentPath === '/#' ||
-        currentPath === ''
+        currentPath === '' ||
+        currentPath === '/#' + window.location.hash
       ) {
-        console.log('[AppRoutes] Utilisateur connecté → redirection forcée vers /');
+        console.log('[AppRoutes] Redirection forcée vers / (accueil protégé)');
         navigate('/', { replace: true });
       }
     }
@@ -105,9 +117,9 @@ function AppRoutes() {
 
   if (state.isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin h-10 w-10 rounded-full border-4 border-orange-500 border-t-transparent" />
-        <p className="ml-4">Vérification de la session...</p>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
+        <div className="animate-spin h-12 w-12 rounded-full border-4 border-orange-500 border-t-transparent mb-4" />
+        <p className="text-gray-600 font-medium">Vérification de la session en cours...</p>
       </div>
     );
   }
