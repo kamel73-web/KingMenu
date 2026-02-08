@@ -52,6 +52,7 @@ function AppRoutes() {
   const { state } = useApp();
   const { isRTL } = useRTL();
   useTranslation();
+  const navigate = useNavigate(); // ← Ajout important !
 
   // Listener deep-link OAuth (mobile uniquement)
   React.useEffect(() => {
@@ -61,7 +62,6 @@ function AppRoutes() {
       try {
         const url = new URL(event.url);
         const params = new URLSearchParams(url.hash.substring(1));
-
         const access_token = params.get('access_token');
         const refresh_token = params.get('refresh_token');
 
@@ -72,7 +72,10 @@ function AppRoutes() {
           });
 
           if (error) throw error;
+
           toast.success("Connexion Google réussie");
+          // Force navigation vers accueil après setSession
+          navigate('/', { replace: true });
         }
       } catch (err) {
         console.error("Erreur deep-link OAuth:", err);
@@ -81,12 +84,30 @@ function AppRoutes() {
     });
 
     return () => listener.remove();
-  }, []);
+  }, [navigate]);
+
+  // Correction race condition : surveille state.user et force navigation
+  React.useEffect(() => {
+    if (!state.isLoading && state.user) {
+      // Si connecté et on est sur /welcome ou une page non protégée
+      const currentPath = window.location.pathname + window.location.hash;
+      if (
+        currentPath.includes('/welcome') ||
+        currentPath === '/' + window.location.hash ||
+        currentPath === '/#' ||
+        currentPath === ''
+      ) {
+        console.log('[AppRoutes] Utilisateur connecté → redirection forcée vers /');
+        navigate('/', { replace: true });
+      }
+    }
+  }, [state.user, state.isLoading, navigate]);
 
   if (state.isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="animate-spin h-10 w-10 rounded-full border-4 border-orange-500 border-t-transparent" />
+        <p className="ml-4">Vérification de la session...</p>
       </div>
     );
   }
