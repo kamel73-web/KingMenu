@@ -8,7 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "build:legacy": "node --experimental-global-webcrypto node_modules/vite/bin/vite.js build",
-    "lint": "eslint . --ext .js,.ts,.jsx,.tsx",
+    "lint": "eslint .",
     "preview": "vite preview",
     "clean": "rm -rf dist node_modules/.vite",
     "clean:build": "npm run clean && npm run build",
