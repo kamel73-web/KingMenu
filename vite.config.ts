@@ -1,24 +1,32 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import { fileURLToPath, URL } from "node:url";
+// vite.config.ts
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { fileURLToPath, URL } from 'node:url';
 
 export default defineConfig({
-  base: "/KingMenu/",
+  // Chemin de base pour GitHub Pages (repo KingMenu)
+  base: '/KingMenu/',
 
   plugins: [react()],
 
   resolve: {
     alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url)),
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
 
-  define: {
-    "import.meta.env.VITE_SUPABASE_URL": JSON.stringify(
-      "https://vehqvqlbtotljstixklz.supabase.co"
-    ),
-    "import.meta.env.VITE_SUPABASE_ANON_KEY": JSON.stringify(
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlaHF2cWxidG90bGpzdGl4a2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1OTAxOTEsImV4cCI6MjA2NjE2NjE5MX0.TnSx9bjz8wqo3pBPHaW11YtFcNYHg7Fckuo8z32rG4w"
-    ),
+  // PAS DE DEFINE pour Supabase ici !
+  // → Utilisez .env.local ou .env pour VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY
+  // Vite les expose automatiquement via import.meta.env.VITE_...
+
+  // Optionnel : augmente la limite de warning chunks (votre build a des gros chunks)
+  build: {
+    chunkSizeWarningLimit: 1200, // ou 1500 si vous gardez html2canvas/jspdf
+  },
+
+  // Optionnel : server pour dev local (utile si vous testez avec proxy)
+  server: {
+    port: 5173,
+    open: true,
   },
 });
