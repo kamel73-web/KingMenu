@@ -32,11 +32,9 @@ import toast from "react-hot-toast";
 // Error Boundary simple
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
   state = { hasError: false };
-
   static getDerivedStateFromError() {
     return { hasError: true };
   }
-
   render() {
     if (this.state.hasError) {
       return (
@@ -69,16 +67,12 @@ function AppRoutes() {
         const refresh_token = params.get('refresh_token');
 
         if (access_token && refresh_token) {
-          console.log('[Mobile Deep Link] Tokens trouvés → mise en session');
           const { error } = await supabase.auth.setSession({
             access_token,
             refresh_token,
           });
-
           if (error) throw error;
-
           toast.success("Connexion Google réussie");
-          // Force navigation immédiate
           navigate('/', { replace: true });
         }
       } catch (err) {
@@ -86,57 +80,73 @@ function AppRoutes() {
         toast.error("Échec de la connexion après retour");
       }
     });
-
     return () => listener.remove();
   }, [navigate]);
 
-  // Redirection forcée renforcée : surveille state.user et chemin actuel
+  // Gestion manuelle du hash OAuth sur web (GitHub Pages)
+  React.useEffect(() => {
+    if (Capacitor.isNativePlatform()) return; // Seulement sur web
+
+    const hash = window.location.hash.substring(1);
+    const params = new URLSearchParams(hash);
+
+    const access_token = params.get('access_token');
+    const refresh_token = params.get('refresh_token');
+
+    if (access_token && refresh_token) {
+      console.log('[Web OAuth] Hash tokens détectés → setSession manuel');
+      supabase.auth.setSession({
+        access_token,
+        refresh_token,
+      }).then(({ error }) => {
+        if (error) {
+          console.error('[Web OAuth] Erreur setSession :', error);
+          toast.error("Échec session Google");
+        } else {
+          console.log('[Web OAuth] Session set OK → nettoyage hash + redirect');
+          // Nettoyage du hash pour propre URL
+          window.location.hash = '';
+          // Force navigation vers accueil protégé
+          navigate('/', { replace: true });
+          toast.success("Connexion Google réussie");
+        }
+      });
+    }
+  }, [navigate]);
+
+  // Force redirection si user connecté mais sur page publique
   React.useEffect(() => {
     if (state.isLoading) return;
 
     const currentPath = window.location.pathname + window.location.hash;
     console.log(
-      "🔥 [AppRoutes] Rendu actuel → user connecté ?",
+      '[AppRoutes Debug] Rendu avec user :',
       !!state.user,
-      "| isLoading ?",
+      'isLoading :',
       state.isLoading,
-      "| chemin :",
+      'chemin actuel :',
       currentPath
     );
 
     if (state.user) {
-      console.log("🔥 [AppRoutes] UTILISATEUR CONNECTÉ DÉTECTÉ");
-
-      // Conditions élargies pour forcer la redirection vers accueil
-      const isPublicPage =
+      if (
         currentPath.includes('/welcome') ||
-        currentPath.includes('/login') ||
-        currentPath === '/' ||
+        currentPath === '/' + window.location.hash ||
         currentPath === '/#' ||
         currentPath === '' ||
-        currentPath === '/KingMenu/' ||
-        currentPath === '/KingMenu' ||
-        currentPath === '/KingMenu/#' ||
-        currentPath === '/KingMenu/#/' ||
-        currentPath.includes('#welcome') ||
-        currentPath.includes('#login');
-
-      if (isPublicPage) {
-        console.log("🔥 [AppRoutes] Page publique détectée → REDIRECTION FORCÉE VERS /");
+        currentPath.includes('/login')
+      ) {
+        console.log('[AppRoutes] Utilisateur connecté → FORCED REDIRECT vers /');
         navigate('/', { replace: true });
-      } else {
-        console.log("🔥 [AppRoutes] Déjà sur une page protégée → OK");
       }
-    } else {
-      console.log("🔥 [AppRoutes] Pas d'utilisateur connecté");
     }
-  }, [state.user, state.isLoading, navigate, window.location.pathname, window.location.hash]);
+  }, [state.user, state.isLoading, navigate]);
 
   if (state.isLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
         <div className="animate-spin h-12 w-12 rounded-full border-4 border-orange-500 border-t-transparent mb-4" />
-        <p className="text-gray-600 font-medium">Vérification de la session en cours...</p>
+        <p className="text-gray-600 font-medium">Vérification de la session...</p>
       </div>
     );
   }
