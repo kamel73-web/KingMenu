@@ -29,7 +29,7 @@ import { App as CapacitorApp } from '@capacitor/app';
 import { supabase } from "./lib/supabase";
 import toast from "react-hot-toast";
 
-// Error Boundary simple
+// Error Boundary
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
   state = { hasError: false };
   static getDerivedStateFromError() {
@@ -40,7 +40,7 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
       return (
         <div className="min-h-screen flex items-center justify-center text-red-600 p-4 text-center">
           Une erreur inattendue s'est produite.<br />
-          Veuillez recharger la page ou contacter le support.
+          Veuillez recharger la page.
         </div>
       );
     }
@@ -54,18 +54,15 @@ function AppRoutes() {
   useTranslation();
   const navigate = useNavigate();
 
-  // Listener deep-link OAuth (mobile uniquement)
+  // Listener deep-link mobile
   React.useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
-
     const listener = CapacitorApp.addListener('appUrlOpen', async (event) => {
       try {
-        console.log('[Mobile Deep Link] URL reçue :', event.url);
         const url = new URL(event.url);
         const params = new URLSearchParams(url.hash.substring(1));
         const access_token = params.get('access_token');
         const refresh_token = params.get('refresh_token');
-
         if (access_token && refresh_token) {
           const { error } = await supabase.auth.setSession({
             access_token,
@@ -77,36 +74,30 @@ function AppRoutes() {
         }
       } catch (err) {
         console.error("Erreur deep-link OAuth:", err);
-        toast.error("Échec de la connexion après retour");
+        toast.error("Échec connexion après retour");
       }
     });
     return () => listener.remove();
   }, [navigate]);
 
-  // Gestion manuelle du hash OAuth sur web (GitHub Pages)
+  // Gestion hash OAuth sur web
   React.useEffect(() => {
-    if (Capacitor.isNativePlatform()) return; // Seulement sur web
-
+    if (Capacitor.isNativePlatform()) return;
     const hash = window.location.hash.substring(1);
     const params = new URLSearchParams(hash);
-
     const access_token = params.get('access_token');
     const refresh_token = params.get('refresh_token');
-
     if (access_token && refresh_token) {
-      console.log('[Web OAuth] Hash tokens détectés → setSession manuel');
+      console.log('[Web OAuth] Hash détecté → setSession');
       supabase.auth.setSession({
         access_token,
         refresh_token,
       }).then(({ error }) => {
         if (error) {
           console.error('[Web OAuth] Erreur setSession :', error);
-          toast.error("Échec session Google");
         } else {
-          console.log('[Web OAuth] Session set OK → nettoyage hash + redirect');
-          // Nettoyage du hash pour propre URL
+          console.log('[Web OAuth] Session set OK → nettoyage hash');
           window.location.hash = '';
-          // Force navigation vers accueil protégé
           navigate('/', { replace: true });
           toast.success("Connexion Google réussie");
         }
@@ -114,30 +105,42 @@ function AppRoutes() {
     }
   }, [navigate]);
 
-  // Force redirection si user connecté mais sur page publique
+  // Redirection forcée + re-render hack
   React.useEffect(() => {
     if (state.isLoading) return;
 
     const currentPath = window.location.pathname + window.location.hash;
     console.log(
-      '[AppRoutes Debug] Rendu avec user :',
+      '[AppRoutes Debug] user :',
       !!state.user,
-      'isLoading :',
+      'loading :',
       state.isLoading,
-      'chemin actuel :',
+      'chemin :',
       currentPath
     );
 
     if (state.user) {
-      if (
+      const isPublic =
         currentPath.includes('/welcome') ||
-        currentPath === '/' + window.location.hash ||
+        currentPath.includes('/login') ||
+        currentPath === '/' ||
         currentPath === '/#' ||
         currentPath === '' ||
-        currentPath.includes('/login')
-      ) {
-        console.log('[AppRoutes] Utilisateur connecté → FORCED REDIRECT vers /');
+        currentPath === '/KingMenu/' ||
+        currentPath === '/KingMenu' ||
+        currentPath === '/KingMenu/#' ||
+        currentPath === '/KingMenu/#/';
+
+      if (isPublic) {
+        console.log('[AppRoutes] REDIRECTION FORCÉE VERS /');
         navigate('/', { replace: true });
+        // Hack ultime : recharger la page si toujours bloqué
+        setTimeout(() => {
+          if (window.location.hash.includes('/welcome')) {
+            console.log('[AppRoutes] Hack : reload forcé après timeout');
+            window.location.reload();
+          }
+        }, 1000);
       }
     }
   }, [state.user, state.isLoading, navigate]);
@@ -146,7 +149,7 @@ function AppRoutes() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
         <div className="animate-spin h-12 w-12 rounded-full border-4 border-orange-500 border-t-transparent mb-4" />
-        <p className="text-gray-600 font-medium">Vérification de la session...</p>
+        <p className="text-gray-600 font-medium">Vérification session...</p>
       </div>
     );
   }
@@ -155,7 +158,7 @@ function AppRoutes() {
     <div className={`min-h-screen ${isRTL ? "rtl" : "ltr"}`}>
       <ErrorBoundary>
         {state.user && <Navbar />}
-        <Routes>
+        <Routes key={state.user ? 'protected' : 'public'}>
           <Route
             path="/welcome"
             element={state.user ? <Navigate to="/" replace /> : <PublicLandingPage />}
