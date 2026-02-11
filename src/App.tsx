@@ -57,12 +57,14 @@ function AppRoutes() {
   // Listener deep-link mobile
   React.useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
+
     const listener = CapacitorApp.addListener('appUrlOpen', async (event) => {
       try {
         const url = new URL(event.url);
         const params = new URLSearchParams(url.hash.substring(1));
         const access_token = params.get('access_token');
         const refresh_token = params.get('refresh_token');
+
         if (access_token && refresh_token) {
           const { error } = await supabase.auth.setSession({
             access_token,
@@ -77,37 +79,11 @@ function AppRoutes() {
         toast.error("Échec connexion après retour");
       }
     });
+
     return () => listener.remove();
   }, [navigate]);
-  
-  // Ajoutez ceci dans AppRoutes, après le listener mobile
-React.useEffect(() => {
-  if (Capacitor.isNativePlatform()) return;
 
-  const hash = window.location.hash.substring(1);
-  const params = new URLSearchParams(hash);
-  const access_token = params.get('access_token');
-  const refresh_token = params.get('refresh_token');
-
-  if (access_token && refresh_token) {
-    console.log('[Web OAuth] Hash détecté → setSession manuel');
-    supabase.auth.setSession({
-      access_token,
-      refresh_token,
-    }).then(({ error }) => {
-      if (error) {
-        console.error('[Web OAuth] Erreur setSession :', error);
-      } else {
-        console.log('[Web OAuth] Session set OK → nettoyage hash + HARD RELOAD');
-        window.location.hash = '';
-        window.location.reload();
-        toast.success("Connexion Google réussie");
-      }
-    });
-  }
-}, [navigate]);
-
-  // Parser hash OAuth sur web + HARD RELOAD pour casser la race condition
+  // Gestion hash OAuth sur web + HARD RELOAD pour casser la race condition
   React.useEffect(() => {
     if (Capacitor.isNativePlatform()) return;
 
@@ -117,7 +93,7 @@ React.useEffect(() => {
     const refresh_token = params.get('refresh_token');
 
     if (access_token && refresh_token) {
-      console.log('[Web OAuth] Hash détecté → setSession');
+      console.log('[Web OAuth] Hash détecté → setSession manuel');
       supabase.auth.setSession({
         access_token,
         refresh_token,
@@ -128,15 +104,14 @@ React.useEffect(() => {
         } else {
           console.log('[Web OAuth] Session set OK → nettoyage hash + HARD RELOAD');
           window.location.hash = '';
-          // HARD RELOAD : recharge avec session déjà présente → state.user true dès le départ
-          window.location.reload();
+          window.location.reload(); // Recharge avec session déjà présente
           toast.success("Connexion Google réussie");
         }
       });
     }
   }, [navigate]);
 
-  // Redirection forcée (backup)
+  // Redirection forcée renforcée
   React.useEffect(() => {
     if (state.isLoading) return;
 
