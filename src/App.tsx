@@ -83,7 +83,7 @@ function AppRoutes() {
     return () => listener.remove();
   }, [navigate]);
 
-  // Gestion hash OAuth sur web + HARD RELOAD pour casser la race condition
+  // Gestion hash OAuth sur web + HARD RELOAD
   React.useEffect(() => {
     if (Capacitor.isNativePlatform()) return;
 
@@ -93,56 +93,22 @@ function AppRoutes() {
     const refresh_token = params.get('refresh_token');
 
     if (access_token && refresh_token) {
-      console.log('[Web OAuth] Hash détecté → setSession manuel');
+      console.log('[Web OAuth] Hash détecté → setSession');
       supabase.auth.setSession({
         access_token,
         refresh_token,
       }).then(({ error }) => {
         if (error) {
           console.error('[Web OAuth] Erreur setSession :', error);
-          toast.error("Échec session Google");
         } else {
-          console.log('[Web OAuth] Session set OK → nettoyage hash + HARD RELOAD');
+          console.log('[Web OAuth] Session set OK → HARD RELOAD');
           window.location.hash = '';
-          window.location.reload(); // Recharge avec session déjà présente
+          window.location.reload(); // Recharge avec session présente
           toast.success("Connexion Google réussie");
         }
       });
     }
   }, [navigate]);
-
-  // Redirection forcée renforcée
-  React.useEffect(() => {
-    if (state.isLoading) return;
-
-    const currentPath = window.location.pathname + window.location.hash;
-    console.log(
-      '[AppRoutes Debug] user :',
-      !!state.user,
-      'loading :',
-      state.isLoading,
-      'chemin :',
-      currentPath
-    );
-
-    if (state.user) {
-      const isPublic =
-        currentPath.includes('/welcome') ||
-        currentPath.includes('/login') ||
-        currentPath === '/' ||
-        currentPath === '/#' ||
-        currentPath === '' ||
-        currentPath === '/KingMenu/' ||
-        currentPath === '/KingMenu' ||
-        currentPath === '/KingMenu/#' ||
-        currentPath === '/KingMenu/#/';
-
-      if (isPublic) {
-        console.log('[AppRoutes] REDIRECTION FORCÉE VERS /');
-        navigate('/', { replace: true });
-      }
-    }
-  }, [state.user, state.isLoading, navigate]);
 
   if (state.isLoading) {
     return (
