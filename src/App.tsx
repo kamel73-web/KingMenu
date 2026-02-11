@@ -80,7 +80,7 @@ function AppRoutes() {
     return () => listener.remove();
   }, [navigate]);
 
-  // Parser hash OAuth sur web + hard reload
+  // Gestion hash OAuth sur web + hard reload
   React.useEffect(() => {
     if (Capacitor.isNativePlatform()) return;
 
@@ -98,9 +98,9 @@ function AppRoutes() {
         if (error) {
           console.error('[Web OAuth] Erreur setSession :', error);
         } else {
-          console.log('[Web OAuth] Session set OK');
-          // Nettoyage hash + hard reload pour forcer re-render avec session
+          console.log('[Web OAuth] Session set OK → nettoyage hash + HARD RELOAD');
           window.location.hash = '';
+          // Hard reload pour forcer re-render avec session déjà présente
           window.location.reload();
           toast.success("Connexion Google réussie");
         }
