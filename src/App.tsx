@@ -80,13 +80,15 @@ function AppRoutes() {
     return () => listener.remove();
   }, [navigate]);
 
-  // Gestion hash OAuth sur web
+  // Parser hash OAuth sur web + hard reload
   React.useEffect(() => {
     if (Capacitor.isNativePlatform()) return;
+
     const hash = window.location.hash.substring(1);
     const params = new URLSearchParams(hash);
     const access_token = params.get('access_token');
     const refresh_token = params.get('refresh_token');
+
     if (access_token && refresh_token) {
       console.log('[Web OAuth] Hash détecté → setSession');
       supabase.auth.setSession({
@@ -96,16 +98,17 @@ function AppRoutes() {
         if (error) {
           console.error('[Web OAuth] Erreur setSession :', error);
         } else {
-          console.log('[Web OAuth] Session set OK → nettoyage hash');
+          console.log('[Web OAuth] Session set OK');
+          // Nettoyage hash + hard reload pour forcer re-render avec session
           window.location.hash = '';
-          navigate('/', { replace: true });
+          window.location.reload();
           toast.success("Connexion Google réussie");
         }
       });
     }
   }, [navigate]);
 
-  // Redirection forcée + re-render hack
+  // Redirection forcée
   React.useEffect(() => {
     if (state.isLoading) return;
 
@@ -134,13 +137,6 @@ function AppRoutes() {
       if (isPublic) {
         console.log('[AppRoutes] REDIRECTION FORCÉE VERS /');
         navigate('/', { replace: true });
-        // Hack ultime : recharger la page si toujours bloqué
-        setTimeout(() => {
-          if (window.location.hash.includes('/welcome')) {
-            console.log('[AppRoutes] Hack : reload forcé après timeout');
-            window.location.reload();
-          }
-        }, 1000);
       }
     }
   }, [state.user, state.isLoading, navigate]);
