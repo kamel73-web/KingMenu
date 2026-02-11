@@ -101,7 +101,7 @@ function AppRoutes() {
         } else {
           console.log('[Web OAuth] Session set OK → nettoyage hash + HARD RELOAD');
           window.location.hash = '';
-          // Hard reload : recharge avec session déjà présente → state.user true dès le départ
+          // HARD RELOAD : recharge avec session déjà présente → state.user true dès le départ
           window.location.reload();
           toast.success("Connexion Google réussie");
         }
