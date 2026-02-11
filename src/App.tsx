@@ -79,6 +79,33 @@ function AppRoutes() {
     });
     return () => listener.remove();
   }, [navigate]);
+  
+  // Ajoutez ceci dans AppRoutes, après le listener mobile
+React.useEffect(() => {
+  if (Capacitor.isNativePlatform()) return;
+
+  const hash = window.location.hash.substring(1);
+  const params = new URLSearchParams(hash);
+  const access_token = params.get('access_token');
+  const refresh_token = params.get('refresh_token');
+
+  if (access_token && refresh_token) {
+    console.log('[Web OAuth] Hash détecté → setSession manuel');
+    supabase.auth.setSession({
+      access_token,
+      refresh_token,
+    }).then(({ error }) => {
+      if (error) {
+        console.error('[Web OAuth] Erreur setSession :', error);
+      } else {
+        console.log('[Web OAuth] Session set OK → nettoyage hash + HARD RELOAD');
+        window.location.hash = '';
+        window.location.reload();
+        toast.success("Connexion Google réussie");
+      }
+    });
+  }
+}, [navigate]);
 
   // Parser hash OAuth sur web + HARD RELOAD pour casser la race condition
   React.useEffect(() => {
