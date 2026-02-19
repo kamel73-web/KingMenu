@@ -1,8 +1,14 @@
-const handleSocialLogin = (provider) => {
-    const redirectTo = '/KingMenu/';
-    // Logic for handling social login based on the provider
-    // Use the redirectTo URL for redirection
-    //... other code regarding social login
+// Import necessary dependencies
+import React from 'react';
+import { Redirect } from 'react-router-dom';
+
+const LoginForm = () => {
+    // Logic for handling OAuth and redirecting
+    const redirectTo = "/#/login"; // Updated URL for redirect
+
+    // other code...
+
+    return (<Redirect to={redirectTo} />);
 };
 
-// Additional logic related to social login
+export default LoginForm;
