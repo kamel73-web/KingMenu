@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
 
 export default defineConfig({
+  // Base pour GitHub Pages (obligatoire)
   base: '/KingMenu/',
 
   plugins: [react()],
@@ -14,15 +15,15 @@ export default defineConfig({
     },
   },
 
-  // EXTERNALISER Capacitor pour la build web (clé pour résoudre l'erreur)
+  // EXTERNALISER Capacitor (clé pour éviter l'erreur Rollup sur web)
   build: {
     chunkSizeWarningLimit: 1200,
-
     rollupOptions: {
       external: [
         '@capacitor/core',
         '@capacitor/app',
-        '@capacitor/android', // au cas où importé ailleurs
+        '@capacitor/android',
+        // Ajoutez d'autres plugins Capacitor si vous en avez (ex: @capacitor/camera, etc.)
       ],
     },
   },
