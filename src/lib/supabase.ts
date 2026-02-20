@@ -20,7 +20,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: true,           // Stocke la session dans localStorage
     autoRefreshToken: true,         // Rafraîchit automatiquement le token
-    detectSessionInUrl: true,       // Essentiel pour GitHub Pages + HashRouter + OAuth
+    detectSessionInUrl: false,       // Essentiel pour GitHub Pages + HashRouter + OAuth
     storageKey: 'kingmenu.auth.token', // Préfixe custom pour éviter conflits
   },
 });
