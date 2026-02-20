@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
 
 export default defineConfig({
-  // Chemin de base pour GitHub Pages (repo KingMenu)
+  // Chemin de base obligatoire pour GitHub Pages (repo KingMenu)
   base: '/KingMenu/',
 
   plugins: [react()],
@@ -15,18 +15,28 @@ export default defineConfig({
     },
   },
 
-  // PAS DE DEFINE pour Supabase ici !
-  // → Utilisez .env.local ou .env pour VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY
-  // Vite les expose automatiquement via import.meta.env.VITE_...
-
-  // Optionnel : augmente la limite de warning chunks (votre build a des gros chunks)
+  // Externaliser les modules Capacitor (important pour build web)
+  // → ils ne doivent pas être bundlés sur web (seulement sur mobile)
   build: {
-    chunkSizeWarningLimit: 1200, // ou 1500 si vous gardez html2canvas/jspdf
+    chunkSizeWarningLimit: 1200,
+    rollupOptions: {
+      external: [
+        '@capacitor/core',
+        '@capacitor/app',
+        // Ajoutez ici d'autres plugins Capacitor si vous en utilisez (ex: @capacitor/camera)
+      ],
+    },
   },
 
-  // Optionnel : server pour dev local (utile si vous testez avec proxy)
+  // Optimisations dev (facultatif mais utile)
   server: {
     port: 5173,
     open: true,
+    hmr: true, // Hot Module Replacement activé
+  },
+
+  // Optimisations production (facultatif)
+  optimizeDeps: {
+    exclude: ['@capacitor/core', '@capacitor/app'],
   },
 });
