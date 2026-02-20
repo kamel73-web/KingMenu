@@ -67,9 +67,9 @@ export default function LoginForm() {
       if (isNative) {
         redirectTo = 'com.kingmenu.app://';
       } else {
-        // Web / GitHub Pages : toujours forcer le chemin complet /KingMenu/
-        const base = window.location.origin + '/KingMenu/login';
-        redirectTo = base.split('#')[0]; // enlève tout hash existant
+        // IMPORTANT : pointe vers la RACINE pour éviter bad_oauth_state sur GitHub Pages
+        redirectTo = window.location.origin + '/KingMenu/';
+        redirectTo = redirectTo.replace(/\/$/, ''); // enlève slash final
       }
 
       console.log('[OAuth Debug] redirectTo envoyé à Supabase :', redirectTo);
@@ -86,12 +86,12 @@ export default function LoginForm() {
       });
 
       if (error) {
+        console.error('[OAuth Error] Supabase signInWithOAuth error:', error);
         setError(error.message);
-        toast.error("Erreur lors de l'initiation Google : " + error.message);
+        toast.error("Erreur initiation Google : " + error.message);
         throw error;
       }
 
-      // Le redirect se fait automatiquement par Supabase
       console.log('[OAuth Debug] Auth Google initiée, attente du redirect...');
     } catch (err: any) {
       const msg = err?.message || 'Erreur connexion Google';
