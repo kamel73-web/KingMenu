@@ -4,7 +4,6 @@ import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
 
 export default defineConfig({
-  // Chemin de base obligatoire pour GitHub Pages (repo KingMenu)
   base: '/KingMenu/',
 
   plugins: [react()],
@@ -15,28 +14,30 @@ export default defineConfig({
     },
   },
 
-  // Externaliser les modules Capacitor (important pour build web)
-  // → ils ne doivent pas être bundlés sur web (seulement sur mobile)
   build: {
     chunkSizeWarningLimit: 1200,
+
+    // EXTERNALISER les modules Capacitor pour la build web
     rollupOptions: {
       external: [
         '@capacitor/core',
         '@capacitor/app',
-        // Ajoutez ici d'autres plugins Capacitor si vous en utilisez (ex: @capacitor/camera)
+        '@capacitor/android', // au cas où
       ],
     },
   },
 
-  // Optimisations dev (facultatif mais utile)
+  // Accélère le dev server (ignore Capacitor en dev)
+  optimizeDeps: {
+    exclude: [
+      '@capacitor/core',
+      '@capacitor/app',
+      '@capacitor/android',
+    ],
+  },
+
   server: {
     port: 5173,
     open: true,
-    hmr: true, // Hot Module Replacement activé
-  },
-
-  // Optimisations production (facultatif)
-  optimizeDeps: {
-    exclude: ['@capacitor/core', '@capacitor/app'],
   },
 });
