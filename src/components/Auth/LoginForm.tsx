@@ -67,9 +67,9 @@ export default function LoginForm() {
       if (isNative) {
         redirectTo = 'com.kingmenu.app://';
       } else {
-        // IMPORTANT : pointe vers la RACINE pour éviter bad_oauth_state sur GitHub Pages
+        // RACINE complète pour éviter bad_oauth_state
         redirectTo = window.location.origin + '/KingMenu/';
-        redirectTo = redirectTo.replace(/\/$/, ''); // enlève slash final
+        redirectTo = redirectTo.replace(/\/$/, ''); // enlève slash final si présent
       }
 
       console.log('[OAuth Debug] redirectTo envoyé à Supabase :', redirectTo);
@@ -78,6 +78,7 @@ export default function LoginForm() {
         provider,
         options: {
           redirectTo,
+          skipNonce: true,          // ← Désactive state/nonce → résout bad_oauth_state
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
@@ -86,18 +87,18 @@ export default function LoginForm() {
       });
 
       if (error) {
-        console.error('[OAuth Error] Supabase signInWithOAuth error:', error);
+        console.error('[OAuth Error] Supabase signInWithOAuth a échoué :', error);
         setError(error.message);
-        toast.error("Erreur initiation Google : " + error.message);
+        toast.error("Erreur initiation Google : " + (error.message || 'Erreur inconnue'));
         throw error;
       }
 
-      console.log('[OAuth Debug] Auth Google initiée, attente du redirect...');
+      console.log('[OAuth Debug] Google OAuth lancé avec succès, attente du redirect...');
     } catch (err: any) {
       const msg = err?.message || 'Erreur connexion Google';
       setError(msg);
       toast.error(msg);
-      console.error('[OAuth Error]', err);
+      console.error('[OAuth Fatal Error]', err);
     } finally {
       setIsLoading(false);
     }
@@ -169,7 +170,7 @@ export default function LoginForm() {
             </div>
 
             {error && (
-              <p className="text-red-600 text-sm text-center">{error}</p>
+              <p className="text-red-600 text-sm text-center bg-red-50 p-2 rounded">{error}</p>
             )}
 
             <button
@@ -190,10 +191,11 @@ export default function LoginForm() {
           <button
             onClick={() => handleSocialLogin("google")}
             disabled={isLoading}
-            className={`w-full border border-gray-300 py-3 rounded-lg font-medium transition-colors ${
+            className={`w-full border border-gray-300 py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${
               isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50"
             }`}
           >
+            <img src="https://www.google.com/favicon.ico" alt="Google" className="w-5 h-5" />
             Continuer avec Google
           </button>
         </div>
