@@ -14,20 +14,20 @@ export default defineConfig({
     },
   },
 
+  // EXTERNALISER Capacitor pour la build web (clé pour résoudre l'erreur)
   build: {
     chunkSizeWarningLimit: 1200,
 
-    // EXTERNALISER les modules Capacitor pour la build web
     rollupOptions: {
       external: [
         '@capacitor/core',
         '@capacitor/app',
-        '@capacitor/android', // au cas où
+        '@capacitor/android', // au cas où importé ailleurs
       ],
     },
   },
 
-  // Accélère le dev server (ignore Capacitor en dev)
+  // Accélère le dev et évite les erreurs de résolution Capacitor
   optimizeDeps: {
     exclude: [
       '@capacitor/core',
