@@ -67,9 +67,9 @@ export default function LoginForm() {
       if (isNative) {
         redirectTo = 'com.kingmenu.app://';
       } else {
-        // RACINE complète pour éviter bad_oauth_state
+        // RACINE complète → résout le mismatch state sur GitHub Pages
         redirectTo = window.location.origin + '/KingMenu/';
-        redirectTo = redirectTo.replace(/\/$/, ''); // enlève slash final si présent
+        redirectTo = redirectTo.replace(/\/$/, ''); // enlève slash final
       }
 
       console.log('[OAuth Debug] redirectTo envoyé à Supabase :', redirectTo);
@@ -78,7 +78,7 @@ export default function LoginForm() {
         provider,
         options: {
           redirectTo,
-          skipNonce: true,          // ← Désactive state/nonce → résout bad_oauth_state
+          skipNonce: true,          // ← IMPORTANT : désactive state/nonce → élimine bad_oauth_state
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
@@ -89,7 +89,7 @@ export default function LoginForm() {
       if (error) {
         console.error('[OAuth Error] Supabase signInWithOAuth a échoué :', error);
         setError(error.message);
-        toast.error("Erreur initiation Google : " + (error.message || 'Erreur inconnue'));
+        toast.error("Erreur Google : " + (error.message || 'Erreur inconnue'));
         throw error;
       }
 
@@ -170,7 +170,9 @@ export default function LoginForm() {
             </div>
 
             {error && (
-              <p className="text-red-600 text-sm text-center bg-red-50 p-2 rounded">{error}</p>
+              <p className="text-red-600 text-sm text-center bg-red-50 p-3 rounded border border-red-200">
+                {error}
+              </p>
             )}
 
             <button
@@ -192,10 +194,15 @@ export default function LoginForm() {
             onClick={() => handleSocialLogin("google")}
             disabled={isLoading}
             className={`w-full border border-gray-300 py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${
-              isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50"
+              isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50 active:bg-gray-100"
             }`}
           >
-            <img src="https://www.google.com/favicon.ico" alt="Google" className="w-5 h-5" />
+            <img 
+              src="https://www.google.com/favicon.ico" 
+              alt="Google" 
+              className="w-5 h-5" 
+              onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/20?text=G'; }}
+            />
             Continuer avec Google
           </button>
         </div>
