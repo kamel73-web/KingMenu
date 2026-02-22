@@ -29,7 +29,7 @@ import { App as CapacitorApp } from '@capacitor/app';
 import { supabase } from "./lib/supabase";
 import toast from "react-hot-toast";
 
-// Error Boundary
+// ---------------- ERROR BOUNDARY ----------------
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
   state = { hasError: false };
 
@@ -50,13 +50,14 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
   }
 }
 
+// ---------------- APP ROUTES ----------------
 function AppRoutes() {
   const { state } = useApp();
   const { isRTL } = useRTL();
   useTranslation();
   const navigate = useNavigate();
 
-  // Listener deep-link OAuth (mobile uniquement)
+  // 1️⃣ Listener deep-link OAuth mobile
   React.useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
 
@@ -68,13 +69,10 @@ function AppRoutes() {
         const refresh_token = params.get('refresh_token');
 
         if (access_token && refresh_token) {
-          const { error } = await supabase.auth.setSession({
-            access_token,
-            refresh_token,
-          });
+          const { error } = await supabase.auth.setSession({ access_token, refresh_token });
           if (error) throw error;
           toast.success("Connexion Google réussie");
-          navigate('/', { replace: true });
+          navigate('/meal-plan', { replace: true });
         }
       } catch (err) {
         console.error("Erreur deep-link OAuth:", err);
@@ -85,7 +83,7 @@ function AppRoutes() {
     return () => listener.remove();
   }, [navigate]);
 
-  // Gestion hash OAuth sur web + HARD RELOAD pour casser la race condition
+  // 2️⃣ Gestion hash OAuth web (sans reload)
   React.useEffect(() => {
     if (Capacitor.isNativePlatform()) return;
 
@@ -95,67 +93,31 @@ function AppRoutes() {
     const refresh_token = params.get('refresh_token');
 
     if (access_token && refresh_token) {
-      console.log('[Web OAuth] Hash détecté → setSession manuel');
-      supabase.auth.setSession({
-        access_token,
-        refresh_token,
-      }).then(({ error }) => {
-        if (error) {
-          console.error('[Web OAuth] Erreur setSession :', error);
-          toast.error("Échec session Google");
-        } else {
-          console.log('[Web OAuth] Session set OK → nettoyage hash + HARD RELOAD');
-          window.location.hash = '';
-          window.location.reload(); // Recharge avec session déjà présente
-          toast.success("Connexion Google réussie");
-        }
-      });
+      supabase.auth.setSession({ access_token, refresh_token })
+        .then(({ error }) => {
+          if (error) {
+            console.error('Erreur setSession web:', error);
+            toast.error("Échec session Google");
+          } else {
+            console.log('Session Google set OK');
+            window.location.hash = '';
+            toast.success("Connexion Google réussie");
+          }
+        });
     }
   }, [navigate]);
-  
-  // Redirection automatique après login si utilisateur connecté
-React.useEffect(() => {
-  if (state.user) {
-    const publicPaths = ['/welcome', '/login'];
-    if (publicPaths.includes(window.location.pathname)) {
-      navigate('/meal-plan', { replace: true }); // ou "/" selon ta logique
-    }
-  }
-}, [state.user, navigate]);
 
-  // Redirection forcée (backup si le reload ne suffit pas)
+  // 3️⃣ Redirection automatique vers page protégée après login
   React.useEffect(() => {
-    if (state.isLoading) return;
-
-    const currentPath = window.location.pathname + window.location.hash;
-    console.log(
-      '[AppRoutes Debug] user :',
-      !!state.user,
-      'loading :',
-      state.isLoading,
-      'chemin :',
-      currentPath
-    );
-
     if (state.user) {
-      const isPublic =
-        currentPath.includes('/welcome') ||
-        currentPath.includes('/login') ||
-        currentPath === '/' ||
-        currentPath === '/#' ||
-        currentPath === '' ||
-        currentPath === '/KingMenu/' ||
-        currentPath === '/KingMenu' ||
-        currentPath === '/KingMenu/#' ||
-        currentPath === '/KingMenu/#/';
-
-      if (isPublic) {
-        console.log('[AppRoutes] REDIRECTION FORCÉE VERS /');
-        navigate('/', { replace: true });
+      const publicPaths = ['/welcome', '/login', '/'];
+      if (publicPaths.includes(window.location.pathname)) {
+        navigate('/meal-plan', { replace: true });
       }
     }
-  }, [state.user, state.isLoading, navigate]);
+  }, [state.user, navigate]);
 
+  // ---------------- LOADING ----------------
   if (state.isLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
@@ -165,6 +127,7 @@ React.useEffect(() => {
     );
   }
 
+  // ---------------- ROUTES ----------------
   return (
     <div className={`min-h-screen ${isRTL ? "rtl" : "ltr"}`}>
       <ErrorBoundary>
@@ -172,7 +135,7 @@ React.useEffect(() => {
         <Routes key={state.user ? 'protected' : 'public'}>
           <Route
             path="/welcome"
-            element={state.user ? <Navigate to="/" replace /> : <PublicLandingPage />}
+            element={state.user ? <Navigate to="/meal-plan" replace /> : <PublicLandingPage />}
           />
           <Route
             path="/"
@@ -207,7 +170,7 @@ React.useEffect(() => {
           <Route path="/terms-of-use" element={<TermsOfUse />} />
           <Route
             path="*"
-            element={<Navigate to={state.user ? "/" : "/welcome"} replace />}
+            element={<Navigate to={state.user ? "/meal-plan" : "/welcome"} replace />}
           />
         </Routes>
       </ErrorBoundary>
@@ -215,6 +178,7 @@ React.useEffect(() => {
   );
 }
 
+// ---------------- APP ----------------
 export default function App() {
   return (
     <AppProvider>
