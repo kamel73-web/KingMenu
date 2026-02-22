@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { signInWithEmail, signUpWithEmail, supabase } from "../../lib/supabase";
 import LanguageSelector from "../LanguageSelector/LanguageSelector";
 import toast from "react-hot-toast";
-import { Capacitor } from '@capacitor/core';
+import { Capacitor } from "@capacitor/core";
 
 export default function LoginForm() {
   const { t } = useTranslation();
@@ -20,6 +20,9 @@ export default function LoginForm() {
     name: "",
   });
 
+  /* =========================
+     EMAIL / PASSWORD
+  ========================= */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -45,7 +48,9 @@ export default function LoginForm() {
         return;
       }
 
-      toast.success(isLogin ? "Connexion réussie !" : "Compte créé avec succès !");
+      toast.success(
+        isLogin ? "Connexion réussie !" : "Compte créé avec succès !"
+      );
     } catch (err: any) {
       const msg = err?.message || "Une erreur est survenue";
       setError(msg);
@@ -56,7 +61,10 @@ export default function LoginForm() {
     }
   };
 
-  const handleSocialLogin = async (provider: 'google') => {
+  /* =========================
+     GOOGLE OAUTH (CORRIGÉ)
+  ========================= */
+  const handleSocialLogin = async (provider: "google") => {
     try {
       setError(null);
       setIsLoading(true);
@@ -65,40 +73,35 @@ export default function LoginForm() {
       let redirectTo: string;
 
       if (isNative) {
-        redirectTo = 'com.kingmenu.app://';
+        redirectTo = "com.kingmenu.app://";
       } else {
-        // RACINE complète → résout le mismatch state sur GitHub Pages
-        redirectTo = window.location.origin + '/KingMenu/';
-        redirectTo = redirectTo.replace(/\/$/, ''); // enlève slash final
+        // ✅ IMPORTANT : compatible HashRouter + GitHub Pages
+        redirectTo = window.location.origin + "/KingMenu/#/";
       }
 
-      console.log('[OAuth Debug] redirectTo envoyé à Supabase :', redirectTo);
+      console.log("[OAuth Debug] redirectTo:", redirectTo);
 
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
           redirectTo,
-          skipNonce: true,          // ← IMPORTANT : désactive state/nonce → élimine bad_oauth_state
           queryParams: {
-            access_type: 'offline',
-            prompt: 'consent',
+            access_type: "offline",
+            prompt: "consent",
           },
         },
       });
 
       if (error) {
-        console.error('[OAuth Error] Supabase signInWithOAuth a échoué :', error);
         setError(error.message);
-        toast.error("Erreur Google : " + (error.message || 'Erreur inconnue'));
-        throw error;
+        toast.error("Erreur Google : " + error.message);
+        console.error("OAuth error:", error);
       }
-
-      console.log('[OAuth Debug] Google OAuth lancé avec succès, attente du redirect...');
     } catch (err: any) {
-      const msg = err?.message || 'Erreur connexion Google';
+      const msg = err?.message || "Erreur connexion Google";
       setError(msg);
       toast.error(msg);
-      console.error('[OAuth Fatal Error]', err);
+      console.error("OAuth fatal error:", err);
     } finally {
       setIsLoading(false);
     }
@@ -112,58 +115,74 @@ export default function LoginForm() {
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-8">
-          {/* Switch Connexion / Inscription */}
+          {/* Switch */}
           <div className="flex mb-6 bg-gray-50 rounded-lg overflow-hidden">
             <button
               onClick={() => setIsLogin(true)}
-              className={`flex-1 py-3 font-medium ${isLogin ? "bg-orange-500 text-white" : "text-gray-600"}`}
+              className={`flex-1 py-3 font-medium ${
+                isLogin ? "bg-orange-500 text-white" : "text-gray-600"
+              }`}
             >
               {t("auth.login") || "Connexion"}
             </button>
             <button
               onClick={() => setIsLogin(false)}
-              className={`flex-1 py-3 font-medium ${!isLogin ? "bg-orange-500 text-white" : "text-gray-600"}`}
+              className={`flex-1 py-3 font-medium ${
+                !isLogin ? "bg-orange-500 text-white" : "text-gray-600"
+              }`}
             >
               {t("auth.signUp") || "Inscription"}
             </button>
           </div>
 
-          {/* Formulaire */}
+          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
               <input
                 type="text"
                 placeholder={t("auth.fullName") || "Nom complet"}
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
               />
             )}
 
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <Mail
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                size={18}
+              />
               <input
                 type="email"
                 placeholder={t("auth.email") || "Email"}
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
               />
             </div>
 
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <Lock
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                size={18}
+              />
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder={t("auth.password") || "Mot de passe"}
                 value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+                className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -178,11 +197,17 @@ export default function LoginForm() {
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full py-3 rounded-lg text-white font-medium transition-colors ${
-                isLoading ? "bg-orange-300 cursor-not-allowed" : "bg-orange-500 hover:bg-orange-600"
+              className={`w-full py-3 rounded-lg text-white font-medium ${
+                isLoading
+                  ? "bg-orange-300 cursor-not-allowed"
+                  : "bg-orange-500 hover:bg-orange-600"
               }`}
             >
-              {isLoading ? "Chargement..." : isLogin ? t("auth.login") : t("auth.signUp")}
+              {isLoading
+                ? "Chargement..."
+                : isLogin
+                ? t("auth.login")
+                : t("auth.signUp")}
             </button>
           </form>
 
@@ -193,14 +218,12 @@ export default function LoginForm() {
           <button
             onClick={() => handleSocialLogin("google")}
             disabled={isLoading}
-            className={`w-full border border-gray-300 py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${
-              isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50 active:bg-gray-100"
-            }`}
+            className="w-full border border-gray-300 py-3 rounded-lg font-medium flex items-center justify-center gap-2 hover:bg-gray-50"
           >
-            <img 
-              src="/KingMenu/google-icon.png" 
-              alt="Google" 
-              className="w-5 h-5" 
+            <img
+              src="/KingMenu/google-icon.png"
+              alt="Google"
+              className="w-5 h-5"
             />
             Continuer avec Google
           </button>
