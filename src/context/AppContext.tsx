@@ -3,8 +3,16 @@ import React, { createContext, useContext, useEffect, useReducer } from "react";
 import { supabase } from "../lib/supabase";
 
 type User = { id: string; email: string; name: string };
-type State = { user: User | null; isLoading: boolean };
-const initialState: State = { user: null, isLoading: true };
+
+type State = {
+  user: User | null;
+  isLoading: boolean;
+};
+
+const initialState: State = {
+  user: null,
+  isLoading: true,
+};
 
 type Action =
   | { type: "SET_USER"; payload: User }
@@ -13,10 +21,14 @@ type Action =
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
-    case "SET_USER": return { ...state, user: action.payload, isLoading: false };
-    case "LOGOUT": return { ...state, user: null, isLoading: false };
-    case "SET_LOADING": return { ...state, isLoading: action.payload };
-    default: return state;
+    case "SET_USER":
+      return { user: action.payload, isLoading: false };
+    case "LOGOUT":
+      return { user: null, isLoading: false };
+    case "SET_LOADING":
+      return { ...state, isLoading: action.payload };
+    default:
+      return state;
   }
 }
 
@@ -28,61 +40,81 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     let isMounted = true;
 
-    async function handleOAuthHash() {
-      // Vérifie s'il y a un hash OAuth dans l'URL
-      const hash = window.location.hash.substring(1);
-      if (!hash.includes("access_token")) return;
-
-      const params = new URLSearchParams(hash);
-      const access_token = params.get("access_token");
-      const refresh_token = params.get("refresh_token");
-
-      if (access_token && refresh_token) {
-        await supabase.auth.setSession({ access_token, refresh_token });
-        window.location.hash = ""; // Nettoie le hash pour React Router
-      }
-    }
-
-    async function hydrate() {
+    const initAuth = async () => {
       try {
-        await handleOAuthHash();
+        console.log("🔥 [AppContext] Initialisation auth...");
 
-        const { data: { session } } = await supabase.auth.getSession();
+        // ✅ TRAITEMENT OAUTH (Google)
+        const { data, error } = await supabase.auth.getSessionFromUrl({
+          storeSession: true,
+        });
+
+        if (error) {
+          console.error("❌ Erreur getSessionFromUrl:", error);
+        }
+
+        if (data?.session) {
+          console.log("✅ Session récupérée depuis URL OAuth");
+        }
+
+        // ✅ Hydratation normale
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
+        if (!isMounted) return;
 
         if (session?.user) {
           const userData: User = {
             id: session.user.id,
             email: session.user.email || "",
-            name: session.user.user_metadata?.full_name || session.user.email || "Utilisateur",
+            name:
+              session.user.user_metadata?.full_name ||
+              session.user.email ||
+              "Utilisateur",
           };
+
           dispatch({ type: "SET_USER", payload: userData });
         } else {
           dispatch({ type: "SET_LOADING", payload: false });
         }
       } catch (err) {
-        console.error("Erreur hydratation OAuth :", err);
+        console.error("❌ Erreur hydratation OAuth:", err);
         dispatch({ type: "SET_LOADING", payload: false });
       }
-    }
+    };
 
-    hydrate();
+    initAuth();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    // 🔥 Listener Supabase
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("🔥 AUTH EVENT:", event);
+
       if (!isMounted) return;
+
       if (session?.user) {
         const userData: User = {
           id: session.user.id,
           email: session.user.email || "",
-          name: session.user.user_metadata?.full_name || session.user.email || "Utilisateur",
+          name:
+            session.user.user_metadata?.full_name ||
+            session.user.email ||
+            "Utilisateur",
         };
+
         dispatch({ type: "SET_USER", payload: userData });
       } else {
         dispatch({ type: "LOGOUT" });
       }
     });
 
+    // 🛟 Sécurité anti-blocage loading
     const safetyTimeout = setTimeout(() => {
-      if (isMounted && state.isLoading) dispatch({ type: "SET_LOADING", payload: false });
+      if (isMounted) {
+        dispatch({ type: "SET_LOADING", payload: false });
+      }
     }, 5000);
 
     return () => {
@@ -92,7 +124,11 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, []);
 
-  return <AppContext.Provider value={{ state, dispatch }}>{children}</AppContext.Provider>;
+  return (
+    <AppContext.Provider value={{ state, dispatch }}>
+      {children}
+    </AppContext.Provider>
+  );
 };
 
 export const useApp = () => useContext(AppContext);
