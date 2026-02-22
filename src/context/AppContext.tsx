@@ -2,21 +2,9 @@
 import React, { createContext, useContext, useEffect, useReducer } from "react";
 import { supabase } from "../lib/supabase";
 
-export type User = {
-  id: string;
-  email: string;
-  name: string;
-};
-
-type State = {
-  user: User | null;
-  isLoading: boolean;
-};
-
-const initialState: State = {
-  user: null,
-  isLoading: true,
-};
+type User = { id: string; email: string; name: string };
+type State = { user: User | null; isLoading: boolean };
+const initialState: State = { user: null, isLoading: true };
 
 type Action =
   | { type: "SET_USER"; payload: User }
@@ -25,24 +13,14 @@ type Action =
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
-    case "SET_USER":
-      return { ...state, user: action.payload, isLoading: false };
-    case "LOGOUT":
-      return { ...state, user: null, isLoading: false };
-    case "SET_LOADING":
-      return { ...state, isLoading: action.payload };
-    default:
-      return state;
+    case "SET_USER": return { ...state, user: action.payload, isLoading: false };
+    case "LOGOUT": return { ...state, user: null, isLoading: false };
+    case "SET_LOADING": return { ...state, isLoading: action.payload };
+    default: return state;
   }
 }
 
-// Définition TS stricte pour le context
-type AppContextType = {
-  state: State;
-  dispatch: React.Dispatch<Action>;
-};
-
-const AppContext = createContext<AppContextType | undefined>(undefined);
+const AppContext = createContext<any>(null);
 
 export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -50,61 +28,61 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     let isMounted = true;
 
-    // 1️⃣ Listener Supabase AUTH
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        if (!isMounted) return;
+    async function handleOAuthHash() {
+      // Vérifie s'il y a un hash OAuth dans l'URL
+      const hash = window.location.hash.substring(1);
+      if (!hash.includes("access_token")) return;
 
-        if (session?.user) {
-          const userData: User = {
-            id: session.user.id,
-            email: session.user.email || "",
-            name:
-              session.user.user_metadata?.full_name ||
-              session.user.email ||
-              "Utilisateur",
-          };
-          dispatch({ type: "SET_USER", payload: userData });
-        } else {
-          dispatch({ type: "LOGOUT" });
-        }
+      const params = new URLSearchParams(hash);
+      const access_token = params.get("access_token");
+      const refresh_token = params.get("refresh_token");
+
+      if (access_token && refresh_token) {
+        await supabase.auth.setSession({ access_token, refresh_token });
+        window.location.hash = ""; // Nettoie le hash pour React Router
       }
-    );
+    }
 
-    // 2️⃣ Hydratation initiale
-    const hydrateSession = async () => {
+    async function hydrate() {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        if (error) throw error;
+        await handleOAuthHash();
 
-        if (!isMounted) return;
+        const { data: { session } } = await supabase.auth.getSession();
 
         if (session?.user) {
           const userData: User = {
             id: session.user.id,
             email: session.user.email || "",
-            name:
-              session.user.user_metadata?.full_name ||
-              session.user.email ||
-              "Utilisateur",
+            name: session.user.user_metadata?.full_name || session.user.email || "Utilisateur",
           };
           dispatch({ type: "SET_USER", payload: userData });
         } else {
           dispatch({ type: "SET_LOADING", payload: false });
         }
       } catch (err) {
-        console.error("❌ [AppContext] Hydratation erreur :", err);
-        if (isMounted) dispatch({ type: "SET_LOADING", payload: false });
-      }
-    };
-
-    hydrateSession();
-
-    // 3️⃣ Timeout sécurité pour éviter blocage
-    const safetyTimeout = setTimeout(() => {
-      if (isMounted && state.isLoading) {
+        console.error("Erreur hydratation OAuth :", err);
         dispatch({ type: "SET_LOADING", payload: false });
       }
+    }
+
+    hydrate();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!isMounted) return;
+      if (session?.user) {
+        const userData: User = {
+          id: session.user.id,
+          email: session.user.email || "",
+          name: session.user.user_metadata?.full_name || session.user.email || "Utilisateur",
+        };
+        dispatch({ type: "SET_USER", payload: userData });
+      } else {
+        dispatch({ type: "LOGOUT" });
+      }
+    });
+
+    const safetyTimeout = setTimeout(() => {
+      if (isMounted && state.isLoading) dispatch({ type: "SET_LOADING", payload: false });
     }, 5000);
 
     return () => {
@@ -114,15 +92,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, []);
 
-  return (
-    <AppContext.Provider value={{ state, dispatch }}>
-      {children}
-    </AppContext.Provider>
-  );
+  return <AppContext.Provider value={{ state, dispatch }}>{children}</AppContext.Provider>;
 };
 
-export const useApp = () => {
-  const context = useContext(AppContext);
-  if (!context) throw new Error("useApp must be used within AppProvider");
-  return context;
-};
+export const useApp = () => useContext(AppContext);
