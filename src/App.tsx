@@ -112,6 +112,16 @@ function AppRoutes() {
       });
     }
   }, [navigate]);
+  
+  // Redirection automatique après login si utilisateur connecté
+React.useEffect(() => {
+  if (state.user) {
+    const publicPaths = ['/welcome', '/login'];
+    if (publicPaths.includes(window.location.pathname)) {
+      navigate('/meal-plan', { replace: true }); // ou "/" selon ta logique
+    }
+  }
+}, [state.user, navigate]);
 
   // Redirection forcée (backup si le reload ne suffit pas)
   React.useEffect(() => {
