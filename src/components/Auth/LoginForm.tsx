@@ -198,10 +198,9 @@ export default function LoginForm() {
             }`}
           >
             <img 
-              src="https://www.google.com/favicon.ico" 
+              src="/KingMenu/google-icon.png" 
               alt="Google" 
               className="w-5 h-5" 
-              onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/20?text=G'; }}
             />
             Continuer avec Google
           </button>
