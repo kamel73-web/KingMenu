@@ -29,14 +29,10 @@ import { App as CapacitorApp } from '@capacitor/app';
 import { supabase } from "./lib/supabase";
 import toast from "react-hot-toast";
 
-// ---------------- ERROR BOUNDARY ----------------
+// Error Boundary
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
   state = { hasError: false };
-
-  static getDerivedStateFromError() {
-    return { hasError: true };
-  }
-
+  static getDerivedStateFromError() { return { hasError: true }; }
   render() {
     if (this.state.hasError) {
       return (
@@ -50,27 +46,23 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
   }
 }
 
-// ---------------- APP ROUTES ----------------
 function AppRoutes() {
   const { state } = useApp();
   const { isRTL } = useRTL();
   useTranslation();
   const navigate = useNavigate();
 
-  // 1️⃣ Listener deep-link OAuth mobile
+  // Listener deep-link OAuth (mobile uniquement)
   React.useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
-
     const listener = CapacitorApp.addListener('appUrlOpen', async (event) => {
       try {
         const url = new URL(event.url);
         const params = new URLSearchParams(url.hash.substring(1));
         const access_token = params.get('access_token');
         const refresh_token = params.get('refresh_token');
-
         if (access_token && refresh_token) {
-          const { error } = await supabase.auth.setSession({ access_token, refresh_token });
-          if (error) throw error;
+          await supabase.auth.setSession({ access_token, refresh_token });
           toast.success("Connexion Google réussie");
           navigate('/meal-plan', { replace: true });
         }
@@ -79,35 +71,10 @@ function AppRoutes() {
         toast.error("Échec connexion après retour");
       }
     });
-
     return () => listener.remove();
   }, [navigate]);
 
-  // 2️⃣ Gestion hash OAuth web (sans reload)
-  React.useEffect(() => {
-    if (Capacitor.isNativePlatform()) return;
-
-    const hash = window.location.hash.substring(1);
-    const params = new URLSearchParams(hash);
-    const access_token = params.get('access_token');
-    const refresh_token = params.get('refresh_token');
-
-    if (access_token && refresh_token) {
-      supabase.auth.setSession({ access_token, refresh_token })
-        .then(({ error }) => {
-          if (error) {
-            console.error('Erreur setSession web:', error);
-            toast.error("Échec session Google");
-          } else {
-            console.log('Session Google set OK');
-            window.location.hash = '';
-            toast.success("Connexion Google réussie");
-          }
-        });
-    }
-  }, [navigate]);
-
-  // 3️⃣ Redirection automatique vers page protégée après login
+  // Redirection automatique après login
   React.useEffect(() => {
     if (state.user) {
       const publicPaths = ['/welcome', '/login', '/'];
@@ -117,7 +84,6 @@ function AppRoutes() {
     }
   }, [state.user, navigate]);
 
-  // ---------------- LOADING ----------------
   if (state.isLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
@@ -127,58 +93,29 @@ function AppRoutes() {
     );
   }
 
-  // ---------------- ROUTES ----------------
   return (
     <div className={`min-h-screen ${isRTL ? "rtl" : "ltr"}`}>
       <ErrorBoundary>
         {state.user && <Navbar />}
         <Routes key={state.user ? 'protected' : 'public'}>
-          <Route
-            path="/welcome"
-            element={state.user ? <Navigate to="/meal-plan" replace /> : <PublicLandingPage />}
-          />
-          <Route
-            path="/"
-            element={state.user ? <HomePage /> : <Navigate to="/welcome" replace />}
-          />
-          <Route
-            path="/use-my-ingredients"
-            element={state.user ? <UseMyIngredientsPage /> : <Navigate to="/welcome" replace />}
-          />
-          <Route
-            path="/meal-plan"
-            element={state.user ? <MealPlanPage /> : <Navigate to="/welcome" replace />}
-          />
-          <Route
-            path="/profile"
-            element={state.user ? <ProfileView /> : <Navigate to="/welcome" replace />}
-          />
-          <Route
-            path="/favorites"
-            element={state.user ? <FavoritesView /> : <Navigate to="/welcome" replace />}
-          />
-          <Route
-            path="/my-recipes"
-            element={state.user ? <MyRecipesPage /> : <Navigate to="/welcome" replace />}
-          />
-          <Route
-            path="/shopping-list"
-            element={state.user ? <ShoppingListView /> : <Navigate to="/welcome" replace />}
-          />
+          <Route path="/welcome" element={state.user ? <Navigate to="/meal-plan" replace /> : <PublicLandingPage />} />
+          <Route path="/" element={state.user ? <HomePage /> : <Navigate to="/welcome" replace />} />
+          <Route path="/use-my-ingredients" element={state.user ? <UseMyIngredientsPage /> : <Navigate to="/welcome" replace />} />
+          <Route path="/meal-plan" element={state.user ? <MealPlanPage /> : <Navigate to="/welcome" replace />} />
+          <Route path="/profile" element={state.user ? <ProfileView /> : <Navigate to="/welcome" replace />} />
+          <Route path="/favorites" element={state.user ? <FavoritesView /> : <Navigate to="/welcome" replace />} />
+          <Route path="/my-recipes" element={state.user ? <MyRecipesPage /> : <Navigate to="/welcome" replace />} />
+          <Route path="/shopping-list" element={state.user ? <ShoppingListView /> : <Navigate to="/welcome" replace />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-use" element={<TermsOfUse />} />
-          <Route
-            path="*"
-            element={<Navigate to={state.user ? "/meal-plan" : "/welcome"} replace />}
-          />
+          <Route path="*" element={<Navigate to={state.user ? "/meal-plan" : "/welcome"} replace />} />
         </Routes>
       </ErrorBoundary>
     </div>
   );
 }
 
-// ---------------- APP ----------------
 export default function App() {
   return (
     <AppProvider>
