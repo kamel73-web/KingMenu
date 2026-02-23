@@ -28,8 +28,9 @@ export default function LoginForm() {
     setError(null);
 
     if (!formData.email || !formData.password || (!isLogin && !formData.name)) {
-      setError("Veuillez remplir tous les champs");
-      toast.error("Veuillez remplir tous les champs");
+      const msg = "Veuillez remplir tous les champs";
+      setError(msg);
+      toast.error(msg);
       return;
     }
 
@@ -62,7 +63,7 @@ export default function LoginForm() {
   };
 
   /* =========================
-     GOOGLE OAUTH (CORRIGÉ)
+     GOOGLE OAUTH — VERSION CORRECTE
   ========================= */
   const handleSocialLogin = async (provider: "google") => {
     try {
@@ -73,10 +74,12 @@ export default function LoginForm() {
       let redirectTo: string;
 
       if (isNative) {
+        // Mobile (Capacitor)
         redirectTo = "com.kingmenu.app://";
       } else {
-        // ✅ IMPORTANT : compatible HashRouter + GitHub Pages
-        redirectTo = window.location.origin + "/KingMenu/#/";
+        // ✅ IMPORTANT : route hash valide pour HashRouter
+        redirectTo =
+          window.location.origin + "/KingMenu/#/login";
       }
 
       console.log("[OAuth Debug] redirectTo:", redirectTo);
@@ -97,6 +100,11 @@ export default function LoginForm() {
         toast.error("Erreur Google : " + error.message);
         console.error("OAuth error:", error);
       }
+
+      // ⚠️ PAS de setSession manuel ici
+      // Supabase gère le hash automatiquement
+      // AppContext captera la session au reload
+
     } catch (err: any) {
       const msg = err?.message || "Erreur connexion Google";
       setError(msg);
