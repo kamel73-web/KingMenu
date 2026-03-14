@@ -43,10 +43,6 @@ export const generateShoppingListPDF = (
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
   
-  // Set up RTL or LTR positioning
-  const getXPosition = (x: number) => isRTL ? pageWidth - x : x;
-  const getTextAlign = () => isRTL ? 'right' : 'left';
-  
   let yPosition = 30;
   
   // Title
@@ -348,10 +344,10 @@ export const generateMealCalendarPDF = (
   
   // Group dates by week for more compact layout
   const groupDatesByWeek = (dates: Date[]) => {
-    const weeks = [];
-    let currentWeek = [];
+    const weeks: Date[][] = [];
+    let currentWeek: Date[] = [];
     
-    dates.forEach((date, index) => {
+    dates.forEach((date: Date, index: number) => {
       currentWeek.push(date);
       
       // If it's Sunday (0) or the last date, start a new week
@@ -427,7 +423,7 @@ export const generateMealCalendarPDF = (
           return acc;
         }, {} as Record<string, MealPlan[]>);
         
-        Object.entries(mealsByType).forEach(([mealType, meals]) => {
+        Object.entries(mealsByType).forEach(([_mealType, meals]) => {
           if (yPosition > pageHeight - 15) {
             doc.addPage();
             yPosition = 25;
