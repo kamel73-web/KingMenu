@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useApp } from '../../context/AppContext';
 import toast from 'react-hot-toast';
@@ -28,6 +28,8 @@ export default function ProfileView() {
         if (ingredientsError) throw ingredientsError;
         setIngredients(ingredientsData || []);
 
+        if (!state.user) return;
+
         const { data: userPrefs, error: prefsError } = await supabase
           .from('user_preferences')
           .select('disliked_ingredients')
@@ -40,7 +42,7 @@ export default function ProfileView() {
           type: 'SET_USER',
           payload: {
             ...state.user,
-            dislikedIngredients: userPrefs?.disliked_ingredients ?? [],
+            dislikedIngredients: (userPrefs?.disliked_ingredients ?? []).map(String),
           },
         });
       } catch (error) {
@@ -70,6 +72,7 @@ export default function ProfileView() {
   const saveUserPreferences = async (newPrefs: {
     disliked_ingredients?: string[];
   }) => {
+    if (!state.user) return false;
     try {
       const { error } = await supabase
         .from('user_preferences')
@@ -87,6 +90,7 @@ export default function ProfileView() {
   };
 
   const handleAddDislikedIngredient = async () => {
+    if (!state.user) return;
     const selected = filteredIngredients.find(
       (ingr) => (ingr.name[i18n.language] || ingr.name.en) === dislikedIngredient
     );
@@ -94,7 +98,7 @@ export default function ProfileView() {
       toast.error(t('profile.invalidIngredient'));
       return;
     }
-    const newDisliked = [...(state.user.dislikedIngredients || []), selected.id];
+    const newDisliked = [...(state.user.dislikedIngredients || []), String(selected.id)];
     const ok = await saveUserPreferences({ disliked_ingredients: newDisliked });
     if (!ok) return;
     dispatch({
@@ -107,6 +111,7 @@ export default function ProfileView() {
   };
 
   const handleRemoveDislikedIngredient = async (ingredientId: string) => {
+    if (!state.user) return;
     const newDisliked = (state.user.dislikedIngredients || []).filter(
       (id: string) => id !== ingredientId
     );
