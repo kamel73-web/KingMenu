@@ -82,7 +82,7 @@ function AppRoutes() {
       const hash = window.location.hash.replace('#', '') || '/';
       const publicPaths = ['/welcome', '/login', '/', ''];
       if (publicPaths.some(p => hash === p || hash.startsWith(p + '?'))) {
-        navigate('/meal-plan', { replace: true });
+        navigate('/', { replace: true });
       }
     }
   }, [state.user, navigate]);
