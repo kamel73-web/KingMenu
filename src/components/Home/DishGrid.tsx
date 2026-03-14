@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Search, Filter, Shuffle, Sparkles } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import DishCard from './DishCard';
@@ -282,11 +282,11 @@ export default function DishGrid() {
   const translatedDishes = useMemo(() => {
     return supabaseDishes.map(dish => {
       const translatedDish = translateDish(dish);
+      const dishAny = dish as any;
       
       // Get the correct IDs based on your actual data structure
-      // This is the key fix - we need to extract the IDs correctly
       let cuisineId = dish.cuisineId;
-      let difficultyId = dish.difficultyId;
+      let difficultyId = dishAny.difficultyId as string | undefined;
       
       // If IDs are not directly available, try to find them by name matching
       if (!cuisineId && dish.cuisine) {
@@ -296,9 +296,9 @@ export default function DishGrid() {
         cuisineId = matchedCuisine?.id;
       }
       
-      if (!difficultyId && dish.difficulty) {
+      if (!difficultyId && dishAny.difficulty) {
         const matchedDifficulty = difficultyTypes.find(d => 
-          d.label[i18n.language] === dish.difficulty || d.label['en'] === dish.difficulty
+          d.label[i18n.language] === dishAny.difficulty || d.label['en'] === dishAny.difficulty
         );
         difficultyId = matchedDifficulty?.id;
       }
@@ -306,8 +306,8 @@ export default function DishGrid() {
       return {
         ...translatedDish,
         cuisineId,
-        difficultyId
-      };
+        difficultyId,
+      } as any;
     });
   }, [supabaseDishes, translateDish, cuisineTypes, difficultyTypes, i18n.language]);
 
@@ -330,8 +330,8 @@ export default function DishGrid() {
       
       // User preferences filter
       const matchesPreferences = !state.user?.preferences?.length || 
-        state.user.preferences.some(pref => 
-          dish.cuisineId && pref.toString() === dish.cuisineId.toString()
+        state.user.preferences.some((pref: string) => 
+          (dish as any).cuisineId && pref.toString() === (dish as any).cuisineId.toString()
         );
 
       return matchesSearch && matchesCuisine && matchesDifficulty && matchesPreferences;
