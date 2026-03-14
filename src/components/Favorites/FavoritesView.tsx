@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Heart, Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import RecipeModal from "../Recipe/RecipeModal";

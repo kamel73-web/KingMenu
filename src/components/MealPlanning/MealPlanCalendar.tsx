@@ -1,17 +1,14 @@
-import React, { useState, useMemo } from 'react';
-import { ChevronLeft, ChevronRight, Calendar, Plus, Clock, Users, X, Edit3 } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { ChevronLeft, ChevronRight, Calendar, Plus, Users, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useApp } from '../../context/AppContext';
-import { CalendarDay, MealPlan } from '../../types';
+import { CalendarDay } from '../../types';
 import ScheduleDishModal from './ScheduleDishModal';
-import { translatedMockDishes } from '../../data/translatedMockData';
-import { useTranslatedContent } from '../../hooks/useTranslatedContent';
 import toast from 'react-hot-toast';
 
 export default function MealPlanCalendar() {
   const { state, dispatch } = useApp();
   const { t } = useTranslation();
-  const { translateDish } = useTranslatedContent();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDish, setSelectedDish] = useState<any>(null);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
@@ -88,7 +85,7 @@ export default function MealPlanCalendar() {
     });
   };
 
-  const handleQuickSchedule = (date: string) => {
+  const handleQuickSchedule = (_date: string) => {
     if (state.selectedDishes.length === 0) {
       toast.error(t('mealPlan.noSelectedDishes'));
       return;

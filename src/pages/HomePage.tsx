@@ -1,4 +1,3 @@
-import React from 'react';
 import DishGrid from '../components/Home/DishGrid';
 import SelectedDishesPanel from '../components/Home/SelectedDishesPanel';
 

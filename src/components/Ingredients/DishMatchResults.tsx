@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Filter, Clock, Users, Star, Check, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ArrowLeft, Filter, Clock, Users, Star, Check, X, Eye, Plus } from 'lucide-react';
 import { DishMatch, OwnedIngredient } from '../../types';
 import { useApp } from '../../context/AppContext';
 import RecipeModal from '../Recipe/RecipeModal';

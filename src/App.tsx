@@ -55,7 +55,8 @@ function AppRoutes() {
   // Listener deep-link OAuth (mobile uniquement)
   React.useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
-    const listener = CapacitorApp.addListener('appUrlOpen', async (event) => {
+    let listenerHandle: { remove: () => void } | null = null;
+    CapacitorApp.addListener('appUrlOpen', async (event) => {
       try {
         const url = new URL(event.url);
         const params = new URLSearchParams(url.hash.substring(1));
@@ -70,8 +71,8 @@ function AppRoutes() {
         console.error("Erreur deep-link OAuth:", err);
         toast.error("Échec connexion après retour");
       }
-    });
-    return () => listener.remove();
+    }).then(h => { listenerHandle = h; });
+    return () => { listenerHandle?.remove(); };
   }, [navigate]);
 
   // Redirection automatique après login

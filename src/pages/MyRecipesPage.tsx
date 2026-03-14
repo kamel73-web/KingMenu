@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ChefHat, Clock, Users, Search, Filter } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import RecipeViewer from '../components/Recipe/RecipeViewer';

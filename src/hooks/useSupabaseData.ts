@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import { supabase, getDishes, getIngredients } from '../lib/supabase';
+import { getDishes, getIngredients } from '../lib/supabase';
 import { Dish, Ingredient } from '../types';
 import { useTranslation } from 'react-i18next';
-import { useApp } from '../context/AppContext'; // ← pour accéder aux préférences utilisateur si besoin
 
 export const useSupabaseData = () => {
   const [dishes, setDishes] = useState<Dish[]>([]);
@@ -10,7 +9,6 @@ export const useSupabaseData = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { i18n } = useTranslation();
-  const { state: { user } } = useApp(); // Optionnel : pour refetch sur changement de prefs
 
   const fetchData = useCallback(async () => {
     try {

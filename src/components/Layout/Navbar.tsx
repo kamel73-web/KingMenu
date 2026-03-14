@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, User, Heart, ShoppingCart, LogOut, Utensils, ChefHat, Sparkles, Calendar } from 'lucide-react';
 import { useTranslation } from 'react-i18next';

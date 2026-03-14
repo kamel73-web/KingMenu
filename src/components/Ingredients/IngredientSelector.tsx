@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Ingredient, IngredientCategory, OwnedIngredient } from '../../types';
+import { OwnedIngredient } from '../../types';
 import { useApp } from '../../context/AppContext';
 import { supabase } from '../../lib/supabase';
-import { useTranslatedContent } from '../../hooks/useTranslatedContent';
 
 interface IngredientSelectorProps {
   onFindDishes?: (ingredients: OwnedIngredient[]) => void;
@@ -12,9 +11,8 @@ interface IngredientSelectorProps {
 const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
   const { t, i18n } = useTranslation();
   const { state, dispatch } = useApp();
-  const { translateCategoryName, translateIngredientName } = useTranslatedContent();
-  const selectedIngredients = state.selectedIngredients ?? [];
-  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+    const selectedIngredients = state.selectedIngredients ?? [];
+  const [ingredients, setIngredients] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -44,7 +42,7 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
     return t(`ingredientsSection.categories.${category.toLowerCase()}`, category);
   };
 
-  const groupedIngredients = ingredients.reduce((acc, ingredient) => {
+  const groupedIngredients = ingredients.reduce((acc: Record<string, any[]>, ingredient: any) => {
     const category =
       typeof ingredient.category === 'string'
         ? ingredient.category
@@ -54,11 +52,11 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
     if (!acc[category]) acc[category] = [];
     acc[category].push(ingredient);
     return acc;
-  }, {} as Record<string, Ingredient[]>);
+  }, {} as Record<string, any[]>);
 
   const handleFindDishes = () => {
     if (onFindDishes) {
-      const ownedIngredients = selectedIngredients.map((ing) => ({
+      const ownedIngredients = selectedIngredients.map((ing: any) => ({
         id: ing.id,
         name:
           typeof ing.name === 'string'
@@ -86,7 +84,7 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
         <p>{t('common.error')}</p>
       ) : (
         <>
-          {Object.entries(groupedIngredients).map(([category, items]) => (
+          {(Object.entries(groupedIngredients) as [string, any[]][]).map(([category, items]) => (
             <div key={category} className="mb-6">
               <h3 className="text-lg font-medium mb-2">
                 {getCategoryName(category.toLowerCase())}
@@ -102,7 +100,7 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
                       })
                     }
                     className={`px-3 py-2 border rounded-full text-sm transition ${
-                      selectedIngredients.some((i) => i.id === ingredient.id)
+                      selectedIngredients.some((i: any) => i.id === ingredient.id)
                         ? 'bg-green-200 border-green-400'
                         : 'bg-white border-gray-300'
                     }`}

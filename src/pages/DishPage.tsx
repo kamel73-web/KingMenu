@@ -1,5 +1,5 @@
 // src/pages/DishPage.tsx
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { Loader2, ArrowLeft, Heart } from "lucide-react";

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { X, Calendar, Clock, Users, ChefHat } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Dish, MealPlan } from '../../types';

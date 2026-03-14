@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Clock, Users, ChefHat, Maximize2, Heart } from 'lucide-react';
 import { Dish } from '../../types';
 import { useApp } from '../../context/AppContext';
