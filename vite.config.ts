@@ -1,41 +1,19 @@
-// vite.config.ts
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { fileURLToPath, URL } from 'node:url';
+import path from 'path';
 
 export default defineConfig({
-  base: '/KingMenu/',
-
   plugins: [react()],
-
+  base: '/KingMenu/',
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '@capacitor/core': path.resolve(__dirname, 'src/stubs/capacitor-core.ts'),
+      '@capacitor/app': path.resolve(__dirname, 'src/stubs/capacitor-app.ts'),
+      '@': path.resolve(__dirname, 'src'),
     },
   },
-
   build: {
-    chunkSizeWarningLimit: 1200,
-
-    rollupOptions: {
-      external: [
-        '@capacitor/core',
-        '@capacitor/app',
-        '@capacitor/android',
-      ],
-    },
-  },
-
-  optimizeDeps: {
-    exclude: [
-      '@capacitor/core',
-      '@capacitor/app',
-      '@capacitor/android',
-    ],
-  },
-
-  server: {
-    port: 5173,
-    open: true,
+    outDir: 'dist',
+    sourcemap: false,
   },
 });
