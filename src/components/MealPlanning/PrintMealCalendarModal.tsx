@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { X, Printer, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useApp } from '../../context/AppContext';
@@ -305,39 +305,19 @@ export default function PrintMealCalendarModal({ isOpen, onClose }: PrintMealCal
       </div>
 
       {/* Print Styles */}
-      <style jsx global>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         @media print {
-          body * {
-            visibility: hidden;
-          }
-          .print-content, .print-content * {
-            visibility: visible;
-          }
+          body * { visibility: hidden; }
+          .print-content, .print-content * { visibility: visible; }
           .print-content {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            background: white;
-            padding: 20px;
-            font-size: 12px;
-            line-height: 1.4;
+            position: absolute; left: 0; top: 0; width: 100%;
+            background: white; padding: 20px; font-size: 12px; line-height: 1.4;
           }
-          .print-content h1 {
-            font-size: 24px;
-            margin-bottom: 10px;
-          }
-          .print-content h3 {
-            font-size: 16px;
-            margin-bottom: 8px;
-            page-break-after: avoid;
-          }
-          .print-content .space-y-4 > div {
-            page-break-inside: avoid;
-            margin-bottom: 15px;
-          }
+          .print-content h1 { font-size: 24px; margin-bottom: 10px; }
+          .print-content h3 { font-size: 16px; margin-bottom: 8px; page-break-after: avoid; }
+          .print-content .space-y-4 > div { page-break-inside: avoid; margin-bottom: 15px; }
         }
-      `}</style>
+      ` }} />
     </>
   );
 }
