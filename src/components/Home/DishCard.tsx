@@ -1,5 +1,5 @@
 // Integrated DishCard with favorites button placed among action buttons for both mobile and desktop
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Clock, Star, Plus, Check, Eye, Calendar } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Dish } from '../../types';
@@ -61,7 +61,7 @@ export default function DishCard({ dish }: DishCardProps) {
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-3xl" />
 
           <div className="absolute top-4 left-4">
-            <span className={`px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-sm bg-white/90 shadow ${getDifficultyColor(dish.difficulty?.en)}`}>
+            <span className={`px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-sm bg-white/90 shadow ${getDifficultyColor(dish.difficulty as string)}`}>
               {translatedDifficulty}
             </span>
           </div>
