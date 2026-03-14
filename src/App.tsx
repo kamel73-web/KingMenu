@@ -78,8 +78,10 @@ function AppRoutes() {
   // Redirection automatique après login
   React.useEffect(() => {
     if (state.user) {
-      const publicPaths = ['/welcome', '/login', '/'];
-      if (publicPaths.includes(window.location.pathname)) {
+      // Avec HashRouter, la route est dans window.location.hash (#/login, #/welcome, etc.)
+      const hash = window.location.hash.replace('#', '') || '/';
+      const publicPaths = ['/welcome', '/login', '/', ''];
+      if (publicPaths.some(p => hash === p || hash.startsWith(p + '?'))) {
         navigate('/meal-plan', { replace: true });
       }
     }
