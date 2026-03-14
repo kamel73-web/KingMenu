@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useApp } from '../../context/AppContext';
@@ -14,7 +14,7 @@ export default function PreferenceSelector() {
   const handlePreferenceToggle = (cuisine: string) => {
     if (!state.user) return;
 
-    const currentPreferences = state.user.preferences;
+    const currentPreferences = state.user.preferences ?? [];
     const newPreferences = currentPreferences.includes(cuisine)
       ? currentPreferences.filter(p => p !== cuisine)
       : [...currentPreferences, cuisine];
@@ -58,7 +58,7 @@ export default function PreferenceSelector() {
                 key={cuisine.id}
                 onClick={() => handlePreferenceToggle(cuisine.name)}
                 className={`p-5 rounded-2xl border-2 transition-all duration-200 hover:scale-105 ${
-                  state.user?.preferences.includes(cuisine.name)
+                  (state.user?.preferences ?? []).includes(cuisine.name)
                     ? 'border-primary-500 bg-primary-500 text-white shadow-medium'
                     : 'border-warm-gray-200 bg-white text-warm-gray-700 hover:border-primary-300 hover:bg-primary-50'
                 }`}
