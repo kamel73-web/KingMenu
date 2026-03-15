@@ -296,7 +296,7 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
               onClick={handleAddToMenu}
               className="flex-1 bg-orange-500 text-white py-3 px-6 rounded-lg font-body font-medium hover:bg-orange-600 transition-all"
             >
-              {t('recipe.addToMenu')}
+              {t('recipe.addToMenu', 'Ajouter au menu')}
             </button>
             <button
               onClick={onEnterCookMode}
