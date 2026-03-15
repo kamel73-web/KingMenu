@@ -40,7 +40,9 @@ export default function ScheduleDishModal({ dish, isOpen, onClose }: ScheduleDis
       createdAt: new Date().toISOString(),
     };
 
+    console.log('ScheduleDishModal - dispatch ADD_MEAL_PLAN:', newMealPlan.id);
     dispatch({ type: 'ADD_MEAL_PLAN', payload: newMealPlan });
+    console.log('ScheduleDishModal - calling saveMealPlan...');
     saveMealPlan(newMealPlan);
     toast.success(t('mealPlan.dishScheduled', { title: dish.title, date: selectedDate }));
     onClose();
