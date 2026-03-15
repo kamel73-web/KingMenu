@@ -43,7 +43,7 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
         .from('saved_dishes')
         .select('dish_id')
         .eq('user_id', user.id)
-        .eq('dish_id', dish.id)
+        .eq('dish_id', Number(dish.id))
         .maybeSingle();
 
       setIsFavorite(!!data);
@@ -192,14 +192,14 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
               <div className="flex items-center space-x-3">
                 <button
                   onClick={() => setServings(Math.max(1, servings - 1))}
-                  className="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center hover:bg-primary-dark transition-all"
+                  className="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center hover:bg-orange-600 transition-all"
                 >
                   -
                 </button>
                 <span className="font-heading font-bold text-lg w-8 text-center">{servings}</span>
                 <button
                   onClick={() => setServings(servings + 1)}
-                  className="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center hover:bg-primary-dark transition-all"
+                  className="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center hover:bg-orange-600 transition-all"
                 >
                   +
                 </button>
@@ -220,7 +220,7 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
                     key={index}
                     className={`p-3 rounded-lg border transition-all cursor-pointer ${
                       highlightedIngredients.has(ingredient.name.toLowerCase())
-                        ? 'border-primary bg-primary/5'
+                        ? 'border-orange-500 bg-orange-50'
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                     onMouseEnter={() => handleIngredientHover(ingredient.name)}
@@ -230,7 +230,7 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
                       <span className="font-body font-medium text-gray-900">
                         {ingredient.name}
                       </span>
-                      <span className="text-primary font-body font-semibold">
+                      <span className="text-orange-500 font-body font-semibold">
                         {adjustQuantity(ingredient.amount)} {translateUnit(ingredient.unit)}
                       </span>
                     </div>
@@ -263,7 +263,7 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
                         className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
                           completedSteps.has(index)
                             ? 'border-green-500 bg-green-500'
-                            : 'border-gray-300 hover:border-primary'
+                            : 'border-gray-300 hover:border-orange-500'
                         }`}
                       >
                         {completedSteps.has(index) && (
@@ -272,7 +272,7 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
                       </button>
                       <div className="flex-1">
                         <div className="flex items-center space-x-2 mb-2">
-                          <span className="font-body font-semibold text-primary">
+                          <span className="font-body font-semibold text-orange-500">
                             {t('recipe.step')} {index + 1}
                           </span>
                         </div>
@@ -294,7 +294,7 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
           <div className="mt-8 flex flex-col sm:flex-row gap-4">
             <button
               onClick={handleAddToMenu}
-              className="flex-1 bg-primary text-white py-3 px-6 rounded-lg font-body font-medium hover:bg-primary-dark transition-all"
+              className="flex-1 bg-orange-500 text-white py-3 px-6 rounded-lg font-body font-medium hover:bg-orange-600 transition-all"
             >
               {t('recipe.addToMenu')}
             </button>
