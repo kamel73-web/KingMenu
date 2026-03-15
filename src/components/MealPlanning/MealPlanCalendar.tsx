@@ -100,8 +100,10 @@ export default function MealPlanCalendar() {
   };
 
   const handleRemoveMeal = (mealId: string) => {
+    // Trouver le repas pour avoir dish_id et date
+    const meal = state.mealPlan.find(m => m.id === mealId);
     dispatch({ type: 'REMOVE_MEAL_PLAN', payload: mealId });
-    deleteMealPlan(mealId);
+    deleteMealPlan(mealId, meal?.dish.id, meal?.date);
     toast.success(t('mealPlan.mealRemoved'));
   };
 

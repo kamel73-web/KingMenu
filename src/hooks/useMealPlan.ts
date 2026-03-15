@@ -81,10 +81,19 @@ export const useMealPlan = () => {
     }, { onConflict: 'id' });
   }, [userId]);
 
-  const deleteMealPlan = useCallback(async (mealId: string) => {
+  const deleteMealPlan = useCallback(async (mealId: string, dishId?: string, date?: string) => {
     if (!userId) return;
-    await supabase.from('meal_plans').delete()
-      .eq('id', mealId).eq('user_id', userId);
+    // Supprimer par dish_id + date si disponible, sinon par id Supabase
+    if (dishId && date) {
+      await supabase.from('meal_plans').delete()
+        .eq('user_id', userId)
+        .eq('dish_id', Number(dishId))
+        .eq('date', date);
+    } else {
+      await supabase.from('meal_plans').delete()
+        .eq('id', mealId)
+        .eq('user_id', userId);
+    }
   }, [userId]);
 
   return { saveMealPlan, deleteMealPlan, loadMealPlans };
