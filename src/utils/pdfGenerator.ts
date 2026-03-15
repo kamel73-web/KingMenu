@@ -57,7 +57,7 @@ export const generateShoppingListPDF = (
   const COL_GAP  = 6;
   const colW     = (pageWidth - MARGIN * 2 - COL_GAP) / 2;
   const ROW_H    = 10;
-  const HEADER_H = 42;
+  const HEADER_H = 26;
 
   doc.setFillColor(...COLOR_PRIMARY);
   doc.rect(0, 0, pageWidth, HEADER_H, "F");
@@ -69,7 +69,7 @@ export const generateShoppingListPDF = (
   doc.setFontSize(22);
   const titleX = isRTL ? pageWidth - MARGIN : MARGIN;
   const titleAlign = isRTL ? "right" : "left";
-  doc.text(formatTextForPDF(title, language), titleX, 18, { align: titleAlign });
+  doc.text(formatTextForPDF(title, language), titleX, 12, { align: titleAlign });
 
   doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
@@ -79,7 +79,7 @@ export const generateShoppingListPDF = (
     `${translations.generatedOn}: ${dateStr}   •   ${translations.totalItems}: ${items.length}`,
     language
   );
-  doc.text(subtitle, titleX, 30, { align: titleAlign });
+  doc.text(subtitle, titleX, 21, { align: titleAlign });
 
   const grouped: Record<string, typeof items> = {};
   items.forEach(item => {
