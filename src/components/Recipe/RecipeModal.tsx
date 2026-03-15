@@ -20,7 +20,7 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
   const [highlightedIngredients, setHighlightedIngredients] = useState<Set<string>>(new Set());
   const [isFavorite, setIsFavorite] = useState(false);
 
-  const { dispatch } = useApp();
+  const { state, dispatch } = useApp();
   const { t } = useTranslation();
   const { translateDifficulty, translateUnit } = useTranslatedContent();
 
@@ -56,8 +56,8 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
   // FAVORITES : Toggle
   // --------------------------
   const toggleFavorite = async () => {
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    if (userError || !user) {
+    const user = state.user;
+    if (!user) {
       toast.error(t('errors.mustBeLoggedIn'));
       return;
     }
@@ -68,7 +68,7 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
         .from('saved_dishes')
         .delete()
         .eq('user_id', user.id)
-        .eq('dish_id', dish.id);
+        .eq('dish_id', Number(dish.id));
 
       if (!error) {
         setIsFavorite(false);
@@ -78,7 +78,7 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
       // Add to saved_dishes
       const { error } = await supabase.from('saved_dishes').insert({
         user_id: user.id,
-        dish_id: dish.id,
+        dish_id: Number(dish.id),
       });
 
       if (!error) {
@@ -152,7 +152,7 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
           <div className="absolute top-4 right-4 flex space-x-2">
             <button
               onClick={onEnterCookMode}
-              className="p-2 bg-primary text-white rounded-full hover:bg-primary-dark transition-all"
+              className="p-2 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-all"
             >
               <Maximize2 className="h-5 w-5" />
             </button>
