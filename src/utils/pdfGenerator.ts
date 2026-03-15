@@ -313,235 +313,149 @@ export const generateRecipePDF = (
   doc.save(filename);
 };
 
-// Optimized meal calendar PDF generation with compact layout and dot bullet points
+// Meal calendar PDF — design moderne coloré
 export const generateMealCalendarPDF = (
   startDate: string,
   endDate: string,
   mealsByDate: Record<string, MealPlan[]>,
   language: string,
   translations: {
-    title: string;
-    dateRange: string;
-    generatedOn: string;
-    totalMeals: string;
-    breakfast: string;
-    lunch: string;
-    dinner: string;
-    snack: string;
-    servings: string;
-    cookingTime: string;
-    noMeals: string;
+    title: string; dateRange: string; generatedOn: string; totalMeals: string;
+    breakfast: string; lunch: string; dinner: string; snack: string;
+    servings: string; cookingTime: string; noMeals: string;
   }
 ) => {
   const doc = new jsPDF();
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+  const M = 14;
+
+  const VIOLET:   [number,number,number] = [ 94, 46,237];
+  const VIOLET_L: [number,number,number] = [237,233,254];
+  const ORANGE:   [number,number,number] = [249,115, 22];
+  const GRAY_BG:  [number,number,number] = [248,248,250];
+  const GRAY_TXT: [number,number,number] = [120,120,130];
+  const DARK:     [number,number,number] = [ 30, 30, 40];
+  const WHITE:    [number,number,number] = [255,255,255];
+  const BORDER:   [number,number,number] = [220,218,235];
+  const MEAL_COLOR: Record<string,[number,number,number]> = {
+    breakfast:[251,191,36], lunch:[59,130,246], dinner:[139,92,246], snack:[34,197,94]
+  };
+  const MEAL_BG: Record<string,[number,number,number]> = {
+    breakfast:[255,251,235], lunch:[239,246,255], dinner:[245,243,255], snack:[240,253,244]
+  };
+
   const isRTL = isRTLLanguage(language);
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-  
-  let yPosition = 25;
-  
-  // Compact title - "Meal Calendar"
-  doc.setFontSize(18);
-  const formattedTitle = formatTextForPDF("Meal Calendar", language);
-  if (isRTL) {
-    doc.text(formattedTitle, pageWidth - 20, yPosition, { align: 'right' });
-  } else {
-    doc.text(formattedTitle, 20, yPosition);
-  }
-  
-  yPosition += 15;
-  
-  // Compact metadata in single line
-  doc.setFontSize(10);
-  const dateRangeText = formatTextForPDF(
-    `${translations.dateRange}: ${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()} | ${translations.generatedOn}: ${new Date().toLocaleDateString()}`,
-    language
-  );
-  
-  if (isRTL) {
-    doc.text(dateRangeText, pageWidth - 20, yPosition, { align: 'right' });
-  } else {
-    doc.text(dateRangeText, 20, yPosition);
-  }
-  
-  yPosition += 20;
-  
-  // Generate date range
-  const generateDateRange = () => {
-    const dates = [];
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    
-    for (let date = new Date(start); date <= end; date.setDate(date.getDate() + 1)) {
-      dates.push(new Date(date));
-    }
-    
-    return dates;
+  const al = isRTL ? 'right' : 'left';
+  const tx = (x: number) => isRTL ? pageW - x : x;
+
+  const totalMeals = Object.values(mealsByDate).reduce((s,m)=>s+m.length,0);
+  const totalCook  = Object.values(mealsByDate).flat().reduce((s,m)=>s+(m.dish?.cookingTime??0),0);
+
+  const dateRange: Date[] = [];
+  for (let d=new Date(startDate); d<=new Date(endDate); d.setDate(d.getDate()+1))
+    dateRange.push(new Date(d));
+
+  const locOpt = language==='ar' ? 'ar-DZ' : language;
+
+  const drawFooter = () => {
+    doc.setDrawColor(...BORDER); doc.setLineWidth(0.4);
+    doc.line(M, pageH-10, pageW-M, pageH-10);
+    doc.setFont('helvetica','italic'); doc.setFontSize(7); doc.setTextColor(...GRAY_TXT);
+    doc.text(`KingMenu — ${translations.generatedOn} ${new Date().toLocaleDateString()}`,
+      pageW/2, pageH-5, {align:'center'});
   };
-  
-  const dateRange = generateDateRange();
-  
-  // Meal type text for PDF (using dots instead of emojis)
-  const getMealTypeText = (mealType: string) => {
-    switch (mealType) {
-      case 'breakfast': return `• ${translations.breakfast}`;
-      case 'lunch': return `• ${translations.lunch}`;
-      case 'dinner': return `• ${translations.dinner}`;
-      case 'snack': return `• ${translations.snack}`;
-      default: return `• ${mealType}`;
-    }
+
+  const drawHeader = (): number => {
+    doc.setFillColor(...VIOLET);
+    doc.rect(0,0,pageW,38,'F');
+    doc.setFillColor(...ORANGE);
+    doc.rect(0,38,pageW,3,'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(20); doc.setTextColor(...WHITE);
+    doc.text(formatTextForPDF(translations.title, language), tx(M), 17, {align:al});
+    doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(200,190,255);
+    const s = new Date(startDate).toLocaleDateString(locOpt,{day:'2-digit',month:'short',year:'numeric'});
+    const e = new Date(endDate).toLocaleDateString(locOpt,{day:'2-digit',month:'short',year:'numeric'});
+    doc.text(formatTextForPDF(`${s}  —  ${e}`, language), tx(M), 30, {align:al});
+    return 48;
   };
-  
-  // Group dates by week for more compact layout
-  const groupDatesByWeek = (dates: Date[]) => {
-    const weeks: Date[][] = [];
-    let currentWeek: Date[] = [];
-    
-    dates.forEach((date: Date, index: number) => {
-      currentWeek.push(date);
-      
-      // If it's Sunday (0) or the last date, start a new week
-      if (date.getDay() === 0 || index === dates.length - 1) {
-        weeks.push([...currentWeek]);
-        currentWeek = [];
-      }
+
+  const drawStats = (y: number): number => {
+    const cW = (pageW-2*M)/3;
+    const stats: [string,string,[number,number,number]][] = [
+      [translations.totalMeals, String(totalMeals), VIOLET],
+      [translations.dateRange, `${dateRange.length} j`, [16,185,129]],
+      ['En cuisine', `${totalCook} min`, ORANGE],
+    ];
+    stats.forEach(([label,val,col],i) => {
+      const x = M + i*cW;
+      doc.setFillColor(...GRAY_BG); doc.roundedRect(x,y,cW-3,22,3,3,'F');
+      doc.setDrawColor(...BORDER); doc.setLineWidth(0.3); doc.roundedRect(x,y,cW-3,22,3,3,'S');
+      doc.setFont('helvetica','bold'); doc.setFontSize(13); doc.setTextColor(...col);
+      doc.text(val, x+(cW-3)/2, y+11, {align:'center'});
+      doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(...GRAY_TXT);
+      doc.text(label.toUpperCase(), x+(cW-3)/2, y+19, {align:'center'});
     });
-    
-    return weeks;
+    return y+26;
   };
-  
-  const weeks = groupDatesByWeek(dateRange);
-  
-  // Process each week
-  weeks.forEach((week, weekIndex) => {
-    // Check if we need a new page for this week
-    const estimatedWeekHeight = week.length * 25; // Rough estimate
-    if (yPosition + estimatedWeekHeight > pageHeight - 30) {
-      doc.addPage();
-      yPosition = 25;
-    }
-    
-    // Week separator (except for first week)
-    if (weekIndex > 0) {
-      yPosition += 10;
-      doc.setDrawColor(200, 200, 200);
-      doc.line(20, yPosition, pageWidth - 20, yPosition);
-      yPosition += 10;
-    }
-    
-    // Process each date in the week
-    week.forEach(date => {
-      const dateString = date.toISOString().split('T')[0];
-      const dayMeals = mealsByDate[dateString] || [];
-      
-      // Check if we need a new page for this day
-      const estimatedDayHeight = Math.max(20, dayMeals.length * 8 + 15);
-      if (yPosition + estimatedDayHeight > pageHeight - 20) {
-        doc.addPage();
-        yPosition = 25;
-      }
-      
-      // Compact date header
-      doc.setFontSize(11);
-      doc.setFont('helvetica', 'bold');
-      const dateHeader = formatTextForPDF(
-        date.toLocaleDateString(language, {
-          weekday: 'short',
-          month: 'short',
-          day: 'numeric'
-        }),
-        language
-      );
-      
-      if (isRTL) {
-        doc.text(dateHeader, pageWidth - 20, yPosition, { align: 'right' });
-      } else {
-        doc.text(dateHeader, 20, yPosition);
-      }
-      
-      yPosition += 12;
-      
-      // Meals for this date in compact format
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(9);
-      
-      if (dayMeals.length > 0) {
-        // Group meals by type for more compact display
-        const mealsByType = dayMeals.reduce((acc, meal) => {
-          if (!acc[meal.mealType]) acc[meal.mealType] = [];
-          acc[meal.mealType].push(meal);
-          return acc;
-        }, {} as Record<string, MealPlan[]>);
-        
-        Object.entries(mealsByType).forEach(([_mealType, meals]) => {
-          if (yPosition > pageHeight - 15) {
-            doc.addPage();
-            yPosition = 25;
-          }
-          
-          meals.forEach(meal => {
-            const mealText = formatTextForPDF(
-              `  ${getMealTypeText(meal.mealType)}: ${meal.dish.title} (${meal.servings}p, ${meal.dish.cookingTime}m)`,
-              language
-            );
-            
-            // Split long text if needed
-            const maxWidth = pageWidth - 50;
-            const lines = doc.splitTextToSize(mealText, maxWidth);
-            
-            lines.forEach((line: string) => {
-              if (yPosition > pageHeight - 15) {
-                doc.addPage();
-                yPosition = 25;
-              }
-              
-              if (isRTL) {
-                doc.text(line, pageWidth - 25, yPosition, { align: 'right' });
-              } else {
-                doc.text(line, 25, yPosition);
-              }
-              
-              yPosition += 8;
-            });
-            
-            // Add notes if present (very compact)
-            if (meal.notes) {
-              const notesText = formatTextForPDF(`    Note: ${meal.notes}`, language);
-              const noteLines = doc.splitTextToSize(notesText, maxWidth - 20);
-              
-              noteLines.forEach((line: string) => {
-                if (yPosition > pageHeight - 15) {
-                  doc.addPage();
-                  yPosition = 25;
-                }
-                
-                doc.setFontSize(8);
-                if (isRTL) {
-                  doc.text(line, pageWidth - 30, yPosition, { align: 'right' });
-                } else {
-                  doc.text(line, 30, yPosition);
-                }
-                yPosition += 7;
-                doc.setFontSize(9);
-              });
-            }
-          });
+
+  const DHEAD=10, MROW=13, EROW=10, PAD=4;
+  const estH = (meals: MealPlan[]) =>
+    DHEAD + (meals.length===0 ? EROW : meals.length*MROW) + PAD*2 + 4;
+
+  const drawDay = (date: Date, meals: MealPlan[], y: number): number => {
+    const h = estH(meals);
+    const cW = pageW-2*M;
+    doc.setFillColor(...WHITE); doc.roundedRect(M,y,cW,h,3,3,'F');
+    doc.setDrawColor(...BORDER); doc.setLineWidth(0.3); doc.roundedRect(M,y,cW,h,3,3,'S');
+    doc.setFillColor(...VIOLET_L); doc.roundedRect(M,y,cW,DHEAD,3,3,'F');
+    doc.rect(M,y+5,cW,DHEAD-5,'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(...VIOLET);
+    const dl = date.toLocaleDateString(locOpt,{weekday:'long',day:'numeric',month:'long'});
+    doc.text(formatTextForPDF(dl,language), tx(M+4), y+7, {align:al});
+
+    let ry = y+DHEAD+PAD;
+    if (meals.length===0) {
+      doc.setFont('helvetica','italic'); doc.setFontSize(8); doc.setTextColor(...GRAY_TXT);
+      doc.text(formatTextForPDF(translations.noMeals,language), tx(M+6), ry+6, {align:al});
+    } else {
+      const order=['breakfast','lunch','snack','dinner'];
+      [...meals].sort((a,b)=>order.indexOf(a.mealType)-order.indexOf(b.mealType))
+        .forEach((meal,idx) => {
+          doc.setFillColor(...(idx%2===0 ? WHITE : GRAY_BG));
+          doc.rect(M+1,ry,cW-2,MROW,'F');
+          const mc = MEAL_COLOR[meal.mealType]??VIOLET;
+          const mb = MEAL_BG[meal.mealType]??VIOLET_L;
+          const ml = (translations as any)[meal.mealType] ?? meal.mealType;
+          doc.setFillColor(...mb); doc.roundedRect(M+3,ry+2,22,8,2,2,'F');
+          doc.setFont('helvetica','bold'); doc.setFontSize(6); doc.setTextColor(...mc);
+          doc.text(formatTextForPDF(ml,language), M+14, ry+7.5, {align:'center'});
+          doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(...DARK);
+          const titleX = isRTL ? pageW-M-28 : M+28;
+          const tLines = doc.splitTextToSize(formatTextForPDF(meal.dish.title,language), cW-58);
+          doc.text(tLines[0], titleX, ry+7.5, {align:al});
+          doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(...GRAY_TXT);
+          const metaX = isRTL ? M+3 : pageW-M-3;
+          doc.text(`${meal.servings}p · ${meal.dish.cookingTime}min`, metaX, ry+7.5,
+            {align: isRTL ? 'left' : 'right'});
+          ry += MROW;
         });
-      } else {
-        const noMealsText = formatTextForPDF(`  ${translations.noMeals}`, language);
-        if (isRTL) {
-          doc.text(noMealsText, pageWidth - 25, yPosition, { align: 'right' });
-        } else {
-          doc.text(noMealsText, 25, yPosition);
-        }
-        yPosition += 8;
-      }
-      
-      yPosition += 5; // Small space between days
-    });
+    }
+    return y+h+4;
+  };
+
+  let y = drawHeader();
+  y = drawStats(y);
+  y += 4;
+
+  dateRange.forEach(date => {
+    const meals = mealsByDate[date.toISOString().split('T')[0]] ?? [];
+    if (y + estH(meals) + 4 > pageH-16) {
+      drawFooter(); doc.addPage(); y = drawHeader(); y += 6;
+    }
+    y = drawDay(date, meals, y);
   });
-  
-  // Generate filename
-  const filename = `meal-calendar-${startDate}-to-${endDate}.pdf`;
-  doc.save(filename);
+
+  drawFooter();
+  doc.save(`planning-repas-${startDate}-${endDate}.pdf`);
 };

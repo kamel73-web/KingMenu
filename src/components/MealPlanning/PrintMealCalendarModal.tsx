@@ -74,7 +74,36 @@ export default function PrintMealCalendarModal({ isOpen, onClose }: PrintMealCal
   const handlePrint = () => {
     if (filteredMeals.length === 0) { toast.error("Aucun repas dans cette période"); return; }
     setShowPreview(true);
-    setTimeout(() => window.print(), 300);
+    setTimeout(() => {
+      const el = printRef.current;
+      if (!el) return;
+      const html = el.innerHTML;
+      const win = window.open('', '_blank', 'width=800,height=600');
+      if (!win) return;
+      win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8">
+        <title>Planning des repas</title>
+        <style>
+          body { font-family: Arial, sans-serif; font-size: 12px; margin: 20px; color: #1e1e28; }
+          h1 { font-size: 20px; color: #5e2eed; margin-bottom: 4px; }
+          .day-card { margin-bottom: 12px; border: 1px solid #dcdaeb; border-radius: 8px; overflow: hidden; }
+          .day-header { background: #ede9fe; padding: 6px 12px; font-weight: bold; font-size: 11px; color: #5e2eed; }
+          .meal-row { display: flex; align-items: center; padding: 5px 12px; font-size: 11px; border-top: 1px solid #f5f5f8; }
+          .meal-row:nth-child(even) { background: #f8f8fa; }
+          .badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: bold; margin-right: 8px; min-width: 52px; text-align: center; }
+          .dish-title { flex: 1; }
+          .meta { color: #787882; font-size: 10px; margin-left: 8px; }
+          .empty { padding: 6px 12px; font-style: italic; color: #aaaa; font-size: 10px; }
+          .footer { margin-top: 20px; text-align: center; font-size: 9px; color: #aaa; border-top: 1px solid #eee; padding-top: 8px; }
+          .stats { display: flex; gap: 12px; margin-bottom: 16px; }
+          .stat-box { flex: 1; border: 1px solid #dcdaeb; border-radius: 8px; padding: 8px; text-align: center; }
+          .stat-val { font-size: 18px; font-weight: bold; color: #5e2eed; }
+          .stat-lbl { font-size: 9px; color: #aaa; text-transform: uppercase; }
+          @media print { body { margin: 10px; } }
+        </style></head><body>${html}</body></html>`);
+      win.document.close();
+      win.focus();
+      setTimeout(() => { win.print(); win.close(); }, 400);
+    }, 200);
   };
 
   return (
