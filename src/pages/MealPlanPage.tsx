@@ -39,7 +39,7 @@ export default function MealPlanPage() {
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
             <div className="flex items-center space-x-4 mb-4 md:mb-0">
-              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+              <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
                 <Calendar className="h-6 w-6 text-primary" />
               </div>
               <div>
@@ -56,7 +56,7 @@ export default function MealPlanPage() {
             <button
               onClick={() => setShowPrintModal(true)}
               disabled={totalMeals === 0}
-              className="flex items-center space-x-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center space-x-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Printer className="h-4 w-4" />
               <span className="font-body font-medium">{t('mealPlan.print.printCalendar')}</span>
