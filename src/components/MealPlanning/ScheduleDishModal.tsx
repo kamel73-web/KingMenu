@@ -30,7 +30,7 @@ export default function ScheduleDishModal({ dish, isOpen, onClose }: ScheduleDis
     }
 
     const newMealPlan: MealPlan = {
-      id: `meal-${Date.now()}-${Math.random()}`,
+      id: crypto.randomUUID(),
       userId: state.user.id,
       date: selectedDate,
       mealType,
