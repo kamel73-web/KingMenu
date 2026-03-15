@@ -15,6 +15,16 @@ interface DishMatchResultsProps {
 
 export default function DishMatchResults({ matches, ownedIngredients, onBack }: DishMatchResultsProps) {
   const { t, i18n } = useTranslation();
+
+  // Résoudre le nom traduit d'un ingrédient
+  const resolveName = (name: any): string => {
+    if (typeof name === 'string') return name;
+    if (name && typeof name === 'object') {
+      return name[i18n.language] ?? name.fr ?? name.en ?? '';
+    }
+    return '';
+  };
+
   const { dispatch } = useApp();
   const [filterType, setFilterType] = useState<'all' | 'perfect' | 'near' | 'creative'>('all');
   const [selectedRecipeDish, setSelectedRecipeDish] = useState<any>(null);
@@ -193,14 +203,14 @@ export default function DishMatchResults({ matches, ownedIngredients, onBack }: 
                       {match.availableIngredients.slice(0, 3).map(ingredient => (
                         <div key={ingredient.id} className="flex items-center space-x-2 text-xs">
                           <Check className="h-3 w-3 text-green-500" />
-                          <span className="text-gray-700">{ingredient.name}</span>
+                          <span className="text-gray-700">{resolveName(ingredient.name)}</span>
                         </div>
                       ))}
                       
                       {match.missingIngredients.slice(0, 2).map(ingredient => (
                         <div key={ingredient.id} className="flex items-center space-x-2 text-xs">
                           <X className="h-3 w-3 text-red-500" />
-                          <span className="text-gray-500">{t('recipe.needIngredient', { name: ingredient.name })}</span>
+                          <span className="text-gray-500">{t('recipe.needIngredient', { name: resolveName(ingredient.name) })}</span>
                         </div>
                       ))}
                       
