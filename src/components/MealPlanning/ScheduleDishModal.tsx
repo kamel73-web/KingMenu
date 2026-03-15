@@ -118,8 +118,8 @@ export default function ScheduleDishModal({ dish, isOpen, onClose }: ScheduleDis
                   onClick={() => setMealType(option.value as any)}
                   className={`p-3 rounded-lg border-2 transition-all text-left ${
                     mealType === option.value
-                      ? 'border-primary bg-primary text-white'
-                      : 'border-gray-200 hover:border-primary hover:bg-primary/5'
+                      ? 'border-orange-500 bg-orange-500 text-white'
+                      : 'border-gray-200 hover:border-orange-500 hover:bg-orange-50'
                   }`}
                 >
                   <div className="flex items-center space-x-2">
@@ -180,7 +180,7 @@ export default function ScheduleDishModal({ dish, isOpen, onClose }: ScheduleDis
             </button>
             <button
               onClick={handleSchedule}
-              className="flex-1 py-3 px-4 bg-primary text-white rounded-lg font-body font-medium hover:bg-primary-dark transition-all"
+              className="flex-1 py-3 px-4 bg-orange-500 text-white rounded-lg font-body font-medium hover:bg-orange-600 transition-all"
             >
               {t('mealPlan.schedule')}
             </button>
