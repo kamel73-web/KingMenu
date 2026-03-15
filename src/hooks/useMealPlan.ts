@@ -32,11 +32,12 @@ export const useMealPlan = () => {
       .order('date', { ascending: true });
 
     if (error) {
-      console.error('Erreur chargement meal plans:', error);
+      // Table inexistante ou erreur réseau : on garde le state local intact
+      console.warn('useMealPlan: table meal_plans inaccessible, mode local activé');
       return;
     }
 
-    if (!data) return;
+    if (!data || data.length === 0) return;
 
     const lang = 'fr';
 
@@ -113,7 +114,7 @@ export const useMealPlan = () => {
   // ── Charger au login ──────────────────────────────────────────────────
   useEffect(() => {
     if (userId) loadMealPlans();
-    else dispatch({ type: 'SET_MEAL_PLAN', payload: [] });
+    // Ne pas vider au logout — le state sera réinitialisé par AppContext.LOGOUT
   }, [userId, loadMealPlans, dispatch]);
 
   return { saveMealPlan, deleteMealPlan, loadMealPlans };
