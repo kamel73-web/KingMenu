@@ -59,18 +59,82 @@ export default function ShoppingListView() {
   };
 
   const shareList = async () => {
+    const text = generateTextList();
+    const title = t('shoppingList.title');
+
+    // Web Share API (mobile natif — Android/iOS)
     if (navigator.share) {
       try {
-        await navigator.share({
-          title: t('shoppingList.title'),
-          text: generateTextList(),
-        });
+        await navigator.share({ title, text });
+        return;
       } catch {
-        // utilisateur a annulé
+        // utilisateur a annulé — ne pas faire de fallback
+        return;
       }
-    } else {
-      copyToClipboard();
     }
+
+    // Fallback desktop : ouvrir un menu de partage manuel
+    const encoded = encodeURIComponent(text);
+    const titleEncoded = encodeURIComponent(title);
+
+    const options = [
+      { label: 'WhatsApp',  url: `https://wa.me/?text=${encoded}` },
+      { label: 'Messenger', url: `https://www.facebook.com/dialog/send?link=${encodeURIComponent(window.location.href)}&app_id=0&redirect_uri=${encodeURIComponent(window.location.href)}` },
+      { label: 'Email',     url: `mailto:?subject=${titleEncoded}&body=${encoded}` },
+      { label: 'Telegram',  url: `https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encoded}` },
+      { label: 'Viber',     url: `viber://forward?text=${encoded}` },
+    ];
+
+    // Créer un menu contextuel simple
+    const existing = document.getElementById('km-share-menu');
+    if (existing) { existing.remove(); return; }
+
+    const menu = document.createElement('div');
+    menu.id = 'km-share-menu';
+    menu.style.cssText = `
+      position: fixed; bottom: 80px; right: 20px; z-index: 9999;
+      background: white; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+      padding: 12px; display: flex; flex-direction: column; gap: 8px; min-width: 180px;
+      border: 1px solid #e5e7eb; animation: fadeIn 0.15s ease;
+    `;
+
+    const closeOnClick = (e: MouseEvent) => {
+      if (!menu.contains(e.target as Node)) {
+        menu.remove();
+        document.removeEventListener('click', closeOnClick);
+      }
+    };
+    setTimeout(() => document.addEventListener('click', closeOnClick), 100);
+
+    options.forEach(opt => {
+      const btn = document.createElement('a');
+      btn.href = opt.url;
+      btn.target = '_blank';
+      btn.rel = 'noopener noreferrer';
+      btn.textContent = opt.label;
+      btn.style.cssText = `
+        display: block; padding: 10px 16px; border-radius: 10px;
+        color: #1f2937; text-decoration: none; font-size: 14px; font-weight: 500;
+        transition: background 0.15s;
+      `;
+      btn.onmouseenter = () => { btn.style.background = '#f3f4f6'; };
+      btn.onmouseleave = () => { btn.style.background = ''; };
+      btn.onclick = () => { setTimeout(() => menu.remove(), 200); };
+      menu.appendChild(btn);
+    });
+
+    // Bouton copier en bas
+    const copyBtn = document.createElement('button');
+    copyBtn.textContent = '📋 ' + t('shoppingList.copy');
+    copyBtn.style.cssText = `
+      padding: 10px 16px; border-radius: 10px; border: none; cursor: pointer;
+      background: #f3f4f6; color: #1f2937; font-size: 14px; font-weight: 500;
+      text-align: left; transition: background 0.15s;
+    `;
+    copyBtn.onclick = () => { copyToClipboard(); menu.remove(); };
+    menu.appendChild(copyBtn);
+
+    document.body.appendChild(menu);
   };
 
   if (state.shoppingList.length === 0) {
