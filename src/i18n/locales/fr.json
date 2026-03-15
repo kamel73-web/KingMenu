@@ -76,8 +76,6 @@
     "cookMode": "Mode cuisson"
   },
   "recipe": "Recette",
-  "recipe.step": "Étape",
-  "recipe.addToMenu": "Ajouter au menu",
   "ingredientsSection": {
     "whatsInKitchen": "Qu'y a-t-il dans votre cuisine ?",
     "whatsInKitchenDesc": "Sélectionnez les ingrédients que vous avez à la maison, et nous vous suggérerons des plats délicieux que vous pouvez préparer avec un minimum de courses supplémentaires.",

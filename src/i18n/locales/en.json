@@ -75,8 +75,6 @@
     "cookMode": "Cook Mode"
   },
   "recipe": "Recipe",
-  "recipe.step": "Step",
-  "recipe.addToMenu": "Add to Menu",
   "ingredientsSection": {
     "whatsInKitchen": "What's in Your Kitchen?",
     "whatsInKitchenDesc": "Select the ingredients you have at home, and we'll suggest delicious dishes you can make with minimal additional shopping.",

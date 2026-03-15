@@ -210,7 +210,7 @@ export default function DishMatchResults({ matches, ownedIngredients, onBack }: 
                       {match.missingIngredients.slice(0, 2).map(ingredient => (
                         <div key={ingredient.id} className="flex items-center space-x-2 text-xs">
                           <X className="h-3 w-3 text-red-500" />
-                          <span className="text-gray-500">{t('recipe.needIngredient', { name: resolveName(ingredient.name) })}</span>
+                          <span className="text-gray-500">{t('recipe.needIngredient', { name: resolveName(ingredient.name), defaultValue: 'Manquant : ' + resolveName(ingredient.name) })}</span>
                         </div>
                       ))}
                       
@@ -229,7 +229,7 @@ export default function DishMatchResults({ matches, ownedIngredients, onBack }: 
                       <button
                         onClick={() => setSelectedRecipeDish(match.dish)}
                         className="w-11 h-11 border-2 border-gray-300 text-gray-600 rounded-full hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center shadow-sm"
-                        title={t('recipe.recipe')}
+                        title={t('recipe.recipe', 'Voir la recette')}
                       >
                         <Eye className="h-4 w-4" />
                       </button>
@@ -237,7 +237,7 @@ export default function DishMatchResults({ matches, ownedIngredients, onBack }: 
                       <button
                         onClick={() => handleAddDish(match.dish)}
                         className="w-11 h-11 bg-gradient-to-br from-primary to-primary-dark text-white rounded-full hover:from-primary-dark hover:to-primary transition-all duration-200 flex items-center justify-center shadow-md transform hover:scale-105"
-                        title={t('recipe.addToMenu')}
+                        title={t('recipe.addToMenu', 'Ajouter au menu')}
                       >
                         <Plus className="h-4 w-4" />
                       </button>
@@ -249,13 +249,13 @@ export default function DishMatchResults({ matches, ownedIngredients, onBack }: 
                       onClick={() => setSelectedRecipeDish(match.dish)}
                       className="flex-1 py-2 px-3 border border-gray-300 text-gray-700 rounded-lg font-body font-medium hover:bg-gray-50 transition-all"
                     >
-                      {t('recipe.recipe')}
+                      {t('recipe.recipe', 'Voir la recette')}
                     </button>
                     <button
                       onClick={() => handleAddDish(match.dish)}
                       className="flex-1 py-2 px-3 bg-primary text-white rounded-lg font-body font-medium hover:bg-primary-dark transition-all"
                     >
-                      {t('recipe.addToMenu')}
+                      {t('recipe.addToMenu', 'Ajouter au menu')}
                     </button>
                     </div>
                   </div>
