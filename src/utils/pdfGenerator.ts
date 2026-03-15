@@ -313,7 +313,7 @@ export const generateRecipePDF = (
   doc.save(filename);
 };
 
-// Meal calendar PDF — design moderne coloré
+// Meal calendar PDF — 1 semaine par page, grille 7 colonnes
 export const generateMealCalendarPDF = (
   startDate: string,
   endDate: string,
@@ -325,137 +325,113 @@ export const generateMealCalendarPDF = (
     servings: string; cookingTime: string; noMeals: string;
   }
 ) => {
-  const doc = new jsPDF();
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
   const pageW = doc.internal.pageSize.getWidth();
   const pageH = doc.internal.pageSize.getHeight();
-  const M = 14;
+  const M = 10;
 
   const VIOLET:   [number,number,number] = [ 94, 46,237];
   const VIOLET_L: [number,number,number] = [237,233,254];
   const ORANGE:   [number,number,number] = [249,115, 22];
   const GRAY_BG:  [number,number,number] = [248,248,250];
   const GRAY_TXT: [number,number,number] = [120,120,130];
-  const DARK:     [number,number,number] = [ 30, 30, 40];
+  const DARK:     [number,number,number] = [ 20, 20, 30];
   const WHITE:    [number,number,number] = [255,255,255];
   const BORDER:   [number,number,number] = [220,218,235];
-  const MEAL_COLOR: Record<string,[number,number,number]> = {
-    breakfast:[251,191,36], lunch:[59,130,246], dinner:[139,92,246], snack:[34,197,94]
+  const MEAL_META: Record<string,{color:[number,number,number];bg:[number,number,number];label:string}> = {
+    breakfast:{color:[180,130,10],bg:[255,251,235],label:translations.breakfast},
+    lunch:    {color:[ 30,100,210],bg:[239,246,255],label:translations.lunch},
+    snack:    {color:[ 20,150, 70],bg:[240,253,244],label:translations.snack},
+    dinner:   {color:[100, 60,210],bg:[245,243,255],label:translations.dinner},
   };
-  const MEAL_BG: Record<string,[number,number,number]> = {
-    breakfast:[255,251,235], lunch:[239,246,255], dinner:[245,243,255], snack:[240,253,244]
-  };
+  const MEAL_ORDER = ['breakfast','lunch','snack','dinner'];
+  const locOpt = language==='ar' ? 'ar-DZ' : language;
 
-  const isRTL = isRTLLanguage(language);
-  const al = isRTL ? 'right' : 'left';
-  const tx = (x: number) => isRTL ? pageW - x : x;
+  const allDates: Date[] = [];
+  for (let d=new Date(startDate); d<=new Date(endDate); d.setDate(d.getDate()+1))
+    allDates.push(new Date(d));
+  const weeks: Date[][] = [];
+  for (let i=0; i<allDates.length; i+=7) weeks.push(allDates.slice(i,i+7));
 
   const totalMeals = Object.values(mealsByDate).reduce((s,m)=>s+m.length,0);
   const totalCook  = Object.values(mealsByDate).flat().reduce((s,m)=>s+(m.dish?.cookingTime??0),0);
 
-  const dateRange: Date[] = [];
-  for (let d=new Date(startDate); d<=new Date(endDate); d.setDate(d.getDate()+1))
-    dateRange.push(new Date(d));
+  const HEADER_H = 22;
 
-  const locOpt = language==='ar' ? 'ar-DZ' : language;
-
-  const drawFooter = () => {
-    doc.setDrawColor(...BORDER); doc.setLineWidth(0.4);
-    doc.line(M, pageH-10, pageW-M, pageH-10);
-    doc.setFont('helvetica','italic'); doc.setFontSize(7); doc.setTextColor(...GRAY_TXT);
-    doc.text(`KingMenu — ${translations.generatedOn} ${new Date().toLocaleDateString()}`,
-      pageW/2, pageH-5, {align:'center'});
+  const drawHeader = (weekDates: Date[]) => {
+    doc.setFillColor(...VIOLET); doc.rect(0,0,pageW,HEADER_H,'F');
+    doc.setFillColor(...ORANGE); doc.rect(0,HEADER_H,pageW,2,'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(14); doc.setTextColor(...WHITE);
+    doc.text(formatTextForPDF(translations.title,language), M, 10);
+    doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(210,200,255);
+    const ws = weekDates[0].toLocaleDateString(locOpt,{day:'numeric',month:'long',year:'numeric'});
+    const we = weekDates[weekDates.length-1].toLocaleDateString(locOpt,{day:'numeric',month:'long',year:'numeric'});
+    doc.text(`${ws}  →  ${we}`, M, 17);
+    doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(...WHITE);
+    doc.text(`${totalMeals} repas · ${totalCook} min`, pageW-M, 10, {align:'right'});
+    doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(210,200,255);
+    doc.text(`${translations.generatedOn} ${new Date().toLocaleDateString()}`, pageW-M, 17, {align:'right'});
   };
 
-  const drawHeader = (): number => {
-    doc.setFillColor(...VIOLET);
-    doc.rect(0,0,pageW,38,'F');
-    doc.setFillColor(...ORANGE);
-    doc.rect(0,38,pageW,3,'F');
-    doc.setFont('helvetica','bold'); doc.setFontSize(20); doc.setTextColor(...WHITE);
-    doc.text(formatTextForPDF(translations.title, language), tx(M), 17, {align:al});
-    doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(200,190,255);
-    const s = new Date(startDate).toLocaleDateString(locOpt,{day:'2-digit',month:'short',year:'numeric'});
-    const e = new Date(endDate).toLocaleDateString(locOpt,{day:'2-digit',month:'short',year:'numeric'});
-    doc.text(formatTextForPDF(`${s}  —  ${e}`, language), tx(M), 30, {align:al});
-    return 48;
-  };
+  const drawWeek = (weekDates: Date[]) => {
+    drawHeader(weekDates);
+    const TOP=HEADER_H+4, BOTTOM=pageH-8, gridH=BOTTOM-TOP;
+    const nDays=weekDates.length, dayW=(pageW-2*M)/nDays;
+    const DAY_HDR_H=14;
 
-  const drawStats = (y: number): number => {
-    const cW = (pageW-2*M)/3;
-    const stats: [string,string,[number,number,number]][] = [
-      [translations.totalMeals, String(totalMeals), VIOLET],
-      [translations.dateRange, `${dateRange.length} j`, [16,185,129]],
-      ['En cuisine', `${totalCook} min`, ORANGE],
-    ];
-    stats.forEach(([label,val,col],i) => {
-      const x = M + i*cW;
-      doc.setFillColor(...GRAY_BG); doc.roundedRect(x,y,cW-3,22,3,3,'F');
-      doc.setDrawColor(...BORDER); doc.setLineWidth(0.3); doc.roundedRect(x,y,cW-3,22,3,3,'S');
-      doc.setFont('helvetica','bold'); doc.setFontSize(13); doc.setTextColor(...col);
-      doc.text(val, x+(cW-3)/2, y+11, {align:'center'});
-      doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(...GRAY_TXT);
-      doc.text(label.toUpperCase(), x+(cW-3)/2, y+19, {align:'center'});
-    });
-    return y+26;
-  };
+    weekDates.forEach((date,di) => {
+      const x=M+di*dayW;
+      const ds=date.toISOString().split('T')[0];
+      const meals=mealsByDate[ds]??[];
+      const isToday=ds===new Date().toISOString().split('T')[0];
 
-  const DHEAD=10, MROW=13, EROW=10, PAD=4;
-  const estH = (meals: MealPlan[]) =>
-    DHEAD + (meals.length===0 ? EROW : meals.length*MROW) + PAD*2 + 4;
+      doc.setFillColor(...(isToday?ORANGE:VIOLET_L));
+      doc.roundedRect(x,TOP,dayW-2,DAY_HDR_H,2,2,'F');
+      doc.setFont('helvetica','bold'); doc.setFontSize(8);
+      doc.setTextColor(...(isToday?WHITE:VIOLET));
+      doc.text(formatTextForPDF(date.toLocaleDateString(locOpt,{weekday:'short'}),language),x+(dayW-2)/2,TOP+6,{align:'center'});
+      doc.setFontSize(11); doc.setTextColor(...(isToday?WHITE:DARK));
+      doc.text(String(date.getDate()),x+(dayW-2)/2,TOP+12,{align:'center'});
 
-  const drawDay = (date: Date, meals: MealPlan[], y: number): number => {
-    const h = estH(meals);
-    const cW = pageW-2*M;
-    doc.setFillColor(...WHITE); doc.roundedRect(M,y,cW,h,3,3,'F');
-    doc.setDrawColor(...BORDER); doc.setLineWidth(0.3); doc.roundedRect(M,y,cW,h,3,3,'S');
-    doc.setFillColor(...VIOLET_L); doc.roundedRect(M,y,cW,DHEAD,3,3,'F');
-    doc.rect(M,y+5,cW,DHEAD-5,'F');
-    doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(...VIOLET);
-    const dl = date.toLocaleDateString(locOpt,{weekday:'long',day:'numeric',month:'long'});
-    doc.text(formatTextForPDF(dl,language), tx(M+4), y+7, {align:al});
+      doc.setFillColor(...(meals.length===0?GRAY_BG:WHITE));
+      doc.rect(x,TOP+DAY_HDR_H,dayW-2,gridH-DAY_HDR_H,'F');
+      doc.setDrawColor(...BORDER); doc.setLineWidth(0.3);
+      doc.roundedRect(x,TOP,dayW-2,gridH,2,2,'S');
 
-    let ry = y+DHEAD+PAD;
-    if (meals.length===0) {
-      doc.setFont('helvetica','italic'); doc.setFontSize(8); doc.setTextColor(...GRAY_TXT);
-      doc.text(formatTextForPDF(translations.noMeals,language), tx(M+6), ry+6, {align:al});
-    } else {
-      const order=['breakfast','lunch','snack','dinner'];
-      [...meals].sort((a,b)=>order.indexOf(a.mealType)-order.indexOf(b.mealType))
-        .forEach((meal,idx) => {
-          doc.setFillColor(...(idx%2===0 ? WHITE : GRAY_BG));
-          doc.rect(M+1,ry,cW-2,MROW,'F');
-          const mc = MEAL_COLOR[meal.mealType]??VIOLET;
-          const mb = MEAL_BG[meal.mealType]??VIOLET_L;
-          const ml = (translations as any)[meal.mealType] ?? meal.mealType;
-          doc.setFillColor(...mb); doc.roundedRect(M+3,ry+2,22,8,2,2,'F');
-          doc.setFont('helvetica','bold'); doc.setFontSize(6); doc.setTextColor(...mc);
-          doc.text(formatTextForPDF(ml,language), M+14, ry+7.5, {align:'center'});
-          doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(...DARK);
-          const titleX = isRTL ? pageW-M-28 : M+28;
-          const tLines = doc.splitTextToSize(formatTextForPDF(meal.dish.title,language), cW-58);
-          doc.text(tLines[0], titleX, ry+7.5, {align:al});
-          doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(...GRAY_TXT);
-          const metaX = isRTL ? M+3 : pageW-M-3;
-          doc.text(`${meal.servings}p · ${meal.dish.cookingTime}min`, metaX, ry+7.5,
-            {align: isRTL ? 'left' : 'right'});
-          ry += MROW;
+      if (meals.length===0) {
+        doc.setFont('helvetica','italic'); doc.setFontSize(7); doc.setTextColor(...GRAY_TXT);
+        doc.text(formatTextForPDF(translations.noMeals,language),x+(dayW-2)/2,TOP+DAY_HDR_H+(gridH-DAY_HDR_H)/2,{align:'center',maxWidth:dayW-6});
+      } else {
+        const sorted=[...meals].sort((a,b)=>MEAL_ORDER.indexOf(a.mealType)-MEAL_ORDER.indexOf(b.mealType));
+        const slotH=Math.min((gridH-DAY_HDR_H)/Math.max(sorted.length,1),38);
+        sorted.forEach((meal,mi) => {
+          const meta=MEAL_META[meal.mealType]??MEAL_META.dinner;
+          const sy=TOP+DAY_HDR_H+mi*slotH;
+          doc.setFillColor(...meta.bg); doc.rect(x+1,sy+1,dayW-4,slotH-2,'F');
+          doc.setFillColor(...meta.color); doc.rect(x+1,sy+1,3,slotH-2,'F');
+          doc.setFont('helvetica','bold'); doc.setFontSize(6); doc.setTextColor(...meta.color);
+          doc.text(formatTextForPDF(meta.label,language).toUpperCase(),x+7,sy+6);
+          doc.setFont('helvetica','bold'); doc.setFontSize(7.5); doc.setTextColor(...DARK);
+          const lines=doc.splitTextToSize(formatTextForPDF(meal.dish.title,language),dayW-10);
+          lines.slice(0,slotH>22?2:1).forEach((l:string,li:number)=>doc.text(l,x+7,sy+12+li*6));
+          if (slotH>22) {
+            doc.setFont('helvetica','normal'); doc.setFontSize(6.5); doc.setTextColor(...GRAY_TXT);
+            doc.text(`${meal.servings}p · ${meal.dish.cookingTime}min`,x+7,sy+slotH-4);
+          }
+          if (mi<sorted.length-1) {
+            doc.setDrawColor(...BORDER); doc.setLineWidth(0.2);
+            doc.line(x+2,sy+slotH,x+dayW-4,sy+slotH);
+          }
         });
-    }
-    return y+h+4;
+      }
+    });
+
+    doc.setDrawColor(...BORDER); doc.setLineWidth(0.3);
+    doc.line(M,pageH-6,pageW-M,pageH-6);
+    doc.setFont('helvetica','italic'); doc.setFontSize(6.5); doc.setTextColor(...GRAY_TXT);
+    doc.text('KingMenu — Planifiez. Cuisinez. Savourez.',pageW/2,pageH-2,{align:'center'});
   };
 
-  let y = drawHeader();
-  y = drawStats(y);
-  y += 4;
-
-  dateRange.forEach(date => {
-    const meals = mealsByDate[date.toISOString().split('T')[0]] ?? [];
-    if (y + estH(meals) + 4 > pageH-16) {
-      drawFooter(); doc.addPage(); y = drawHeader(); y += 6;
-    }
-    y = drawDay(date, meals, y);
-  });
-
-  drawFooter();
+  weeks.forEach((wd,wi) => { if(wi>0) doc.addPage(); drawWeek(wd); });
   doc.save(`planning-repas-${startDate}-${endDate}.pdf`);
 };
