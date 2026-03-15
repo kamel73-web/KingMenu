@@ -57,6 +57,7 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
   // --------------------------
   const toggleFavorite = async () => {
     const user = state.user;
+    console.log('toggleFavorite - user:', user?.id, 'dish.id:', dish.id, 'Number:', Number(dish.id), 'isFavorite:', isFavorite);
     if (!user) {
       toast.error(t('errors.mustBeLoggedIn'));
       return;
@@ -70,10 +71,11 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
         .eq('user_id', user.id)
         .eq('dish_id', Number(dish.id));
 
+      console.log('DELETE error:', error);
       if (!error) {
         setIsFavorite(false);
         toast.success(t('favorites.removed'));
-      }
+      } else { toast.error('Erreur: ' + error.message); }
     } else {
       // Add to saved_dishes
       const { error } = await supabase.from('saved_dishes').insert({
@@ -81,10 +83,11 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
         dish_id: Number(dish.id),
       });
 
+      console.log('INSERT error:', error);
       if (!error) {
         setIsFavorite(true);
         toast.success(t('favorites.added'));
-      }
+      } else { toast.error('Erreur: ' + error.message); }
     }
   };
 
