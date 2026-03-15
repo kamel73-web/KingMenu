@@ -47,8 +47,8 @@ export const useSupabaseData = () => {
           id,
           title: dish.title || 'Plat sans titre',
           image: dish.image
-            ? `${dish.image}?width=600&quality=80&format=webp` // ← optimisation image
-            : '/placeholder-dish.jpg',
+            ? `${dish.image}?width=600&quality=80&format=webp`
+            : 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80',
           cuisine: dish.cuisine || 'Inconnue',
           cuisineId: dish.cuisineId ? String(dish.cuisineId) : null,
           cookingTime: Number(dish.cookingTime) || 30,
