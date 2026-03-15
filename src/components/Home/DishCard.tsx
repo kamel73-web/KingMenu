@@ -13,9 +13,11 @@ import AddToFavoritesButton from '../Favorites/AddToFavoritesButton';
 
 interface DishCardProps {
   dish: Dish;
+  favorites?: number[];
+  toggleFavorite?: (id: number) => Promise<void>;
 }
 
-export default function DishCard({ dish }: DishCardProps) {
+export default function DishCard({ dish, favorites = [], toggleFavorite }: DishCardProps) {
   const { state, dispatch } = useApp();
   const { t } = useTranslation();
   const { translateDish, translateDifficulty, translateTag } = useTranslatedContent();
@@ -147,7 +149,7 @@ export default function DishCard({ dish }: DishCardProps) {
 
               {/* ❤️ Favoris */}
               <div className="w-12 h-12 flex items-center justify-center">
-                <AddToFavoritesButton dishId={dish.id} />
+                <AddToFavoritesButton dishId={dish.id} favorites={favorites} toggleFavorite={toggleFavorite} />
               </div>
             </div>
 
@@ -178,7 +180,7 @@ export default function DishCard({ dish }: DishCardProps) {
 
               {/* ❤️ Favoris */}
               <div className="flex items-center justify-center px-4">
-                <AddToFavoritesButton dishId={dish.id} size={24} />
+                <AddToFavoritesButton dishId={dish.id} size={24} favorites={favorites} toggleFavorite={toggleFavorite} />
               </div>
             </div>
           </div>

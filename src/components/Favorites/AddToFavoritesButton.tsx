@@ -1,17 +1,30 @@
 import { Heart } from "lucide-react";
-import { useFavorites } from "../../hooks/useFavorites";
 import { useApp } from "../../context/AppContext";
+import { useFavorites } from "../../hooks/useFavorites";
 
 interface AddToFavoritesButtonProps {
   dishId: string | number;
   size?: number;
+  favorites?: number[];
+  toggleFavorite?: (id: number) => Promise<void>;
 }
 
-export default function AddToFavoritesButton({ dishId, size = 22 }: AddToFavoritesButtonProps) {
+export default function AddToFavoritesButton({
+  dishId,
+  size = 22,
+  favorites: externalFavorites,
+  toggleFavorite: externalToggle,
+}: AddToFavoritesButtonProps) {
   const { state } = useApp();
   const userId = state.user?.id ?? "";
-  const { favorites, toggleFavorite } = useFavorites(userId);
 
+  // Si favorites passés en props depuis DishGrid : 0 requête supplémentaire
+  const { favorites: localFavorites, toggleFavorite: localToggle } = useFavorites(
+    externalFavorites !== undefined ? "" : userId
+  );
+
+  const favorites = externalFavorites ?? localFavorites;
+  const toggle = externalToggle ?? localToggle;
   const numericId = Number(dishId);
   const isFav = favorites.includes(numericId);
 
@@ -19,7 +32,7 @@ export default function AddToFavoritesButton({ dishId, size = 22 }: AddToFavorit
 
   return (
     <button
-      onClick={() => toggleFavorite(numericId)}
+      onClick={() => toggle(numericId)}
       className="p-1 transition"
       aria-label={isFav ? "Retirer des favoris" : "Ajouter aux favoris"}
     >

@@ -8,6 +8,7 @@ import { useApp } from '../../context/AppContext';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { supabase } from '../../lib/supabase';
+import { useFavorites } from '../../hooks/useFavorites';
 
 // Types
 type CuisineType = {
@@ -205,6 +206,8 @@ export default function DishGrid() {
   const { t, i18n } = useTranslation();
   const { translateDish } = useTranslatedContent();
   const { dishes: supabaseDishes, loading, error } = useSupabaseData();
+  const userId = state.user?.id ?? '';
+  const { favorites, toggleFavorite } = useFavorites(userId);
 
   // Fetch cuisine types and difficulty types
   useEffect(() => {
@@ -395,7 +398,7 @@ export default function DishGrid() {
       {filteredDishes.length > 0 ? (
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8 w-full">
     {filteredDishes.map(dish => (
-      <DishCard key={dish.id} dish={dish} />
+      <DishCard key={dish.id} dish={dish} favorites={favorites} toggleFavorite={toggleFavorite} />
     ))}
   </div>
 ) : (

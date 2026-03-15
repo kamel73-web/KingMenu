@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Calendar, TrendingUp, Clock, Users, ChefHat, Printer } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useApp } from '../context/AppContext';
@@ -13,7 +12,7 @@ export default function MealPlanPage() {
   const userId = state.user?.id;
 
   // Charger les repas une seule fois au montage ou changement d'utilisateur
-  React.useEffect(() => {
+  useEffect(() => {
     if (userId) loadMealPlans();
   }, [userId]);
   const { t } = useTranslation();
