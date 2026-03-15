@@ -5,9 +5,11 @@ import { useApp } from '../../context/AppContext';
 import { CalendarDay } from '../../types';
 import ScheduleDishModal from './ScheduleDishModal';
 import toast from 'react-hot-toast';
+import { useMealPlan } from '../../hooks/useMealPlan';
 
 export default function MealPlanCalendar() {
   const { state, dispatch } = useApp();
+  const { deleteMealPlan } = useMealPlan();
   const { t } = useTranslation();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDish, setSelectedDish] = useState<any>(null);
@@ -99,6 +101,7 @@ export default function MealPlanCalendar() {
 
   const handleRemoveMeal = (mealId: string) => {
     dispatch({ type: 'REMOVE_MEAL_PLAN', payload: mealId });
+    deleteMealPlan(mealId);
     toast.success(t('mealPlan.mealRemoved'));
   };
 

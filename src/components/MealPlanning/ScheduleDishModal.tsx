@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Dish, MealPlan } from '../../types';
 import { useApp } from '../../context/AppContext';
 import toast from 'react-hot-toast';
+import { useMealPlan } from '../../hooks/useMealPlan';
 
 interface ScheduleDishModalProps {
   dish: Dish;
@@ -13,6 +14,7 @@ interface ScheduleDishModalProps {
 
 export default function ScheduleDishModal({ dish, isOpen, onClose }: ScheduleDishModalProps) {
   const { state, dispatch } = useApp();
+  const { saveMealPlan } = useMealPlan();
   const { t } = useTranslation();
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [mealType, setMealType] = useState<'breakfast' | 'lunch' | 'dinner' | 'snack'>('dinner');
@@ -39,6 +41,7 @@ export default function ScheduleDishModal({ dish, isOpen, onClose }: ScheduleDis
     };
 
     dispatch({ type: 'ADD_MEAL_PLAN', payload: newMealPlan });
+    saveMealPlan(newMealPlan);
     toast.success(t('mealPlan.dishScheduled', { title: dish.title, date: selectedDate }));
     onClose();
   };
