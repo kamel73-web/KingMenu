@@ -1,12 +1,21 @@
+import React from 'react';
 import { useState } from 'react';
 import { Calendar, TrendingUp, Clock, Users, ChefHat, Printer } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useApp } from '../context/AppContext';
+import { useMealPlan } from '../hooks/useMealPlan';
 import MealPlanCalendar from '../components/MealPlanning/MealPlanCalendar';
 import PrintMealCalendarModal from '../components/MealPlanning/PrintMealCalendarModal';
 
 export default function MealPlanPage() {
   const { state } = useApp();
+  const { loadMealPlans } = useMealPlan();
+  const userId = state.user?.id;
+
+  // Charger les repas une seule fois au montage ou changement d'utilisateur
+  React.useEffect(() => {
+    if (userId) loadMealPlans();
+  }, [userId]);
   const { t } = useTranslation();
   const [showPrintModal, setShowPrintModal] = useState(false);
 

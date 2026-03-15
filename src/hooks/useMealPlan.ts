@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import { useApp } from '../context/AppContext';
 import { MealPlan } from '../types';
@@ -7,20 +7,16 @@ export const useMealPlan = () => {
   const { state, dispatch } = useApp();
   const userId = state.user?.id;
 
-  // ── Charger les repas futurs au login ─────────────────────────────────
   const loadMealPlans = useCallback(async () => {
     if (!userId) return;
-
     const today = new Date().toISOString().split('T')[0];
-
     const { data, error } = await supabase
       .from('meal_plans')
       .select(`
         id, date, meal_type, servings, notes, created_at,
         dishes (
-          id, name, description, image_url, cooking_time,
-          rating, calories, servings, tags, difficulty,
-          cuisine_type, "cuisineId",
+          id, name, image_url, cooking_time, rating,
+          calories, servings, tags, difficulty, cuisine_type, "cuisineId",
           dish_ingredients (
             quantity, unit,
             ingredient:ingredient_id ( id, name, category )
@@ -31,16 +27,9 @@ export const useMealPlan = () => {
       .gte('date', today)
       .order('date', { ascending: true });
 
-    if (error) {
-      // Table inexistante ou erreur réseau : on garde le state local intact
-      console.warn('useMealPlan: table meal_plans inaccessible, mode local activé');
-      return;
-    }
-
-    if (!data || data.length === 0) return;
+    if (error || !data || data.length === 0) return;
 
     const lang = 'fr';
-
     const mealPlans: MealPlan[] = data.map((row: any) => {
       const dish = row.dishes;
       return {
@@ -78,44 +67,25 @@ export const useMealPlan = () => {
     dispatch({ type: 'SET_MEAL_PLAN', payload: mealPlans });
   }, [userId, dispatch]);
 
-  // ── Sauvegarder un repas ──────────────────────────────────────────────
   const saveMealPlan = useCallback(async (meal: MealPlan) => {
     if (!userId) return;
-
-    const { error } = await supabase
-      .from('meal_plans')
-      .upsert({
-        id: meal.id,
-        user_id: userId,
-        dish_id: Number(meal.dish.id),
-        date: meal.date,
-        meal_type: meal.mealType,
-        servings: meal.servings,
-        notes: meal.notes ?? null,
-        created_at: meal.createdAt,
-      }, { onConflict: 'id' });
-
-    if (error) console.error('Erreur sauvegarde meal plan:', error);
+    await supabase.from('meal_plans').upsert({
+      id: meal.id,
+      user_id: userId,
+      dish_id: Number(meal.dish.id),
+      date: meal.date,
+      meal_type: meal.mealType,
+      servings: meal.servings,
+      notes: meal.notes ?? null,
+      created_at: meal.createdAt,
+    }, { onConflict: 'id' });
   }, [userId]);
 
-  // ── Supprimer un repas ────────────────────────────────────────────────
   const deleteMealPlan = useCallback(async (mealId: string) => {
     if (!userId) return;
-
-    const { error } = await supabase
-      .from('meal_plans')
-      .delete()
-      .eq('id', mealId)
-      .eq('user_id', userId);
-
-    if (error) console.error('Erreur suppression meal plan:', error);
+    await supabase.from('meal_plans').delete()
+      .eq('id', mealId).eq('user_id', userId);
   }, [userId]);
-
-  // ── Charger au login ──────────────────────────────────────────────────
-  useEffect(() => {
-    if (userId) loadMealPlans();
-    // Ne pas vider au logout — le state sera réinitialisé par AppContext.LOGOUT
-  }, [userId, loadMealPlans, dispatch]);
 
   return { saveMealPlan, deleteMealPlan, loadMealPlans };
 };
