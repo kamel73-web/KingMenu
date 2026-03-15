@@ -199,12 +199,18 @@ function reducer(state: State, action: Action): State {
       }
 
       // Conversion Ingredient → OwnedIngredient
+      // Garder le nom multilingue si disponible pour matching multilingue
+      const rawName = ing.name as any;
+      const resolvedName = typeof rawName === "string"
+        ? rawName
+        : rawName?.fr ?? rawName?.en ?? rawName?.ar ?? "Unknown";
+
       const owned: OwnedIngredient = {
         id: ing.id,
-        name: typeof ing.name === "string" ? ing.name : (ing.name as any)?.en ?? "Unknown",
+        name: resolvedName,
         quantity: parseFloat(ing.amount) || 1,
         unit: ing.unit ?? "",
-        category: typeof ing.category === "string" ? ing.category : (ing.category as any)?.en ?? "",
+        category: typeof ing.category === "string" ? ing.category : (ing.category as any)?.fr ?? (ing.category as any)?.en ?? "",
       };
 
       return {

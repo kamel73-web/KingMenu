@@ -27,20 +27,31 @@ export default function UseMyIngredientsPage() {
     const lang = i18n.language;
     const matches: DishMatch[] = [];
 
-    dishes.forEach(dish => {
-      const availableIngredients: Ingredient[] = dish.ingredients.filter(dishIngredient => {
-        const dishName = resolveName(dishIngredient.name, lang).toLowerCase();
-        return ownedIngredients.some(owned =>
-          resolveName(owned.name, lang).toLowerCase() === dishName
-        );
-      });
+    // Ensemble des IDs possédés pour comparaison rapide
+    const ownedIds = new Set(ownedIngredients.map(o => String(o.id)));
+    // Noms possédés en minuscules pour fallback si IDs absents
+    const ownedNames = new Set(
+      ownedIngredients.map(o => resolveName(o.name, lang).toLowerCase().trim())
+    );
 
-      const missingIngredients: Ingredient[] = dish.ingredients.filter(dishIngredient => {
-        const dishName = resolveName(dishIngredient.name, lang).toLowerCase();
-        return !ownedIngredients.some(owned =>
-          resolveName(owned.name, lang).toLowerCase() === dishName
-        );
-      });
+    const ingredientMatches = (dishIngredient: Ingredient): boolean => {
+      // 1. Comparaison par ID (plus fiable)
+      if (ownedIds.has(String(dishIngredient.id))) return true;
+      // 2. Fallback : comparaison par nom traduit
+      const dishName = resolveName(dishIngredient.name, lang).toLowerCase().trim();
+      if (ownedNames.has(dishName)) return true;
+      // 3. Fallback partiel : le nom possédé est contenu dans le nom du plat ou inversement
+      for (const ownedName of ownedNames) {
+        if (ownedName.length > 2 && (dishName.includes(ownedName) || ownedName.includes(dishName))) {
+          return true;
+        }
+      }
+      return false;
+    };
+
+    dishes.forEach(dish => {
+      const availableIngredients: Ingredient[] = dish.ingredients.filter(ingredientMatches);
+      const missingIngredients: Ingredient[] = dish.ingredients.filter(i => !ingredientMatches(i));
 
       const compatibilityScore = dish.ingredients.length > 0
         ? (availableIngredients.length / dish.ingredients.length) * 100
