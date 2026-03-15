@@ -24,7 +24,6 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
   const { t } = useTranslation();
   const { translateDifficulty, translateUnit } = useTranslatedContent();
 
-  if (!isOpen) return null;
 
   const servingMultiplier = servings / dish.servings;
 
@@ -118,6 +117,7 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
     if (isNaN(numericAmount)) return amount;
     return (numericAmount * servingMultiplier).toFixed(1).replace(/\.0$/, '');
   };
+
 
   if (!isOpen) return null;
 
