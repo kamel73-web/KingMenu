@@ -1,5 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, User, Heart, ShoppingCart, LogOut, Utensils, ChefHat, Sparkles, Calendar } from 'lucide-react';
+import { useState } from 'react';
+import TodayMenuModal from '../MealPlanning/TodayMenuModal';
+import { Home, User, Heart, ShoppingCart, LogOut, Utensils, ChefHat, Sparkles, Calendar, UtensilsCrossed } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useApp } from '../../context/AppContext';
 import { signOut } from '../../lib/supabase';
@@ -9,7 +11,10 @@ import toast from 'react-hot-toast';
 export default function Navbar() {
   const location = useLocation();
   const { state, dispatch } = useApp();
+  const [showTodayMenu, setShowTodayMenu] = useState(false);
   const { t } = useTranslation();
+  const todayStr = new Date().toISOString().split('T')[0];
+  const todayMealsCount = state.mealPlan.filter(m => m.date === todayStr).length;
 
   const handleLogout = async () => {
     try {
@@ -40,6 +45,7 @@ export default function Navbar() {
   ];
 
   return (
+    <>
     <nav className="bg-white/95 backdrop-blur-md shadow-soft border-b border-warm-gray-100 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
@@ -83,6 +89,21 @@ export default function Navbar() {
               </Link>
             ))}
             
+            {/* Bouton Menu du jour */}
+            <button
+              onClick={() => setShowTodayMenu(true)}
+              className="relative flex items-center space-x-2 px-5 py-2.5 rounded-full transition-all duration-200 text-warm-gray-600 hover:text-orange-500 hover:bg-orange-50"
+              title="Menu du jour"
+            >
+              <UtensilsCrossed className="h-5 w-5" />
+              <span className="font-semibold">{t('navigation.todayMenu', 'Menu du jour')}</span>
+              {todayMealsCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-orange-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
+                  {todayMealsCount}
+                </span>
+              )}
+            </button>
+
             <LanguageSelector />
             
             {state.user && (
@@ -170,6 +191,20 @@ export default function Navbar() {
             </Link>
           ))}
           
+          {/* Menu du jour */}
+          <button
+            onClick={() => setShowTodayMenu(true)}
+            className="relative flex flex-col items-center py-3 px-2 text-warm-gray-600 rounded-2xl hover:bg-orange-50 hover:text-orange-500 transition-all"
+          >
+            <UtensilsCrossed className="h-5 w-5" />
+            <span className="text-xs font-semibold mt-1">Auj.</span>
+            {todayMealsCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-orange-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
+                {todayMealsCount}
+              </span>
+            )}
+          </button>
+
           {/* Logout button */}
           {state.user && (
             <button
@@ -183,5 +218,7 @@ export default function Navbar() {
         </div>
       </div>
     </nav>
+      <TodayMenuModal isOpen={showTodayMenu} onClose={() => setShowTodayMenu(false)} />
+    </>
   );
 }
