@@ -46,6 +46,11 @@ jobs:
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode \
             > android/app/kingmenu-release.keystore
 
+      - name: Fix JAVA_HOME
+        run: |
+          echo "JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))" >> $GITHUB_ENV
+          java -version
+
       - name: Build release AAB
         run: |
           cd android
