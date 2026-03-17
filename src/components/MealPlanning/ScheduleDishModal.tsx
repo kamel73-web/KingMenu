@@ -19,7 +19,6 @@ export default function ScheduleDishModal({ dish, isOpen, onClose }: ScheduleDis
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [mealType, setMealType] = useState<'breakfast' | 'lunch' | 'dinner' | 'snack'>('dinner');
   const [servings, setServings] = useState(dish.servings);
-  const [notes, setNotes] = useState('');
 
   if (!isOpen) return null;
 
@@ -36,7 +35,7 @@ export default function ScheduleDishModal({ dish, isOpen, onClose }: ScheduleDis
       mealType,
       dish,
       servings,
-      notes: notes.trim() || undefined,
+      notes: undefined,
       createdAt: new Date().toISOString(),
     };
 
@@ -160,21 +159,6 @@ export default function ScheduleDishModal({ dish, isOpen, onClose }: ScheduleDis
               </button>
             </div>
           </div>
-
-          {/* Notes */}
-          <div>
-            <label className="block text-sm font-body font-medium text-gray-700 mb-2">
-              {t('mealPlan.notes')} ({t('common.optional')})
-            </label>
-            <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder={t('mealPlan.notesPlaceholder')}
-              rows={3}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
-            />
-          </div>
-
           {/* Action Buttons */}
           <div className="flex space-x-3 pt-4">
             <button
