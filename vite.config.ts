@@ -4,7 +4,7 @@ import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
-  base: '/KingMenu/',
+  base: process.env.CAPACITOR_BUILD === 'true' ? '/' : '/KingMenu/',
   resolve: {
     alias: {
       '@capacitor/core': path.resolve(__dirname, 'src/stubs/capacitor-core.ts'),
