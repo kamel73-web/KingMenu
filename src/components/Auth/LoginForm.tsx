@@ -229,7 +229,7 @@ export default function LoginForm() {
             className="w-full border border-gray-300 py-3 rounded-lg font-medium flex items-center justify-center gap-2 hover:bg-gray-50"
           >
             <img
-              src="/KingMenu/google-icon.svg"
+              src="https://www.google.com/favicon.ico"
               alt="Google"
               className="w-5 h-5"
             />
