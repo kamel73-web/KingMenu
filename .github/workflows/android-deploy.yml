@@ -41,6 +41,7 @@ jobs:
 
       - name: Capacitor sync
         run: |
+          rm -rf android/app/src/main/assets/public/
           npx cap sync android
           # Créer le fichier manquant si absent
           if [ ! -f android/capacitor-cordova-android-plugins/cordova.variables.gradle ]; then
