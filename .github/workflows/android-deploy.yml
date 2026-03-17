@@ -40,7 +40,16 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Capacitor sync
-        run: npx cap sync android
+        run: |
+          npx cap sync android
+          # Créer le fichier manquant si absent
+          if [ ! -f android/capacitor-cordova-android-plugins/cordova.variables.gradle ]; then
+            mkdir -p android/capacitor-cordova-android-plugins
+            echo "ext {" > android/capacitor-cordova-android-plugins/cordova.variables.gradle
+            echo "}" >> android/capacitor-cordova-android-plugins/cordova.variables.gradle
+            echo "✅ cordova.variables.gradle créé"
+          fi
+          ls android/capacitor-cordova-android-plugins/
 
       - name: Decode keystore
         run: |
