@@ -60,9 +60,21 @@ jobs:
             -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} \
             -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
 
+      - name: Build release APK
+        run: |
+          cd android
+          ./gradlew assembleRelease             -Pandroid.injected.signing.store.file=$GITHUB_WORKSPACE/android/app/kingmenu-release.keystore             -Pandroid.injected.signing.store.password=${{ secrets.KEYSTORE_PASSWORD }}             -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }}             -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
+
       - name: Save AAB artifact
         uses: actions/upload-artifact@v4
         with:
-          name: kingmenu-release
+          name: kingmenu-release-aab
           path: android/app/build/outputs/bundle/release/app-release.aab
+          retention-days: 30
+
+      - name: Save APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kingmenu-release-apk
+          path: android/app/build/outputs/apk/release/app-release.apk
           retention-days: 30
