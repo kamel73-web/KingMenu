@@ -1,3 +1,4 @@
+// BUILD_ID: NO_NOTES_v1018
 import { useState } from 'react';
 import { X, Calendar, Users } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -48,8 +49,8 @@ export default function ScheduleDishModal({ dish, isOpen, onClose }: ScheduleDis
   ];
 
   return (
-    <div className="fixed inset-0 bg-black/60 z-50 flex items-end sm:items-center justify-center">
-      <div className="bg-white w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl shadow-2xl">
+    <div className="fixed inset-0 bg-black/60 z-50 flex items-end sm:items-center justify-center" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="bg-white w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col" style={{maxHeight:"85vh"}}>
 
         {/* Header compact */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
@@ -66,7 +67,7 @@ export default function ScheduleDishModal({ dish, isOpen, onClose }: ScheduleDis
           </button>
         </div>
 
-        <div className="px-4 py-3 space-y-4">
+        <div className="px-4 py-3 space-y-4 overflow-y-auto flex-1">
 
           {/* Date */}
           <div>
