@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Calendar, Clock, Users, ChefHat } from 'lucide-react';
+import { X, Calendar, Users } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Dish, MealPlan } from '../../types';
 import { useApp } from '../../context/AppContext';
@@ -23,11 +23,7 @@ export default function ScheduleDishModal({ dish, isOpen, onClose }: ScheduleDis
   if (!isOpen) return null;
 
   const handleSchedule = () => {
-    if (!state.user) {
-      toast.error(t('common.error'));
-      return;
-    }
-
+    if (!state.user) { toast.error(t('common.error')); return; }
     const newMealPlan: MealPlan = {
       id: crypto.randomUUID(),
       userId: state.user.id,
@@ -38,10 +34,7 @@ export default function ScheduleDishModal({ dish, isOpen, onClose }: ScheduleDis
       notes: undefined,
       createdAt: new Date().toISOString(),
     };
-
-    console.log('ScheduleDishModal - dispatch ADD_MEAL_PLAN:', newMealPlan.id);
     dispatch({ type: 'ADD_MEAL_PLAN', payload: newMealPlan });
-    console.log('ScheduleDishModal - calling saveMealPlan...');
     saveMealPlan(newMealPlan);
     toast.success(t('mealPlan.dishScheduled', { title: dish.title, date: selectedDate }));
     onClose();
@@ -49,131 +42,97 @@ export default function ScheduleDishModal({ dish, isOpen, onClose }: ScheduleDis
 
   const mealTypeOptions = [
     { value: 'breakfast', label: t('mealPlan.breakfast'), icon: '🌅' },
-    { value: 'lunch', label: t('mealPlan.lunch'), icon: '☀️' },
-    { value: 'dinner', label: t('mealPlan.dinner'), icon: '🌙' },
-    { value: 'snack', label: t('mealPlan.snack'), icon: '🍎' },
+    { value: 'lunch',     label: t('mealPlan.lunch'),      icon: '☀️' },
+    { value: 'dinner',    label: t('mealPlan.dinner'),     icon: '🌙' },
+    { value: 'snack',     label: t('mealPlan.snack'),      icon: '🍎' },
   ];
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-60 flex items-start justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl my-4">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-heading font-bold text-gray-900">
-            {t('mealPlan.scheduleDish')}
-          </h2>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-all"
-          >
+    <div className="fixed inset-0 bg-black/60 z-50 flex items-end sm:items-center justify-center">
+      <div className="bg-white w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl shadow-2xl">
+
+        {/* Header compact */}
+        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+          <div className="flex items-center gap-3">
+            <img src={dish.image} alt={dish.title}
+              className="w-10 h-10 object-cover rounded-lg flex-shrink-0" />
+            <div>
+              <p className="font-semibold text-gray-900 text-sm leading-tight">{dish.title}</p>
+              <p className="text-xs text-gray-500">{dish.cookingTime} min · {dish.difficulty}</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="p-1.5 hover:bg-gray-100 rounded-lg">
             <X className="h-5 w-5 text-gray-500" />
           </button>
         </div>
 
-        <div className="p-6 space-y-6">
-          {/* Dish Info */}
-          <div className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
-            <img
-              src={dish.image}
-              alt={dish.title}
-              className="w-16 h-16 object-cover rounded-lg"
-            />
-            <div className="flex-1">
-              <h3 className="font-heading font-semibold text-gray-900">{dish.title}</h3>
-              <div className="flex items-center space-x-3 text-sm text-gray-600 mt-1">
-                <div className="flex items-center space-x-1">
-                  <Clock className="h-4 w-4" />
-                  <span>{dish.cookingTime}m</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <ChefHat className="h-4 w-4" />
-                  <span>{dish.difficulty}</span>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div className="px-4 py-3 space-y-4">
 
-          {/* Date Selection */}
+          {/* Date */}
           <div>
-            <label className="block text-sm font-body font-medium text-gray-700 mb-2">
+            <label className="block text-xs font-medium text-gray-600 mb-1.5">
               {t('mealPlan.selectDate')}
             </label>
             <div className="relative">
-              <Calendar className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-              <input
-                type="date"
-                value={selectedDate}
+              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <input type="date" value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
                 min={new Date().toISOString().split('T')[0]}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-              />
+                className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-transparent outline-none" />
             </div>
           </div>
 
-          {/* Meal Type Selection */}
+          {/* Type de repas */}
           <div>
-            <label className="block text-sm font-body font-medium text-gray-700 mb-3">
+            <label className="block text-xs font-medium text-gray-600 mb-1.5">
               {t('mealPlan.mealType')}
             </label>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-4 gap-2">
               {mealTypeOptions.map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() => setMealType(option.value as any)}
-                  className={`p-3 rounded-lg border-2 transition-all text-left ${
+                <button key={option.value} onClick={() => setMealType(option.value as any)}
+                  className={`py-2 px-1 rounded-xl border-2 text-center transition-all ${
                     mealType === option.value
                       ? 'border-orange-500 bg-orange-500 text-white'
-                      : 'border-gray-200 hover:border-orange-500 hover:bg-orange-50'
-                  }`}
-                >
-                  <div className="flex items-center space-x-2">
-                    <span className="text-lg">{option.icon}</span>
-                    <span className="font-body font-medium text-sm">{option.label}</span>
-                  </div>
+                      : 'border-gray-200 hover:border-orange-300'
+                  }`}>
+                  <div className="text-lg leading-none mb-1">{option.icon}</div>
+                  <div className="text-xs font-medium leading-tight">{option.label}</div>
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Servings */}
-          <div>
-            <label className="block text-sm font-body font-medium text-gray-700 mb-2">
-              {t('mealPlan.servings')}
-            </label>
-            <div className="flex items-center space-x-3">
-              <button
-                onClick={() => setServings(Math.max(1, servings - 1))}
-                className="w-10 h-10 bg-gray-200 text-gray-700 rounded-full flex items-center justify-center hover:bg-gray-300 transition-all"
-              >
-                -
+          {/* Portions */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Users className="h-4 w-4 text-gray-500" />
+              <span className="text-sm font-medium text-gray-700">{t('mealPlan.servings')}</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <button onClick={() => setServings(Math.max(1, servings - 1))}
+                className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-700 hover:bg-gray-300 font-bold">
+                −
               </button>
-              <div className="flex items-center space-x-2">
-                <Users className="h-5 w-5 text-gray-500" />
-                <span className="font-heading font-bold text-lg w-8 text-center">{servings}</span>
-              </div>
-              <button
-                onClick={() => setServings(servings + 1)}
-                className="w-10 h-10 bg-gray-200 text-gray-700 rounded-full flex items-center justify-center hover:bg-gray-300 transition-all"
-              >
+              <span className="font-bold text-lg w-6 text-center">{servings}</span>
+              <button onClick={() => setServings(servings + 1)}
+                className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-700 hover:bg-gray-300 font-bold">
                 +
               </button>
             </div>
           </div>
-          {/* Action Buttons */}
-          <div className="flex space-x-3 pt-4">
-            <button
-              onClick={onClose}
-              className="flex-1 py-3 px-4 border border-gray-300 text-gray-700 rounded-lg font-body font-medium hover:bg-gray-50 transition-all"
-            >
+
+          {/* Boutons */}
+          <div className="flex gap-3 pt-1 pb-1">
+            <button onClick={onClose}
+              className="flex-1 py-3 border border-gray-300 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50">
               {t('common.cancel')}
             </button>
-            <button
-              onClick={handleSchedule}
-              className="flex-1 py-3 px-4 bg-orange-500 text-white rounded-lg font-body font-medium hover:bg-orange-600 transition-all"
-            >
+            <button onClick={handleSchedule}
+              className="flex-1 py-3 bg-orange-500 text-white rounded-xl text-sm font-medium hover:bg-orange-600">
               {t('mealPlan.schedule')}
             </button>
           </div>
+
         </div>
       </div>
     </div>
