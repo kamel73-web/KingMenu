@@ -17,14 +17,14 @@ export default function ScheduleDishModal({ dish, isOpen, onClose }: ScheduleDis
   const { saveMealPlan } = useMealPlan();
   const { t } = useTranslation();
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-  const [mealType, setMealType] = useState<'breakfast' | 'lunch' | 'dinner' | 'snack'>('dinner');
+  const [mealType, setMealType] = useState<'breakfast'|'lunch'|'dinner'|'snack'>('dinner');
   const [servings, setServings] = useState(dish.servings);
 
   if (!isOpen) return null;
 
   const handleSchedule = () => {
     if (!state.user) { toast.error(t('common.error')); return; }
-    const newMealPlan: MealPlan = {
+    const meal: MealPlan = {
       id: crypto.randomUUID(),
       userId: state.user.id,
       date: selectedDate,
@@ -34,13 +34,13 @@ export default function ScheduleDishModal({ dish, isOpen, onClose }: ScheduleDis
       notes: undefined,
       createdAt: new Date().toISOString(),
     };
-    dispatch({ type: 'ADD_MEAL_PLAN', payload: newMealPlan });
-    saveMealPlan(newMealPlan);
+    dispatch({ type: 'ADD_MEAL_PLAN', payload: meal });
+    saveMealPlan(meal);
     toast.success(t('mealPlan.dishScheduled', { title: dish.title, date: selectedDate }));
     onClose();
   };
 
-  const mealTypeOptions = [
+  const meals = [
     { value: 'breakfast', label: t('mealPlan.breakfast'), icon: '🌅' },
     { value: 'lunch',     label: t('mealPlan.lunch'),     icon: '☀️' },
     { value: 'dinner',    label: t('mealPlan.dinner'),    icon: '🌙' },
@@ -49,132 +49,108 @@ export default function ScheduleDishModal({ dish, isOpen, onClose }: ScheduleDis
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center"
-      style={{ backgroundColor: 'rgba(0,0,0,0.55)' }}
+      className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div
-        className="bg-white w-full rounded-t-2xl shadow-2xl"
-        style={{ maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}
-      >
-        {/* Handle bar */}
-        <div className="flex justify-center pt-2 pb-1">
+      <div className="bg-white w-full sm:w-96 rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden">
+
+        {/* Poignée mobile */}
+        <div className="sm:hidden flex justify-center pt-2">
           <div className="w-10 h-1 rounded-full bg-gray-300" />
         </div>
 
-        {/* Header */}
-        <div className="flex items-center justify-between px-4 py-2 border-b border-gray-100">
-          <div className="flex items-center gap-3 flex-1 min-w-0">
-            <img
-              src={dish.image}
-              alt={dish.title}
-              style={{ width: 38, height: 38, objectFit: 'cover', borderRadius: 8, flexShrink: 0 }}
-            />
-            <div className="min-w-0">
-              <p className="font-semibold text-gray-900 text-sm truncate">{dish.title}</p>
-              <p className="text-xs text-gray-500">{dish.cookingTime} min · {dish.difficulty}</p>
-            </div>
+        {/* Header orange */}
+        <div className="bg-orange-500 px-4 py-3 flex items-center gap-3">
+          <img
+            src={dish.image}
+            alt={dish.title}
+            className="w-10 h-10 rounded-xl object-cover ring-2 ring-white/30 flex-shrink-0"
+          />
+          <div className="flex-1 min-w-0">
+            <p className="text-white font-semibold text-sm truncate">{dish.title}</p>
+            <p className="text-orange-100 text-xs">{dish.cookingTime} min · {dish.difficulty}</p>
           </div>
-          <button
-            onClick={onClose}
-            style={{ padding: 6, borderRadius: 8, flexShrink: 0 }}
-            className="hover:bg-gray-100"
-          >
-            <X size={18} className="text-gray-500" />
+          <button onClick={onClose} className="p-1.5 rounded-full bg-white/20 hover:bg-white/30">
+            <X className="h-4 w-4 text-white" />
           </button>
         </div>
 
-        {/* Contenu scrollable */}
-        <div style={{ overflowY: 'auto', flex: 1, padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+        {/* Corps */}
+        <div className="px-4 py-4 space-y-4">
 
           {/* Date */}
           <div>
-            <label className="block text-xs font-medium text-gray-600" style={{ marginBottom: 6 }}>
+            <label className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+              <Calendar className="h-3.5 w-3.5 text-orange-500" />
               {t('mealPlan.selectDate')}
             </label>
-            <div style={{ position: 'relative' }}>
-              <Calendar size={15} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
-              <input
-                type="date"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-                min={new Date().toISOString().split('T')[0]}
-                style={{
-                  width: '100%', paddingLeft: 32, paddingRight: 12,
-                  paddingTop: 10, paddingBottom: 10,
-                  fontSize: 14, border: '1px solid #d1d5db',
-                  borderRadius: 10, outline: 'none', boxSizing: 'border-box'
-                }}
-              />
-            </div>
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              min={new Date().toISOString().split('T')[0]}
+              className="w-full px-3 py-2.5 text-sm border-2 border-gray-200 rounded-xl focus:border-orange-400 focus:outline-none"
+            />
           </div>
 
           {/* Type de repas */}
           <div>
-            <label className="block text-xs font-medium text-gray-600" style={{ marginBottom: 6 }}>
+            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5 block">
               {t('mealPlan.mealType')}
             </label>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 8 }}>
-              {mealTypeOptions.map((option) => (
+            <div className="grid grid-cols-4 gap-2">
+              {meals.map((m) => (
                 <button
-                  key={option.value}
-                  onClick={() => setMealType(option.value as any)}
-                  style={{
-                    padding: '8px 4px',
-                    borderRadius: 12,
-                    border: `2px solid ${mealType === option.value ? '#f97316' : '#e5e7eb'}`,
-                    background: mealType === option.value ? '#f97316' : '#fff',
-                    color: mealType === option.value ? '#fff' : '#374151',
-                    textAlign: 'center',
-                    cursor: 'pointer',
-                    transition: 'all .15s',
-                  }}
+                  key={m.value}
+                  onClick={() => setMealType(m.value as any)}
+                  className={`py-2.5 px-1 rounded-xl border-2 text-center transition-all ${
+                    mealType === m.value
+                      ? 'border-orange-500 bg-orange-500 text-white'
+                      : 'border-gray-200 bg-gray-50 hover:border-orange-300'
+                  }`}
                 >
-                  <div style={{ fontSize: 20, lineHeight: 1, marginBottom: 4 }}>{option.icon}</div>
-                  <div style={{ fontSize: 10, fontWeight: 500, lineHeight: 1.2 }}>{option.label}</div>
+                  <div className="text-xl leading-none mb-1">{m.icon}</div>
+                  <div className="text-xs font-medium leading-tight">{m.label}</div>
                 </button>
               ))}
             </div>
           </div>
 
           {/* Portions */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <Users size={16} className="text-gray-500" />
-              <span style={{ fontSize: 14, fontWeight: 500, color: '#374151' }}>{t('mealPlan.servings')}</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div>
+            <label className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+              <Users className="h-3.5 w-3.5 text-orange-500" />
+              {t('mealPlan.servings')}
+            </label>
+            <div className="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-2 border-2 border-gray-200">
               <button
                 onClick={() => setServings(Math.max(1, servings - 1))}
-                style={{ width: 32, height: 32, borderRadius: '50%', background: '#e5e7eb', border: 'none', cursor: 'pointer', fontSize: 18, fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-              >−</button>
-              <span style={{ fontSize: 18, fontWeight: 700, minWidth: 24, textAlign: 'center' }}>{servings}</span>
+                disabled={servings <= 1}
+                className="w-8 h-8 rounded-full bg-white border border-gray-200 text-gray-700 font-bold text-lg flex items-center justify-center disabled:opacity-40"
+              >
+                −
+              </button>
+              <span className="text-2xl font-bold text-gray-800">{servings}</span>
               <button
                 onClick={() => setServings(servings + 1)}
-                style={{ width: 32, height: 32, borderRadius: '50%', background: '#e5e7eb', border: 'none', cursor: 'pointer', fontSize: 18, fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-              >+</button>
+                className="w-8 h-8 rounded-full bg-white border border-gray-200 text-gray-700 font-bold text-lg flex items-center justify-center"
+              >
+                +
+              </button>
             </div>
           </div>
 
-          {/* Boutons */}
-          <div style={{ display: 'flex', gap: 10, paddingBottom: 8 }}>
+          {/* Boutons action */}
+          <div className="flex gap-2 pt-1">
             <button
               onClick={onClose}
-              style={{
-                flex: 1, padding: '12px 0', border: '1px solid #d1d5db',
-                borderRadius: 12, fontSize: 14, fontWeight: 500,
-                color: '#374151', background: '#fff', cursor: 'pointer'
-              }}
+              className="flex-1 py-3 border-2 border-gray-200 text-gray-700 rounded-xl text-sm font-semibold hover:bg-gray-50"
             >
               {t('common.cancel')}
             </button>
             <button
               onClick={handleSchedule}
-              style={{
-                flex: 1, padding: '12px 0', border: 'none',
-                borderRadius: 12, fontSize: 14, fontWeight: 500,
-                color: '#fff', background: '#f97316', cursor: 'pointer'
-              }}
+              className="flex-1 py-3 bg-orange-500 text-white rounded-xl text-sm font-semibold hover:bg-orange-600"
             >
               {t('mealPlan.schedule')}
             </button>
