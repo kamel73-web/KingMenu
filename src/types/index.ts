@@ -1,10 +1,12 @@
+// src/types/index.ts
+
 export interface User {
   id: string;
   email: string;
   name: string;
-  preferences: string[];
-  dislikedIngredients: string[];
-  ownedIngredients: OwnedIngredient[];
+  preferences?: string[];          // IDs des types de cuisine préférés (optionnel)
+  dislikedIngredients?: string[];   // IDs des ingrédients à exclure (optionnel)
+  ownedIngredients?: OwnedIngredient[];
   avatar?: string;
 }
 
@@ -13,10 +15,11 @@ export interface Dish {
   title: string;
   image: string;
   cuisine: string;               // nom traduit / affichage
-  cuisineId?: string | null;     // <-- ajouté : identifiant stable (pour logique / filtres)
+  cuisineId?: string | null;     // identifiant stable pour logique / filtres
   cookingTime: number;
   rating: number;
-  difficulty: 'Easy' | 'Medium' | 'Hard';
+  // Accepte les valeurs uppercase (ancienne norme) et lowercase (BDD Supabase)
+  difficulty: 'Easy' | 'Medium' | 'Hard' | 'easy' | 'medium' | 'hard';
   ingredients: Ingredient[];
   instructions: string[];
   servings: number;
@@ -31,6 +34,9 @@ export interface Dish {
     cuisine?: Record<string, string>;
   };
   instructionTranslations?: Record<string, string[]>;
+  // Champs optionnels utilisés dans DishGrid pour les filtres
+  difficultyId?: string;
+  description?: string;
 }
 
 export interface Ingredient {
