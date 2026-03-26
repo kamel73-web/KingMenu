@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react";
 import { Heart, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/lib/supabase";
+import { mapSupabaseDishToModel } from "@/dishMapper";
 import RecipeModal from "../Recipe/RecipeModal";
 
 export default function FavoritesView() {
   const [favorites, setFavorites] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
-  const [selectedDish, setSelectedDish] = useState<any>(null); // Pour ouvrir RecipeModal
+  const [selectedDish, setSelectedDish] = useState<any>(null);
+  const { i18n } = useTranslation();
+  const lang = i18n.language.split("-")[0] || "fr";
 
   // Charger l'utilisateur
   useEffect(() => {
@@ -44,7 +48,13 @@ export default function FavoritesView() {
 
       const { data: dishes, error: dishesError } = await supabase
         .from("dishes")
-        .select("*")
+        .select(`
+          *,
+          dish_ingredients (
+            quantity, unit,
+            ingredient:ingredient_id ( id, name, category )
+          )
+        `)
         .in("id", dishIds);
 
       if (dishesError) {
@@ -72,17 +82,8 @@ export default function FavoritesView() {
     setFavorites((prev) => prev.filter((f) => f.id !== dishId));
   };
 
-  // Mapper un plat DB → format attendu par RecipeModal
-  const formatForRecipeModal = (dish: any) => ({
-    id: dish.id,
-    title: dish.name?.fr || dish.name?.en || "Sans nom",
-    image: dish.image_url,
-    ingredients: dish.ingredients || [],
-    instructions: dish.steps || [],
-    difficulty: dish.difficulty,
-    cookingTime: dish.cooking_time,
-    servings: dish.servings,
-  });
+  // Mapper un plat DB → format Dish complet attendu par RecipeModal
+  const formatForRecipeModal = (dish: any) => mapSupabaseDishToModel(dish, lang);
 
   if (loading) {
     return (
