@@ -304,7 +304,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
               session.user.email ??
               'Utilisateur',
             // CORRIGÉ : charger les préférences depuis la BDD
-            preferences: prefs?.preferred_cuisines ?? [],
+            preferences: prefs?.cuisine_types ?? [],
             dislikedIngredients: prefs?.disliked_ingredients ?? [],
           };
 
@@ -344,7 +344,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
               session.user.user_metadata?.full_name ??
               session.user.email ??
               'Utilisateur',
-            preferences: prefs?.preferred_cuisines ?? [],
+            preferences: prefs?.cuisine_types ?? [],
             dislikedIngredients: prefs?.disliked_ingredients ?? [],
           },
         });
