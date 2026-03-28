@@ -16,18 +16,19 @@
     "logout": "تسجيل الخروج"
   },
   "landing": {
-  "title": "مرحبًا بك في كينغ منيو",
-  "subtitle": "اكتشف طريقة ذكية لتخطيط وجباتك، واستكشاف الوصفات، وتنظيم مطبخك.",
-  "featuresTitle": "يتيح لك كينغ منيو:",
-  "featureRecipes": "استكشاف وصفات مختارة بعناية ومحدثة بانتظام.",
-  "featureIngredients": "العثور على أطباق بناءً على المكونات المتوفرة لديك في المنزل.",
-  "featurePlanner": "تخطيط وجبات الأسبوع بسهولة وبضع نقرات.",
-  "featureShoppingList": "إنشاء قائمة التسوق تلقائيًا بناءً على قائمتك المختارة.",
-  "loginButton": "تسجيل الدخول إلى كينغ منيو",
-  "footer": "خطط. اطبخ. استمتع."
-},
+    "title": "مرحبًا بك في كينغ منيو",
+    "subtitle": "اكتشف طريقة ذكية لتخطيط وجباتك، واستكشاف الوصفات، وتنظيم مطبخك.",
+    "featuresTitle": "يتيح لك كينغ منيو:",
+    "featureRecipes": "استكشاف وصفات مختارة بعناية ومحدثة بانتظام.",
+    "featureIngredients": "العثور على أطباق بناءً على المكونات المتوفرة لديك في المنزل.",
+    "featurePlanner": "تخطيط وجبات الأسبوع بسهولة وبضع نقرات.",
+    "featureShoppingList": "إنشاء قائمة التسوق تلقائيًا بناءً على قائمتك المختارة.",
+    "loginButton": "تسجيل الدخول إلى كينغ منيو",
+    "footer": "خطط. اطبخ. استمتع.",
+    "logoAlt": "شعار كينغ منيو"
+  },
   "auth": {
-    "welcomeTitle": "مرحبًا بك في King Menu!",
+    "welcomeTitle": "مرحبًا بك في كينغ منيو!",
     "login": "تسجيل الدخول",
     "signUp": "التسجيل",
     "email": "عنوان البريد الإلكتروني",
@@ -41,7 +42,7 @@
     "google": "جوجل",
     "facebook": "فيسبوك",
     "locationDetection": "سنكتشف موقعك لتوصيات مخصصة",
-     "fullNameLabel": "الاسم الكامل",
+    "fullNameLabel": "الاسم الكامل",
     "fullNamePlaceholder": "أدخل اسمك الكامل",
     "emailLabel": "البريد الإلكتروني",
     "emailPlaceholder": "أدخل بريدك الإلكتروني",
@@ -75,7 +76,12 @@
     "added": "تم الإضافة",
     "cookMode": "وضع الطهي"
   },
-  "ingredients": {
+  "recipe": {
+    "step": "الخطوة",
+    "addToMenu": "أضف إلى القائمة",
+    "addedToMenu": "{{title}} تمت إضافته إلى قائمتك!"
+  },
+  "ingredientsSection": {
     "whatsInKitchen": "ما الذي لديك في مطبخك؟",
     "whatsInKitchenDesc": "اختر المكونات التي لديك في المنزل، وسنقترح أطباقًا لذيذة يمكنك تحضيرها بأقل تكلفة إضافية.",
     "searchIngredients": "ابحث عن المكونات...",
@@ -84,9 +90,9 @@
     "clearAll": "مسح الكل",
     "findDishes": "ابحث عن الأطباق",
     "findingDishes": "جاري البحث عن الأطباق...",
-    "ingredients": "مكونات",
     "selectAtLeastOne": "يرجى اختيار مكون واحد على الأقل",
-    "dishesFound": "تم العثور على أطباق باستخدام {{count}} مكونات!",
+    "dishesFound": "تم العثور على {{count}} أطباق باستخدام هذه المكونات!",
+    "ingredientsLabel": "مكونات",
     "categories": {
       "proteins": "البروتينات",
       "vegetables": "الخضروات",
@@ -98,53 +104,52 @@
       "herbs": "الأعشاب والتوابل"
     }
   },
-  "recipe": {
-    "ingredients": "المكونات",
-    "instructions": "التعليمات",
-    "step": "الخطوة",
-    "adjustServings": "تعديل الحصص:",
-    "addToMenu": "أضف إلى القائمة",
-    "addedToMenu": "{{title}} تمت إضافته إلى قائمتك!",
-    "enterCookMode": "أدخل وضع الطهي",
-    "downloadPDF": "PDF",
-    "share": "مشاركة",
-    "completedStep": "تمت الخطوة!",
-    "finishCooking": "أكمل الطهي",
-    "completeStep": "أكمل الخطوة",
-    "previous": "السابق",
-    "next": "التالي",
-    "needIngredient": "تحتاج إلى: {{name}}",
-    "moreNeeded": "+{{count}} أخرى مطلوبة",
-    "dishMatches": "الأطباق المطابقة",
-    "basedOnIngredients": "بناءً على {{count}} مكونات مختارة",
-    "totalMatches": "إجمالي المطابقات",
-    "perfectMatches": "مطابقات مثالية",
-    "nearMatches": "مطابقات قريبة",
-    "creativeMatches": "خيارات إبداعية",
-    "allResults": "جميع النتائج",
-    "matchType": {
-      "perfect": "مطابقة مثالية",
-      "near": "مطابقة قريبة",
-      "creative": "خيار إبداعي"
-    },
-    "noMatches": "لم يتم العثور على مطابقات",
-    "tryDifferentIngredients": "حاول اختيار مكونات مختلفة أو تعديل الفلاتر",
-    "dishAdded": "{{title}} تمت إضافته إلى قائمتك!"
-  },
   "recipeDetails": {
     "ingredients": "المكونات",
     "instructions": "طريقة التحضير",
-    "adjustServings": "ضبط الحصص :",
-    "addedToMenu": "تمت إضافة {{title}} إلى قائمتك !",
+    "adjustServings": "ضبط الحصص:",
+    "addedToMenu": "تمت إضافة {{title}} إلى قائمتك!",
     "enterCookMode": "وضع الطهي",
     "downloadPDF": "PDF",
     "share": "مشاركة",
-    "completedStep": "تم إكمال الخطوة !",
+    "completedStep": "تم إكمال الخطوة!",
     "finishCooking": "إنهاء الطهي",
     "completeStep": "أكمل الخطوة",
     "previous": "السابق",
     "next": "التالي"
-},
+  },
+  "dishMatches": "الأطباق المطابقة",
+  "basedOnIngredients": "بناءً على {{count}} مكونات مختارة",
+  "totalMatches": "إجمالي المطابقات",
+  "perfectMatches": "مطابقات مثالية",
+  "nearMatches": "مطابقات قريبة",
+  "creativeMatches": "خيارات إبداعية",
+  "allResults": "جميع النتائج",
+  "needIngredient": "تحتاج إلى: {{name}}",
+  "noMatches": "لم يتم العثور على مطابقات",
+  "tryDifferentIngredients": "حاول اختيار مكونات مختلفة أو تعديل الفلاتر",
+  "moreNeeded": "+{{count}} أخرى مطلوبة",
+  "matchType": {
+    "perfect": "مطابقة مثالية",
+    "near": "مطابقة قريبة",
+    "creative": "خيار إبداعي"
+  },
+  "errorLoadingDishes": "خطأ في تحميل الأطباق. يرجى المحاولة مرة أخرى.",
+  "errors": {
+    "loadUserPreferences": "خطأ في تحميل تفضيلاتك",
+    "mustBeLoggedIn": "يجب أن تكون مسجّل الدخول لتنفيذ هذا الإجراء",
+    "updatePreferences": "خطأ في تحديث التفضيلات"
+  },
+  "favorites": {
+    "add": "أضف إلى المفضلة",
+    "added": "تمت الإضافة إلى المفضلة",
+    "remove": "إزالة من المفضلة",
+    "removed": "تمت الإزالة من المفضلة",
+    "title": "المفضلة لديك",
+    "empty": "لا توجد مفضلة حتى الآن",
+    "emptyDesc": "استكشف الأطباق وأضف ما يعجبك إلى مفضلتك.",
+    "browse": "تصفح الأطباق"
+  },
   "mealPlan": {
     "title": "خطة الوجبات",
     "description": "خطط لوجباتك ونظم جدولك الطهي",
@@ -156,6 +161,7 @@
     "notes": "ملاحظات",
     "notesPlaceholder": "أضف أي ملاحظات خاصة أو تعديلات...",
     "schedule": "جدولة",
+    "addToPlan": "أضف إلى الخطة",
     "breakfast": "إفطار",
     "lunch": "غداء",
     "dinner": "عشاء",
@@ -216,7 +222,7 @@
     "itemsYouHave": "عناصر لديك",
     "itemsToBuyTitle": "العناصر للشراء",
     "itemsYouHaveTitle": "العناصر التي لديك",
-    "noShoppingList": "لا يوجد قائمة تسوق بعد",
+    "noShoppingList": "لا توجد قائمة تسوق بعد",
     "noShoppingListDesc": "اختر بعض الأطباق من الصفحة الرئيسية لتوليد قائمة التسوق",
     "browseDishes": "تصفح الأطباق",
     "selectedDishes": "الأطباق المختارة",
@@ -225,7 +231,8 @@
     "copy": "نسخ",
     "copied": "تم النسخ!",
     "pdf": "PDF",
-    "share": "مشاركة"
+    "share": "مشاركة",
+    "downloadedPDF": "تم تحميل قائمة التسوق كملف PDF!"
   },
   "profile": {
     "culinaryPreferences": "التفضيلات الطهوية",
@@ -239,20 +246,28 @@
     "hide": "إخفاء",
     "dishesSelected": "الأطباق المختارة",
     "preferredCuisines": "المأكولات المفضلة",
-    "preferencesUpdated": "تم تحديث التفضيلات",
     "pantryItemsCount": "عناصر المخزن",
     "shoppingListItems": "عناصر قائمة التسوق",
-    "noDislikedIngredients": "لم يتم إضافة مكونات غير مرغوب فيها بعد",
     "ingredientAdded": "تمت إضافة المكون",
-    "noIngredientFound": "غير موجود",
+    "preferencesUpdated": "تم تحديث التفضيلات",
+    "noDislikedIngredients": "لم يتم إضافة مكونات غير مرغوب فيها بعد",
     "ingredientRemoved": "تمت إزالة المكون",
-    "add": "أضف"
+    "noIngredientFound": "غير موجود",
+    "add": "أضف",
+    "accountDetails": "تفاصيل الحساب",
+    "anonymous": "مجهول",
+    "dislikedIngredients": "المكونات غير المرغوبة",
+    "email": "البريد الإلكتروني",
+    "invalidIngredient": "مكوّن غير صالح",
+    "loginPrompt": "سجّل دخولك للوصول إلى ملفك الشخصي",
+    "name": "الاسم",
+    "pleaseLogin": "يرجى تسجيل الدخول"
   },
   "measurements": {
     "metric": "متري",
     "imperial": "إمبراطوري",
     "temperature": {
-      "celsius": "°س",
+      "celsius": "°م",
       "fahrenheit": "°ف"
     },
     "units": {
@@ -294,7 +309,12 @@
     "viewRecipes": "عرض الوصفات",
     "hideRecipes": "إخفاء الوصفات",
     "more": "أكثر",
-    "optional": "اختياري"
+    "optional": "اختياري",
+    "unknown": "غير معروف",
+    "no_recipe_selected": "لم يتم اختيار وصفة",
+    "date": "التاريخ",
+    "errorOccurred": "حدث خطأ",
+    "servings": "حصص"
   },
   "cuisines": {
     "italian": "إيطالية",
@@ -330,9 +350,9 @@
     "totalServings": "الحصص",
     "totalIngredients": "إجمالي المكونات المطلوبة"
   },
-  "footer":{
-  "privacy": "Privacy Policy",
-  "terms": "Terms of Use"
+  "footer": {
+    "privacy": "سياسة الخصوصية",
+    "terms": "شروط الاستخدام"
   },
   "tags": {
     "pasta": "معكرونة",
