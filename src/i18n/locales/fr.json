@@ -369,5 +369,27 @@
     "fresh": "frais",
     "light": "léger",
     "vegan": "végétalien"
+  },
+  "mealTypes": {
+    "breakfast": "Petit-déjeuner",
+    "lunch": "Déjeuner",
+    "dinner": "Dîner",
+    "snack": "Collation"
+  },
+  "todayMenu": {
+    "meals": "repas",
+    "inKitchen": "en cuisine",
+    "total": "total",
+    "noMealsToday": "Aucun repas planifié aujourd'hui",
+    "addFromHome": "Ajoutez des plats depuis la page Accueil",
+    "viewRecipe": "Voir la recette"
+  },
+  "myRecipes": {
+    "noRecipesSelected": "Aucune recette sélectionnée",
+    "noRecipesDesc": "Ajoutez des plats à votre menu pour accéder à leurs recettes ici",
+    "recipesReady": "{{count}} recettes prêtes à cuisiner",
+    "searchPlaceholder": "Rechercher vos recettes...",
+    "noRecipesFound": "Aucune recette trouvée",
+    "startCooking": "Commencer à cuisiner"
   }
 }
