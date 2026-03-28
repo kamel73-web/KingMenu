@@ -369,5 +369,27 @@
     "fresh": "fresh",
     "light": "light",
     "vegan": "vegan"
+  },
+  "mealTypes": {
+    "breakfast": "Breakfast",
+    "lunch": "Lunch",
+    "dinner": "Dinner",
+    "snack": "Snack"
+  },
+  "todayMenu": {
+    "meals": "meals",
+    "inKitchen": "in kitchen",
+    "total": "total",
+    "noMealsToday": "No meals planned for today",
+    "addFromHome": "Add dishes from the Home page",
+    "viewRecipe": "View recipe"
+  },
+  "myRecipes": {
+    "noRecipesSelected": "No Recipes Selected",
+    "noRecipesDesc": "Add some dishes to your menu to access their recipes here",
+    "recipesReady": "{{count}} recipes ready to cook",
+    "searchPlaceholder": "Search your recipes...",
+    "noRecipesFound": "No recipes found",
+    "startCooking": "Start Cooking"
   }
 }
