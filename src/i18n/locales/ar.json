@@ -369,5 +369,27 @@
     "fresh": "طازج",
     "light": "خفيف",
     "vegan": "نباتي"
+  },
+  "mealTypes": {
+    "breakfast": "إفطار",
+    "lunch": "غداء",
+    "dinner": "عشاء",
+    "snack": "وجبة خفيفة"
+  },
+  "todayMenu": {
+    "meals": "وجبات",
+    "inKitchen": "في المطبخ",
+    "total": "المجموع",
+    "noMealsToday": "لا توجد وجبات مخططة لليوم",
+    "addFromHome": "أضف أطباقاً من الصفحة الرئيسية",
+    "viewRecipe": "عرض الوصفة"
+  },
+  "myRecipes": {
+    "noRecipesSelected": "لم يتم اختيار وصفات",
+    "noRecipesDesc": "أضف بعض الأطباق إلى قائمتك للوصول إلى وصفاتها هنا",
+    "recipesReady": "{{count}} وصفة جاهزة للطهي",
+    "searchPlaceholder": "ابحث في وصفاتك...",
+    "noRecipesFound": "لم يتم العثور على وصفات",
+    "startCooking": "ابدأ الطهي"
   }
 }
