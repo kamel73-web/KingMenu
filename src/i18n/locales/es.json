@@ -16,22 +16,19 @@
     "logout": "Cerrar Sesión"
   },
   "landing": {
-  "title": "Bienvenido a King Menu",
-  "subtitle": "Descubre una nueva forma de planificar tus comidas, explorar recetas y organizar tu cocina.",
-  "featuresTitle": "King Menu te permite:",
-  "featureRecipes": "Descubrir recetas variadas y cuidadosamente seleccionadas, actualizadas regularmente.",
-  "featureIngredients": "Encontrar platos según los ingredientes que ya tienes en casa.",
-  "featurePlanner": "Planificar tus comidas semanales con unos pocos clics.",
-  "featureShoppingList": "Generar automáticamente tu lista de compras a partir del menú elegido.",
-  "loginButton": "Inicia sesión en King Menu",
-  "footer": "Planifica. Cocina. Disfruta."
-},
-  "footer":{
-  "privacy": "Privacy Policy",
-  "terms": "Terms of Use"
+    "title": "Bienvenido a King Menu",
+    "subtitle": "Descubre una nueva forma de planificar tus comidas, explorar recetas y organizar tu cocina.",
+    "featuresTitle": "King Menu te permite:",
+    "featureRecipes": "Descubrir recetas variadas y cuidadosamente seleccionadas, actualizadas regularmente.",
+    "featureIngredients": "Encontrar platos según los ingredientes que ya tienes en casa.",
+    "featurePlanner": "Planificar tus comidas semanales con unos pocos clics.",
+    "featureShoppingList": "Generar automáticamente tu lista de compras a partir del menú elegido.",
+    "loginButton": "Inicia sesión en King Menu",
+    "footer": "Planifica. Cocina. Disfruta.",
+    "logoAlt": "Logo de KingMenu"
   },
   "auth": {
-    "welcomeTitle": "Bienvenido a King Menu!",
+    "welcomeTitle": "¡Bienvenido a King Menu!",
     "login": "Iniciar Sesión",
     "signUp": "Registrarse",
     "email": "Correo Electrónico",
@@ -79,7 +76,12 @@
     "added": "Añadido",
     "cookMode": "Modo de Cocina"
   },
-  "ingredients": {
+  "recipe": {
+    "step": "Paso",
+    "addToMenu": "Añadir al menú",
+    "addedToMenu": "¡{{title}} añadido a tu menú!"
+  },
+  "ingredientsSection": {
     "whatsInKitchen": "¿Qué tienes en la Cocina?",
     "whatsInKitchenDesc": "Selecciona los ingredientes que tienes en casa, y te sugeriremos platos deliciosos que puedes preparar con un mínimo de compras adicionales.",
     "searchIngredients": "Buscar ingredientes...",
@@ -88,9 +90,9 @@
     "clearAll": "Borrar Todo",
     "findDishes": "Encontrar Platos",
     "findingDishes": "Buscando Platos...",
-    "ingredients": "ingredientes",
     "selectAtLeastOne": "Por favor, selecciona al menos un ingrediente",
-    "dishesFound": "¡Platos encontrados usando {{count}} ingredientes!",
+    "dishesFound": "¡{{count}} platos encontrados con estos ingredientes!",
+    "ingredientsLabel": "Ingredientes",
     "categories": {
       "proteins": "Proteínas",
       "vegetables": "Verduras",
@@ -102,52 +104,51 @@
       "herbs": "Hierbas y Especias"
     }
   },
-  "recipe": {
+  "recipeDetails": {
     "ingredients": "Ingredientes",
     "instructions": "Instrucciones",
-    "step": "Paso",
-    "adjustServings": "Ajustar Porciones:",
-    "addToMenu": "Añadir al Menú",
-    "addedToMenu": "{{title}} añadido a tu menú!",
-    "enterCookMode": "Entrar en Modo de Cocina",
-    "downloadPDF": "PDF",
-    "share": "Compartir",
-    "completedStep": "¡Paso completado!",
-    "finishCooking": "Terminar de Cocinar",
-    "completeStep": "Completar Paso",
-    "previous": "Anterior",
-    "next": "Siguiente",
-    "needIngredient": "Necesitas: {{name}}",
-    "moreNeeded": "+{{count}} más necesarios",
-    "dishMatches": "Platos Correspondientes",
-    "basedOnIngredients": "Basado en {{count}} ingredientes seleccionados",
-    "totalMatches": "Total de Correspondencias",
-    "perfectMatches": "Correspondencias Perfectas",
-    "nearMatches": "Correspondencias Cercanas",
-    "creativeMatches": "Opciones Creativas",
-    "allResults": "Todos los Resultados",
-    "matchType": {
-      "perfect": "Correspondencia Perfecta",
-      "near": "Correspondencia Cercana",
-      "creative": "Opción Creativa"
-    },
-    "recipeDetails": {
-    "ingredients": "Ingredientes",
-    "instructions": "Instrucciones",
-    "adjustServings": "Ajustar porciones :",
-    "addedToMenu": "¡ {{title}} agregado a tu menú !",
+    "adjustServings": "Ajustar porciones:",
+    "addedToMenu": "¡{{title}} agregado a tu menú!",
     "enterCookMode": "Modo cocción",
     "downloadPDF": "PDF",
     "share": "Compartir",
-    "completedStep": "¡ Paso completado !",
+    "completedStep": "¡Paso completado!",
     "finishCooking": "Terminar de cocinar",
     "completeStep": "Completar paso",
     "previous": "Anterior",
     "next": "Siguiente"
-},
-    "noMatches": "No se encontraron correspondencias",
-    "tryDifferentIngredients": "Prueba a seleccionar diferentes ingredientes o ajustar los filtros",
-    "dishAdded": "{{title}} añadido a tu menú!"
+  },
+  "dishMatches": "Platos Correspondientes",
+  "basedOnIngredients": "Basado en {{count}} ingredientes seleccionados",
+  "totalMatches": "Total de Correspondencias",
+  "perfectMatches": "Correspondencias Perfectas",
+  "nearMatches": "Correspondencias Cercanas",
+  "creativeMatches": "Opciones Creativas",
+  "allResults": "Todos los Resultados",
+  "needIngredient": "Necesitas: {{name}}",
+  "noMatches": "No se encontraron correspondencias",
+  "tryDifferentIngredients": "Prueba a seleccionar diferentes ingredientes o ajustar los filtros",
+  "moreNeeded": "+{{count}} más necesarios",
+  "matchType": {
+    "perfect": "Correspondencia Perfecta",
+    "near": "Correspondencia Cercana",
+    "creative": "Opción Creativa"
+  },
+  "errorLoadingDishes": "Error al cargar los platos. Por favor, inténtalo de nuevo.",
+  "errors": {
+    "loadUserPreferences": "Error al cargar tus preferencias",
+    "mustBeLoggedIn": "Debes iniciar sesión para realizar esta acción",
+    "updatePreferences": "Error al actualizar las preferencias"
+  },
+  "favorites": {
+    "add": "Añadir a favoritos",
+    "added": "Añadido a favoritos",
+    "remove": "Quitar de favoritos",
+    "removed": "Eliminado de favoritos",
+    "title": "Tus Favoritos",
+    "empty": "Aún no hay favoritos",
+    "emptyDesc": "Explora los platos y añade tus favoritos aquí.",
+    "browse": "Explorar platos"
   },
   "mealPlan": {
     "title": "Plan de Comidas",
@@ -160,6 +161,7 @@
     "notes": "Notas",
     "notesPlaceholder": "Añade notas especiales o modificaciones...",
     "schedule": "Programar",
+    "addToPlan": "Añadir al Plan",
     "breakfast": "Desayuno",
     "lunch": "Almuerzo",
     "dinner": "Cena",
@@ -229,7 +231,8 @@
     "copy": "Copiar",
     "copied": "¡Copiado!",
     "pdf": "PDF",
-    "share": "Compartir"
+    "share": "Compartir",
+    "downloadedPDF": "¡Lista de compras descargada como PDF!"
   },
   "profile": {
     "culinaryPreferences": "Preferencias Culinarias",
@@ -245,12 +248,20 @@
     "preferredCuisines": "Cocinas Favoritas",
     "pantryItemsCount": "Artículos de la Despensa",
     "shoppingListItems": "Artículos de la Lista de Compras",
+    "ingredientAdded": "Ingrediente añadido",
     "preferencesUpdated": "Preferencias actualizadas",
     "noDislikedIngredients": "Aún no se han añadido ingredientes no deseados",
-    "ingredientAdded": "Ingrediente añadido",
-    "noIngredientFound": "No encontrado",
     "ingredientRemoved": "Ingrediente eliminado",
-    "add": "Añadir"
+    "noIngredientFound": "No encontrado",
+    "add": "Añadir",
+    "accountDetails": "Detalles de la Cuenta",
+    "anonymous": "Anónimo",
+    "dislikedIngredients": "Ingredientes No Deseados",
+    "email": "Correo electrónico",
+    "invalidIngredient": "Ingrediente inválido",
+    "loginPrompt": "Inicia sesión para acceder a tu perfil",
+    "name": "Nombre",
+    "pleaseLogin": "Por favor, inicia sesión"
   },
   "measurements": {
     "metric": "Métrico",
@@ -298,7 +309,12 @@
     "viewRecipes": "Ver Recetas",
     "hideRecipes": "Ocultar Recetas",
     "more": "más",
-    "optional": "opcional"
+    "optional": "opcional",
+    "unknown": "Desconocido",
+    "no_recipe_selected": "Ninguna receta seleccionada",
+    "date": "Fecha",
+    "errorOccurred": "Se produjo un error",
+    "servings": "porciones"
   },
   "cuisines": {
     "italian": "Italiana",
@@ -320,7 +336,7 @@
   "location": {
     "yourLocation": "Tu Ubicación",
     "detecting": "Detectando...",
-    "settings": "Configuraciones"
+    "settings": "Configuración"
   },
   "preferences": {
     "culinaryPreferences": "Preferencias Culinarias",
@@ -334,6 +350,10 @@
     "totalServings": "porciones",
     "totalIngredients": "Total de ingredientes necesarios"
   },
+  "footer": {
+    "privacy": "Política de Privacidad",
+    "terms": "Términos de Uso"
+  },
   "tags": {
     "pasta": "pasta",
     "creamy": "cremoso",
@@ -345,7 +365,7 @@
     "meat": "carne",
     "quick": "rápido",
     "aromatic": "aromático",
-    "comfort": "confortante",
+    "comfort": "reconfortante",
     "fresh": "fresco",
     "light": "ligero",
     "vegan": "vegano"
