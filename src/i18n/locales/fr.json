@@ -2,7 +2,7 @@
   "brand": {
     "name": "KingMenu",
     "tagline": "Planifiez. Cuisinez. Savourez.",
-    "description": "Plateforme de planification culinaire alimentée par l'IA"
+    "description": "Plateforme de planification culinaire"
   },
   "navigation": {
     "home": "Accueil",
@@ -16,16 +16,17 @@
     "logout": "Déconnexion"
   },
   "landing": {
-  "title": "Bienvenue sur King Menu",
-  "subtitle": "Découvrez une nouvelle façon de planifier vos repas, d’explorer des recettes et d’organiser votre cuisine.",
-  "featuresTitle": "King Menu vous permet de :",
-  "featureRecipes": "Découvrir des recettes variées et soigneusement sélectionnées, régulièrement mises à jour.",
-  "featureIngredients": "Trouver des plats à partir des ingrédients que vous avez déjà à la maison.",
-  "featurePlanner": "Planifier vos repas de la semaine en quelques clics.",
-  "featureShoppingList": "Générer automatiquement votre liste de courses à partir du menu choisi.",
-  "loginButton": "Se connecter à King Menu",
-  "footer": "Planifiez. Cuisinez. Savourez."
-},
+    "title": "Bienvenue sur King Menu",
+    "subtitle": "Découvrez une nouvelle façon de planifier vos repas, d’explorer des recettes et d’organiser votre cuisine.",
+    "featuresTitle": "King Menu vous permet de :",
+    "featureRecipes": "Découvrir des recettes variées et soigneusement sélectionnées, régulièrement mises à jour.",
+    "featureIngredients": "Trouver des plats à partir des ingrédients que vous avez déjà à la maison.",
+    "featurePlanner": "Planifier vos repas de la semaine en quelques clics.",
+    "featureShoppingList": "Générer automatiquement votre liste de courses à partir du menu choisi.",
+    "loginButton": "Se connecter à King Menu",
+    "footer": "Planifiez. Cuisinez. Savourez.",
+    "logoAlt": "Logo KingMenu"
+  },
   "auth": {
     "welcomeTitle": "Bienvenue sur King Menu!",
     "login": "Connexion",
@@ -46,9 +47,10 @@
     "emailLabel": "Adresse e-mail",
     "emailPlaceholder": "Entrez votre e-mail",
     "passwordLabel": "Mot de passe",
-    "passwordPlaceholder": "Entrez votre mot de passe"
+    "passwordPlaceholder": "Entrez votre mot de passe",
+    "googleSuccess": "Connexion Google réussie",
+    "loginError": "Échec de la connexion après retour"
   },
-
   "home": {
     "recommendedDishes": "Plats recommandés",
     "dishesFound": "plats trouvés",
@@ -62,7 +64,8 @@
     "startWithIngredients": "Commencer avec des ingrédients",
     "noDishesFound": "Aucun plat trouvé",
     "adjustFilters": "Essayez d'ajuster vos filtres ou termes de recherche",
-    "allDishesSelected": "Tous les plats sont déjà sélectionnés !"
+    "allDishesSelected": "Tous les plats sont déjà sélectionnés !",
+    "loadMore": "Charger plus"
   },
   "dish": {
     "minutes": "min",
@@ -76,7 +79,15 @@
     "added": "Ajouté",
     "cookMode": "Mode cuisson"
   },
-  "recipe": "Recette",
+  "recipe": {
+    "addToMenu": "Ajouter au menu",
+    "addedToMenu": "{{title}} ajouté à votre menu !",
+    "ingredients": "Ingrédients",
+    "instructions": "Instructions",
+    "needIngredient": "Besoin : {{name}}",
+    "recipe": "Recette",
+    "step": "Étape"
+  },
   "ingredientsSection": {
     "whatsInKitchen": "Qu'y a-t-il dans votre cuisine ?",
     "whatsInKitchenDesc": "Sélectionnez les ingrédients que vous avez à la maison, et nous vous suggérerons des plats délicieux que vous pouvez préparer avec un minimum de courses supplémentaires.",
@@ -171,7 +182,8 @@
       "downloadPDF": "Télécharger PDF",
       "downloadedPDF": "Calendrier des repas téléchargé en PDF !",
       "noMealsForDay": "Aucun repas prévu ce jour"
-    }
+    },
+    "addToPlan": "Ajouter au plan"
   },
   "calendar": {
     "sunday": "Dim",
@@ -210,7 +222,8 @@
     "copy": "Copier",
     "copied": "Copié !",
     "pdf": "PDF",
-    "share": "Partager"
+    "share": "Partager",
+    "downloadedPDF": "Liste de courses téléchargée en PDF !"
   },
   "profile": {
     "culinaryPreferences": "Préférences culinaires",
@@ -228,10 +241,19 @@
     "shoppingListItems": "Articles de la liste de courses",
     "preferencesUpdated": "Préférences mises à jour",
     "noDislikedIngredients": "Aucun ingrédient désapprouvé ajouté pour l'instant",
-     "ingredientAdded": "Ingrédient ajouté",
+    "ingredientAdded": "Ingrédient ajouté",
     "noIngredientFound": "Non trouvé",
     "ingredientRemoved": "Ingrédient supprimé",
-    "add": "Ajouter"
+    "add": "Ajouter",
+    "accountDetails": "Détails du compte",
+    "anonymous": "Utilisateur anonyme",
+    "dislikedIngredients": "Ingrédients à éviter",
+    "email": "Email",
+    "invalidIngredient": "Ingrédient invalide",
+    "loginPrompt": "Connectez-vous pour accéder à votre profil",
+    "name": "Nom",
+    "pleaseLogin": "Veuillez vous connecter",
+    "removeIngredient": "Supprimer l'ingrédient"
   },
   "measurements": {
     "metric": "Métrique",
@@ -253,7 +275,7 @@
       "pieces": "pièces"
     }
   },
-    "common": {
+  "common": {
     "loading": "Chargement...",
     "error": "Erreur",
     "success": "Succès",
@@ -281,7 +303,14 @@
     "more": "plus",
     "optional": "optionnel",
     "unknown": "Inconnu",
-    "no_recipe_selected": "Aucune recette sélectionnée"
+    "no_recipe_selected": "Aucune recette sélectionnée",
+    "date": "Date",
+    "errorOccurred": "Une erreur est survenue",
+    "reload": "Recharger la page",
+    "retry": "Réessayer",
+    "servings": "portions",
+    "sessionCheck": "Vérification de la session...",
+    "unexpectedError": "Une erreur inattendue s'est produite."
   },
   "cuisines": {
     "italian": "Italien",
@@ -317,9 +346,9 @@
     "totalServings": "portions",
     "totalIngredients": "Total d'ingrédients nécessaires"
   },
-  "footer":{
-  "privacy": "Privacy Policy",
-  "terms": "Terms of Use"
+  "footer": {
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Use"
   },
   "tags": {
     "pasta": "pâtes",
@@ -336,5 +365,20 @@
     "fresh": "frais",
     "light": "léger",
     "vegan": "végétalien"
+  },
+  "errors": {
+    "loadUserPreferences": "Erreur lors du chargement des préférences",
+    "mustBeLoggedIn": "Vous devez être connecté",
+    "updatePreferences": "Erreur lors de la mise à jour des préférences"
+  },
+  "favorites": {
+    "title": "Vos favoris",
+    "empty": "Aucun favori pour l'instant",
+    "emptyDesc": "Explorez les plats et ajoutez vos favoris.",
+    "browse": "Parcourir les plats",
+    "add": "Ajouter aux favoris",
+    "added": "Ajouté aux favoris",
+    "remove": "Retirer des favoris",
+    "removed": "Retiré des favoris"
   }
 }
