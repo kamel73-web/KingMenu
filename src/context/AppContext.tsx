@@ -1,21 +1,20 @@
 // src/context/AppContext.tsx
-import React, { createContext, useContext, useEffect, useReducer } from 'react';
-import { supabase } from '../lib/supabase';
-import { getUserPreferences } from '../lib/supabase';
-import { Dish, Ingredient, MealPlan, OwnedIngredient, User } from '../types';
-import { mapSupabaseMealPlan } from '../lib/dishMapper';
-import i18n from '../i18n';
-
-// ─────────────────────────────────────────────────────────────
-// Constantes
-// ─────────────────────────────────────────────────────────────
-
-const LS_SELECTED_DISHES = 'km_selectedDishes';
-const LS_SHOPPING_LIST   = 'km_shoppingList';
+import React, { createContext, useContext, useEffect, useReducer } from "react";
+import { supabase } from "../lib/supabase";
+import { Dish, Ingredient, MealPlan, OwnedIngredient } from "../types";
 
 // ─────────────────────────────────────────────────────────────
 // Types
 // ─────────────────────────────────────────────────────────────
+
+type User = {
+  id: string;
+  email: string;
+  name: string;
+  location?: string;
+  preferences?: string[];       // IDs des types de cuisine préférés
+  dislikedIngredients?: string[]; // IDs des ingrédients à exclure
+};
 
 type State = {
   user: User | null;
@@ -28,51 +27,43 @@ type State = {
 };
 
 type Action =
-  | { type: 'SET_USER'; payload: User | null }
-  | { type: 'LOGOUT' }
-  | { type: 'SET_LOADING'; payload: boolean }
-  | { type: 'SET_LOCATION'; payload: string }
-  | { type: 'ADD_DISH'; payload: Dish }
-  | { type: 'REMOVE_DISH'; payload: string }
-  | { type: 'CLEAR_SELECTED_DISHES' }
-  | { type: 'ADD_MEAL_PLAN'; payload: MealPlan }
-  | { type: 'REMOVE_MEAL_PLAN'; payload: string }
-  | { type: 'SET_MEAL_PLAN'; payload: MealPlan[] }
-  | { type: 'TOGGLE_INGREDIENT_OWNED'; payload: string }
-  | { type: 'TOGGLE_SELECTED_INGREDIENT'; payload: Ingredient }
-  | { type: 'SET_SELECTED_INGREDIENTS'; payload: OwnedIngredient[] }
-  | { type: 'CLEAR_SELECTED_INGREDIENTS' };
+  | { type: "SET_USER"; payload: User | null }
+  | { type: "LOGOUT" }
+  | { type: "SET_LOADING"; payload: boolean }
+  | { type: "SET_LOCATION"; payload: string }
+  // Plats sélectionnés (menu)
+  | { type: "ADD_DISH"; payload: Dish }
+  | { type: "REMOVE_DISH"; payload: string }
+  | { type: "CLEAR_SELECTED_DISHES" }
+  // Planification des repas
+  | { type: "ADD_MEAL_PLAN"; payload: MealPlan }
+  | { type: "REMOVE_MEAL_PLAN"; payload: string }
+  | { type: "SET_MEAL_PLAN"; payload: MealPlan[] }
+  // Liste de courses
+  | { type: "TOGGLE_INGREDIENT_OWNED"; payload: string }
+  // Ingrédients disponibles (UseMyIngredients)
+  | { type: "TOGGLE_SELECTED_INGREDIENT"; payload: Ingredient }
+  | { type: "SET_SELECTED_INGREDIENTS"; payload: OwnedIngredient[] }
+  | { type: "CLEAR_SELECTED_INGREDIENTS" };
 
 // ─────────────────────────────────────────────────────────────
-// Helper localStorage : lire avec fallback sécurisé
-// ─────────────────────────────────────────────────────────────
-
-function readLocalStorage<T>(key: string, fallback: T): T {
-  try {
-    const raw = localStorage.getItem(key);
-    if (!raw) return fallback;
-    return JSON.parse(raw) as T;
-  } catch {
-    return fallback;
-  }
-}
-
-// ─────────────────────────────────────────────────────────────
-// État initial (hydraté depuis localStorage si disponible)
+// État initial
 // ─────────────────────────────────────────────────────────────
 
 const initialState: State = {
   user: null,
   isLoading: true,
   location: null,
-  selectedDishes: readLocalStorage<Dish[]>(LS_SELECTED_DISHES, []),
+  selectedDishes: [],
   mealPlan: [],
-  shoppingList: readLocalStorage<Ingredient[]>(LS_SHOPPING_LIST, []),
+  shoppingList: [],
   selectedIngredients: [],
 };
 
 // ─────────────────────────────────────────────────────────────
 // Helper : génération de la liste de courses à partir des plats
+// Fusionne les ingrédients identiques (même id) en additionnant
+// les quantités, et préserve le statut isOwned existant.
 // ─────────────────────────────────────────────────────────────
 
 function buildShoppingList(
@@ -80,9 +71,6 @@ function buildShoppingList(
   prevList: Ingredient[]
 ): Ingredient[] {
   const map = new Map<string, Ingredient>();
-
-  // Indexer la liste précédente pour préserver isOwned
-  const prevMap = new Map(prevList.map((p) => [p.id, p]));
 
   dishes.forEach((dish) => {
     dish.ingredients.forEach((ing) => {
@@ -96,10 +84,10 @@ function buildShoppingList(
           amount: String(Math.round((existingQty + newQty) * 100) / 100),
         });
       } else {
-        // Préserver le statut isOwned depuis la liste précédente
+        const prev = prevList.find((p) => p.id === key);
         map.set(key, {
           ...ing,
-          isOwned: prevMap.get(key)?.isOwned ?? false,
+          isOwned: prev?.isOwned ?? false,
         });
       }
     });
@@ -114,104 +102,134 @@ function buildShoppingList(
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
-    case 'SET_USER':
-      return { ...state, user: action.payload, isLoading: false };
+    // ── Auth ──────────────────────────────────────────────────
+    case "SET_USER":
+      return {
+        ...state,
+        user: action.payload,
+        isLoading: false,
+      };
 
-    case 'LOGOUT':
-      // Vider aussi le localStorage au logout
-      try {
-        localStorage.removeItem(LS_SELECTED_DISHES);
-        localStorage.removeItem(LS_SHOPPING_LIST);
-      } catch { /* ignore */ }
-      return { ...initialState, isLoading: false, selectedDishes: [], shoppingList: [] };
+    case "LOGOUT":
+      return {
+        ...initialState,
+        isLoading: false,
+      };
 
-    case 'SET_LOADING':
+    case "SET_LOADING":
       return { ...state, isLoading: action.payload };
 
-    case 'SET_LOCATION':
+    case "SET_LOCATION":
       return { ...state, location: action.payload };
 
-    case 'ADD_DISH': {
-      if (state.selectedDishes.some((d) => d.id === action.payload.id)) return state;
+    // ── Plats sélectionnés ────────────────────────────────────
+    case "ADD_DISH": {
+      // Évite les doublons
+      if (state.selectedDishes.some((d) => d.id === action.payload.id)) {
+        return state;
+      }
       const newDishes = [...state.selectedDishes, action.payload];
-      const newList = buildShoppingList(newDishes, state.shoppingList);
-      // Persister
-      try {
-        localStorage.setItem(LS_SELECTED_DISHES, JSON.stringify(newDishes));
-        localStorage.setItem(LS_SHOPPING_LIST, JSON.stringify(newList));
-      } catch { /* ignore quota */ }
-      return { ...state, selectedDishes: newDishes, shoppingList: newList };
+      return {
+        ...state,
+        selectedDishes: newDishes,
+        shoppingList: buildShoppingList(newDishes, state.shoppingList),
+      };
     }
 
-    case 'REMOVE_DISH': {
-      const newDishes = state.selectedDishes.filter((d) => d.id !== action.payload);
-      const newList = buildShoppingList(newDishes, state.shoppingList);
-      try {
-        localStorage.setItem(LS_SELECTED_DISHES, JSON.stringify(newDishes));
-        localStorage.setItem(LS_SHOPPING_LIST, JSON.stringify(newList));
-      } catch { /* ignore quota */ }
-      return { ...state, selectedDishes: newDishes, shoppingList: newList };
-    }
-
-    case 'CLEAR_SELECTED_DISHES':
-      try {
-        localStorage.removeItem(LS_SELECTED_DISHES);
-        localStorage.removeItem(LS_SHOPPING_LIST);
-      } catch { /* ignore */ }
-      return { ...state, selectedDishes: [], shoppingList: [] };
-
-    case 'ADD_MEAL_PLAN':
-      return { ...state, mealPlan: [...state.mealPlan, action.payload] };
-
-    case 'REMOVE_MEAL_PLAN':
-      return { ...state, mealPlan: state.mealPlan.filter((m) => m.id !== action.payload) };
-
-    case 'SET_MEAL_PLAN':
-      return { ...state, mealPlan: action.payload };
-
-    case 'TOGGLE_INGREDIENT_OWNED': {
-      const newList = state.shoppingList.map((item) =>
-        item.id === action.payload ? { ...item, isOwned: !item.isOwned } : item
+    case "REMOVE_DISH": {
+      const newDishes = state.selectedDishes.filter(
+        (d) => d.id !== action.payload
       );
-      try {
-        localStorage.setItem(LS_SHOPPING_LIST, JSON.stringify(newList));
-      } catch { /* ignore */ }
-      return { ...state, shoppingList: newList };
+      return {
+        ...state,
+        selectedDishes: newDishes,
+        shoppingList: buildShoppingList(newDishes, state.shoppingList),
+      };
     }
 
-    case 'TOGGLE_SELECTED_INGREDIENT': {
+    case "CLEAR_SELECTED_DISHES":
+      return {
+        ...state,
+        selectedDishes: [],
+        shoppingList: [],
+      };
+
+    // ── Planification des repas ───────────────────────────────
+    case "ADD_MEAL_PLAN":
+      return {
+        ...state,
+        mealPlan: [...state.mealPlan, action.payload],
+      };
+
+    case "REMOVE_MEAL_PLAN":
+      return {
+        ...state,
+        mealPlan: state.mealPlan.filter((m) => m.id !== action.payload),
+      };
+
+    case "SET_MEAL_PLAN":
+      return {
+        ...state,
+        mealPlan: action.payload,
+      };
+
+    // ── Liste de courses ──────────────────────────────────────
+    case "TOGGLE_INGREDIENT_OWNED":
+      return {
+        ...state,
+        shoppingList: state.shoppingList.map((item) =>
+          item.id === action.payload
+            ? { ...item, isOwned: !item.isOwned }
+            : item
+        ),
+      };
+
+    // ── Ingrédients disponibles (UseMyIngredients) ────────────
+    case "TOGGLE_SELECTED_INGREDIENT": {
       const ing = action.payload;
       const exists = state.selectedIngredients.some((i) => i.id === ing.id);
+
       if (exists) {
         return {
           ...state,
-          selectedIngredients: state.selectedIngredients.filter((i) => i.id !== ing.id),
+          selectedIngredients: state.selectedIngredients.filter(
+            (i) => i.id !== ing.id
+          ),
         };
       }
+
+      // Conversion Ingredient → OwnedIngredient
+      // Garder le nom multilingue si disponible pour matching multilingue
       const rawName = ing.name as any;
-      const resolvedName =
-        typeof rawName === 'string'
-          ? rawName
-          : rawName?.fr ?? rawName?.en ?? rawName?.ar ?? 'Unknown';
+      const resolvedName = typeof rawName === "string"
+        ? rawName
+        : rawName?.fr ?? rawName?.en ?? rawName?.ar ?? "Unknown";
 
       const owned: OwnedIngredient = {
         id: ing.id,
         name: resolvedName,
         quantity: parseFloat(ing.amount) || 1,
-        unit: ing.unit ?? '',
-        category:
-          typeof ing.category === 'string'
-            ? ing.category
-            : (ing.category as any)?.fr ?? (ing.category as any)?.en ?? '',
+        unit: ing.unit ?? "",
+        category: typeof ing.category === "string" ? ing.category : (ing.category as any)?.fr ?? (ing.category as any)?.en ?? "",
       };
-      return { ...state, selectedIngredients: [...state.selectedIngredients, owned] };
+
+      return {
+        ...state,
+        selectedIngredients: [...state.selectedIngredients, owned],
+      };
     }
 
-    case 'SET_SELECTED_INGREDIENTS':
-      return { ...state, selectedIngredients: action.payload };
+    case "SET_SELECTED_INGREDIENTS":
+      return {
+        ...state,
+        selectedIngredients: action.payload,
+      };
 
-    case 'CLEAR_SELECTED_INGREDIENTS':
-      return { ...state, selectedIngredients: [] };
+    case "CLEAR_SELECTED_INGREDIENTS":
+      return {
+        ...state,
+        selectedIngredients: [],
+      };
 
     default:
       return state;
@@ -219,7 +237,11 @@ function reducer(state: State, action: Action): State {
 }
 
 // ─────────────────────────────────────────────────────────────
-// Helper OAuth : parse les tokens depuis l'URL
+// Helper OAuth : parse les tokens depuis l'URL (compatible
+// HashRouter + GitHub Pages).
+// Format attendu après redirection Supabase :
+//   https://domaine/#/login?access_token=...&refresh_token=...
+//   ou  https://domaine/#/login#access_token=...
 // ─────────────────────────────────────────────────────────────
 
 function parseOAuthTokensFromUrl(): {
@@ -227,25 +249,27 @@ function parseOAuthTokensFromUrl(): {
   refresh_token: string;
 } | null {
   try {
-    const fullHash = window.location.hash;
-    if (!fullHash.includes('access_token')) return null;
+    const fullHash = window.location.hash; // ex: "#/login?access_token=..."
+    if (!fullHash.includes("access_token")) return null;
 
-    if (fullHash.includes('?')) {
-      const params = new URLSearchParams(fullHash.split('?')[1]);
-      const access_token = params.get('access_token');
-      const refresh_token = params.get('refresh_token');
+    // Cas 1 : paramètres après "?" dans le hash
+    if (fullHash.includes("?")) {
+      const params = new URLSearchParams(fullHash.split("?")[1]);
+      const access_token = params.get("access_token");
+      const refresh_token = params.get("refresh_token");
       if (access_token && refresh_token) return { access_token, refresh_token };
     }
 
-    const parts = fullHash.split('#');
+    // Cas 2 : second fragment après "#"  (#/login#access_token=...)
+    const parts = fullHash.split("#");
     for (let i = parts.length - 1; i > 0; i--) {
       const params = new URLSearchParams(parts[i]);
-      const access_token = params.get('access_token');
-      const refresh_token = params.get('refresh_token');
+      const access_token = params.get("access_token");
+      const refresh_token = params.get("refresh_token");
       if (access_token && refresh_token) return { access_token, refresh_token };
     }
   } catch (err) {
-    console.error('parseOAuthTokensFromUrl:', err);
+    console.error("parseOAuthTokensFromUrl:", err);
   }
   return null;
 }
@@ -275,13 +299,20 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         // ── Étape 1 : traitement OAuth (tokens dans l'URL) ───
         const oauthTokens = parseOAuthTokensFromUrl();
+
         if (oauthTokens) {
-          const { error: sessionError } = await supabase.auth.setSession(oauthTokens);
+          const { error: sessionError } = await supabase.auth.setSession(
+            oauthTokens
+          );
           if (sessionError) {
-            console.error('Erreur setSession OAuth:', sessionError);
+            console.error("Erreur setSession OAuth:", sessionError);
           } else {
-            // CORRIGÉ : rediriger vers meal-plan au lieu de '/'
-            window.history.replaceState(null, '', window.location.pathname + '#/meal-plan');
+            // Nettoie l'URL pour ne pas rejouer le token au rechargement
+            window.history.replaceState(
+              null,
+              "",
+              window.location.pathname + "#/"
+            );
           }
         }
 
@@ -293,33 +324,78 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         if (!isMounted) return;
 
         if (session?.user) {
-          // Récupérer les préférences utilisateur depuis Supabase
-          const { data: prefs } = await getUserPreferences(session.user.id);
-
-          const userData: User = {
+          const userData = {
             id: session.user.id,
-            email: session.user.email ?? '',
+            email: session.user.email ?? "",
             name:
               session.user.user_metadata?.full_name ??
               session.user.email ??
-              'Utilisateur',
-            // CORRIGÉ : charger les préférences depuis la BDD
-            preferences: prefs?.cuisine_types ?? [],
-            dislikedIngredients: prefs?.disliked_ingredients ?? [],
+              "Utilisateur",
           };
+          dispatch({ type: "SET_USER", payload: userData });
 
-          dispatch({ type: 'SET_USER', payload: userData });
+          // Charger les repas futurs depuis Supabase
+          const today = new Date().toISOString().split('T')[0];
+          const { data: mealData } = await supabase
+            .from('meal_plans')
+            .select(`
+              id, date, meal_type, servings, notes, created_at,
+              dishes (
+                id, name, image_url, cooking_time, rating,
+                calories, servings, tags, difficulty, cuisine_type, cuisineId,
+                dish_ingredients (
+                  quantity, unit,
+                  ingredient:ingredient_id ( id, name, category )
+                )
+              )
+            `)
+            .eq('user_id', session.user.id)
+            .gte('date', today)
+            .order('date', { ascending: true });
 
-          // CORRIGÉ : la requête meal_plans est déléguée exclusivement
-          // à useMealPlan.loadMealPlans() pour éviter la duplication.
-          // AppContext ne fait plus cette requête ici.
-
+          if (mealData && mealData.length > 0) {
+            const lang = 'fr';
+            const meals: MealPlan[] = mealData.map((row: any) => {
+              const dish = row.dishes;
+              return {
+                id: row.id,
+                userId: session.user.id,
+                date: row.date,
+                mealType: row.meal_type,
+                servings: row.servings,
+                notes: row.notes ?? undefined,
+                createdAt: row.created_at,
+                dish: {
+                  id: String(dish.id),
+                  title: dish.name?.[lang] || dish.name?.en || 'Sans titre',
+                  image: dish.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80',
+                  cuisine: dish.cuisine_type?.[lang] || dish.cuisine_type?.en || '',
+                  cuisineId: dish.cuisineId ? String(dish.cuisineId) : null,
+                  cookingTime: dish.cooking_time || 30,
+                  rating: Number(dish.rating) || 4.5,
+                  difficulty: dish.difficulty?.[lang] || dish.difficulty?.en || 'medium',
+                  servings: dish.servings || 4,
+                  calories: dish.calories || 400,
+                  tags: Array.isArray(dish.tags) ? dish.tags : [],
+                  ingredients: (dish.dish_ingredients || []).map((di: any) => ({
+                    id: String(di.ingredient.id),
+                    name: di.ingredient.name?.[lang] || di.ingredient.name?.en || '',
+                    category: di.ingredient.category?.[lang] || '',
+                    amount: String(di.quantity || 1),
+                    unit: di.unit?.[lang] || di.unit?.en || '',
+                  })),
+                  instructions: [],
+                },
+              };
+            });
+            dispatch({ type: 'SET_MEAL_PLAN', payload: meals });
+          }
         } else {
-          dispatch({ type: 'SET_LOADING', payload: false });
+          dispatch({ type: "SET_LOADING", payload: false });
         }
       } catch (err) {
-        console.error('Erreur initAuth:', err);
-        if (isMounted) dispatch({ type: 'SET_LOADING', payload: false });
+        console.error("Erreur initAuth:", err);
+        if (isMounted) dispatch({ type: "SET_LOADING", payload: false });
       }
     };
 
@@ -328,34 +404,29 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     // ── Listener Supabase (changements d'état auth) ──────────
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
       if (!isMounted) return;
 
       if (session?.user) {
-        // Recharger les préférences lors d'un changement de session
-        const { data: prefs } = await getUserPreferences(session.user.id);
-
         dispatch({
-          type: 'SET_USER',
+          type: "SET_USER",
           payload: {
             id: session.user.id,
-            email: session.user.email ?? '',
+            email: session.user.email ?? "",
             name:
               session.user.user_metadata?.full_name ??
               session.user.email ??
-              'Utilisateur',
-            preferences: prefs?.cuisine_types ?? [],
-            dislikedIngredients: prefs?.disliked_ingredients ?? [],
+              "Utilisateur",
           },
         });
-      } else if (event === 'SIGNED_OUT') {
-        dispatch({ type: 'LOGOUT' });
+      } else if (event === "SIGNED_OUT") {
+        dispatch({ type: "LOGOUT" });
       }
     });
 
     // ── Sécurité anti-blocage : 6 s max pour le chargement ──
     const safetyTimeout = setTimeout(() => {
-      if (isMounted) dispatch({ type: 'SET_LOADING', payload: false });
+      if (isMounted) dispatch({ type: "SET_LOADING", payload: false });
     }, 6000);
 
     return () => {
@@ -383,6 +454,3 @@ export const useApp = (): AppContextValue => {
   }
   return ctx;
 };
-
-// Export du type User pour compatibilité
-export type { User };
