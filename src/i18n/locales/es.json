@@ -369,5 +369,27 @@
     "fresh": "fresco",
     "light": "ligero",
     "vegan": "vegano"
+  },
+  "mealTypes": {
+    "breakfast": "Desayuno",
+    "lunch": "Almuerzo",
+    "dinner": "Cena",
+    "snack": "Merienda"
+  },
+  "todayMenu": {
+    "meals": "comidas",
+    "inKitchen": "en cocina",
+    "total": "total",
+    "noMealsToday": "No hay comidas planificadas para hoy",
+    "addFromHome": "Añade platos desde la página de Inicio",
+    "viewRecipe": "Ver receta"
+  },
+  "myRecipes": {
+    "noRecipesSelected": "No hay recetas seleccionadas",
+    "noRecipesDesc": "Añade algunos platos a tu menú para acceder a sus recetas aquí",
+    "recipesReady": "{{count}} recetas listas para cocinar",
+    "searchPlaceholder": "Buscar tus recetas...",
+    "noRecipesFound": "No se encontraron recetas",
+    "startCooking": "Empezar a cocinar"
   }
 }
