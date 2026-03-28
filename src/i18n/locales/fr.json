@@ -2,7 +2,7 @@
   "brand": {
     "name": "KingMenu",
     "tagline": "Planifiez. Cuisinez. Savourez.",
-    "description": "Plateforme de planification culinaire"
+    "description": "Plateforme de planification culinaire alimentée par l'IA"
   },
   "navigation": {
     "home": "Accueil",
@@ -17,7 +17,7 @@
   },
   "landing": {
     "title": "Bienvenue sur King Menu",
-    "subtitle": "Découvrez une nouvelle façon de planifier vos repas, d’explorer des recettes et d’organiser votre cuisine.",
+    "subtitle": "Découvrez une nouvelle façon de planifier vos repas, d'explorer des recettes et d'organiser votre cuisine.",
     "featuresTitle": "King Menu vous permet de :",
     "featureRecipes": "Découvrir des recettes variées et soigneusement sélectionnées, régulièrement mises à jour.",
     "featureIngredients": "Trouver des plats à partir des ingrédients que vous avez déjà à la maison.",
@@ -47,9 +47,7 @@
     "emailLabel": "Adresse e-mail",
     "emailPlaceholder": "Entrez votre e-mail",
     "passwordLabel": "Mot de passe",
-    "passwordPlaceholder": "Entrez votre mot de passe",
-    "googleSuccess": "Connexion Google réussie",
-    "loginError": "Échec de la connexion après retour"
+    "passwordPlaceholder": "Entrez votre mot de passe"
   },
   "home": {
     "recommendedDishes": "Plats recommandés",
@@ -64,8 +62,7 @@
     "startWithIngredients": "Commencer avec des ingrédients",
     "noDishesFound": "Aucun plat trouvé",
     "adjustFilters": "Essayez d'ajuster vos filtres ou termes de recherche",
-    "allDishesSelected": "Tous les plats sont déjà sélectionnés !",
-    "loadMore": "Charger plus"
+    "allDishesSelected": "Tous les plats sont déjà sélectionnés !"
   },
   "dish": {
     "minutes": "min",
@@ -80,13 +77,9 @@
     "cookMode": "Mode cuisson"
   },
   "recipe": {
+    "step": "Étape",
     "addToMenu": "Ajouter au menu",
-    "addedToMenu": "{{title}} ajouté à votre menu !",
-    "ingredients": "Ingrédients",
-    "instructions": "Instructions",
-    "needIngredient": "Besoin : {{name}}",
-    "recipe": "Recette",
-    "step": "Étape"
+    "addedToMenu": "{{title}} ajouté à votre menu !"
   },
   "ingredientsSection": {
     "whatsInKitchen": "Qu'y a-t-il dans votre cuisine ?",
@@ -99,6 +92,7 @@
     "findingDishes": "Recherche de plats...",
     "selectAtLeastOne": "Veuillez sélectionner au moins un ingrédient",
     "dishesFound": "{{count}} plats trouvés avec ces ingrédients !",
+    "ingredientsLabel": "Ingrédients",
     "categories": {
       "proteins": "Protéines",
       "vegetables": "Légumes",
@@ -108,8 +102,7 @@
       "fruits": "Fruits",
       "condiments": "Condiments & Sauces",
       "herbs": "Herbes & Épices"
-    },
-    "ingredientsLabel": "Ingrédients"
+    }
   },
   "recipeDetails": {
     "ingredients": "Ingrédients",
@@ -141,6 +134,22 @@
     "near": "Presque complet",
     "creative": "Option créative"
   },
+  "errorLoadingDishes": "Erreur lors du chargement des plats. Veuillez réessayer.",
+  "errors": {
+    "loadUserPreferences": "Erreur lors du chargement de vos préférences",
+    "mustBeLoggedIn": "Vous devez être connecté pour effectuer cette action",
+    "updatePreferences": "Erreur lors de la mise à jour des préférences"
+  },
+  "favorites": {
+    "add": "Ajouter aux favoris",
+    "added": "Ajouté aux favoris",
+    "remove": "Retirer des favoris",
+    "removed": "Retiré des favoris",
+    "title": "Vos favoris",
+    "empty": "Aucun favori pour l'instant",
+    "emptyDesc": "Explorez les plats et ajoutez ceux que vous appréciez à vos favoris.",
+    "browse": "Parcourir les plats"
+  },
   "mealPlan": {
     "title": "Plan de repas",
     "description": "Planifiez vos repas et organisez votre emploi du temps culinaire",
@@ -152,6 +161,7 @@
     "notes": "Notes",
     "notesPlaceholder": "Ajoutez des notes spéciales ou des modifications...",
     "schedule": "Planifier",
+    "addToPlan": "Ajouter au plan",
     "breakfast": "Petit-déjeuner",
     "lunch": "Déjeuner",
     "dinner": "Dîner",
@@ -182,8 +192,7 @@
       "downloadPDF": "Télécharger PDF",
       "downloadedPDF": "Calendrier des repas téléchargé en PDF !",
       "noMealsForDay": "Aucun repas prévu ce jour"
-    },
-    "addToPlan": "Ajouter au plan"
+    }
   },
   "calendar": {
     "sunday": "Dim",
@@ -239,21 +248,20 @@
     "preferredCuisines": "Cuisines préférées",
     "pantryItemsCount": "Articles dans le garde-manger",
     "shoppingListItems": "Articles de la liste de courses",
+    "ingredientAdded": "Ingrédient ajouté",
     "preferencesUpdated": "Préférences mises à jour",
     "noDislikedIngredients": "Aucun ingrédient désapprouvé ajouté pour l'instant",
-    "ingredientAdded": "Ingrédient ajouté",
-    "noIngredientFound": "Non trouvé",
     "ingredientRemoved": "Ingrédient supprimé",
+    "noIngredientFound": "Non trouvé",
     "add": "Ajouter",
     "accountDetails": "Détails du compte",
-    "anonymous": "Utilisateur anonyme",
-    "dislikedIngredients": "Ingrédients à éviter",
+    "anonymous": "Anonyme",
+    "dislikedIngredients": "Ingrédients non aimés",
     "email": "Email",
     "invalidIngredient": "Ingrédient invalide",
     "loginPrompt": "Connectez-vous pour accéder à votre profil",
     "name": "Nom",
-    "pleaseLogin": "Veuillez vous connecter",
-    "removeIngredient": "Supprimer l'ingrédient"
+    "pleaseLogin": "Veuillez vous connecter"
   },
   "measurements": {
     "metric": "Métrique",
@@ -305,12 +313,8 @@
     "unknown": "Inconnu",
     "no_recipe_selected": "Aucune recette sélectionnée",
     "date": "Date",
-    "errorOccurred": "Une erreur est survenue",
-    "reload": "Recharger la page",
-    "retry": "Réessayer",
-    "servings": "portions",
-    "sessionCheck": "Vérification de la session...",
-    "unexpectedError": "Une erreur inattendue s'est produite."
+    "errorOccurred": "Une erreur s'est produite",
+    "servings": "portions"
   },
   "cuisines": {
     "italian": "Italien",
@@ -347,8 +351,8 @@
     "totalIngredients": "Total d'ingrédients nécessaires"
   },
   "footer": {
-    "privacy": "Privacy Policy",
-    "terms": "Terms of Use"
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions d'utilisation"
   },
   "tags": {
     "pasta": "pâtes",
@@ -365,20 +369,5 @@
     "fresh": "frais",
     "light": "léger",
     "vegan": "végétalien"
-  },
-  "errors": {
-    "loadUserPreferences": "Erreur lors du chargement des préférences",
-    "mustBeLoggedIn": "Vous devez être connecté",
-    "updatePreferences": "Erreur lors de la mise à jour des préférences"
-  },
-  "favorites": {
-    "title": "Vos favoris",
-    "empty": "Aucun favori pour l'instant",
-    "emptyDesc": "Explorez les plats et ajoutez vos favoris.",
-    "browse": "Parcourir les plats",
-    "add": "Ajouter aux favoris",
-    "added": "Ajouté aux favoris",
-    "remove": "Retirer des favoris",
-    "removed": "Retiré des favoris"
   }
 }
