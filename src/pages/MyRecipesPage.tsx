@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ChefHat, Clock, Users, Search, Filter } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useApp } from '../context/AppContext';
 import RecipeViewer from '../components/Recipe/RecipeViewer';
 import CookModeModal from '../components/Recipe/CookModeModal';
@@ -7,6 +8,7 @@ import { Dish } from '../types';
 
 export default function MyRecipesPage() {
   const { state } = useApp();
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCuisine, setSelectedCuisine] = useState('');
   const [cookModeDish, setCookModeDish] = useState<Dish | null>(null);
@@ -29,16 +31,16 @@ export default function MyRecipesPage() {
             <ChefHat className="h-8 w-8 text-gray-400" />
           </div>
           <h2 className="text-2xl font-heading font-bold text-gray-900 mb-2">
-            No Recipes Selected
+            {t('myRecipes.noRecipesSelected')}
           </h2>
           <p className="text-gray-600 font-body mb-6">
-            Add some dishes to your menu to access their recipes here
+            {t('myRecipes.noRecipesDesc')}
           </p>
           <a
             href="/"
             className="inline-flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-all"
           >
-            Browse Dishes
+            {t('shoppingList.browseDishes')}
           </a>
         </div>
       </div>
@@ -52,10 +54,10 @@ export default function MyRecipesPage() {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
           <div>
             <h1 className="text-3xl font-heading font-bold text-gray-900 mb-2">
-              My Recipes
+              {t('navigation.myRecipes')}
             </h1>
             <p className="text-gray-600 font-body">
-              {state.selectedDishes.length} recipes ready to cook
+              {t('myRecipes.recipesReady', { count: state.selectedDishes.length })}
             </p>
           </div>
           
@@ -69,7 +71,7 @@ export default function MyRecipesPage() {
             <div className="flex items-center space-x-1">
               <Users className="h-4 w-4" />
               <span className="font-body">
-                {state.selectedDishes.reduce((total, dish) => total + dish.servings, 0)} servings
+                {state.selectedDishes.reduce((total, dish) => total + dish.servings, 0)} {t('common.servings')}
               </span>
             </div>
           </div>
@@ -82,7 +84,7 @@ export default function MyRecipesPage() {
             <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
             <input
               type="text"
-              placeholder="Search your recipes..."
+              placeholder={t('myRecipes.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
@@ -95,7 +97,7 @@ export default function MyRecipesPage() {
             onChange={(e) => setSelectedCuisine(e.target.value)}
             className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
           >
-            <option value="">All Cuisines</option>
+            <option value="">{t('home.allCuisines')}</option>
             {cuisines.map(cuisine => (
               <option key={cuisine} value={cuisine}>{cuisine}</option>
             ))}
@@ -124,7 +126,7 @@ export default function MyRecipesPage() {
                   </div>
                   <div className="flex items-center space-x-1">
                     <Users className="h-4 w-4" />
-                    <span>{dish.servings} servings</span>
+                    <span>{dish.servings} {t('common.servings')}</span>
                   </div>
                   <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
                     {dish.difficulty}
@@ -135,7 +137,7 @@ export default function MyRecipesPage() {
                   className="w-full bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary-dark transition-all flex items-center justify-center space-x-2"
                 >
                   <ChefHat className="h-4 w-4" />
-                  <span className="font-body font-medium">Start Cooking</span>
+                  <span className="font-body font-medium">{t('myRecipes.startCooking')}</span>
                 </button>
               </div>
             </div>
@@ -145,10 +147,10 @@ export default function MyRecipesPage() {
         <div className="text-center py-12">
           <Filter className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-heading font-semibold text-gray-900 mb-2">
-            No recipes found
+            {t('myRecipes.noRecipesFound')}
           </h3>
           <p className="text-gray-600 font-body">
-            Try adjusting your search terms or filters
+            {t('home.adjustFilters')}
           </p>
         </div>
       )}
