@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Heart, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { supabase } from "@/lib/supabase";
-import { mapSupabaseDishToModel } from "@/dishMapper";
+import { mapSupabaseDishToModel } from "@/lib/dishMapper";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useApp } from "@/context/AppContext";
 import DishCard from "@/components/Home/DishCard";
