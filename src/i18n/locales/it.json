@@ -369,5 +369,27 @@
     "fresh": "fresco",
     "light": "leggero",
     "vegan": "vegano"
+  },
+  "mealTypes": {
+    "breakfast": "Colazione",
+    "lunch": "Pranzo",
+    "dinner": "Cena",
+    "snack": "Spuntino"
+  },
+  "todayMenu": {
+    "meals": "pasti",
+    "inKitchen": "in cucina",
+    "total": "totale",
+    "noMealsToday": "Nessun pasto pianificato per oggi",
+    "addFromHome": "Aggiungi piatti dalla pagina Home",
+    "viewRecipe": "Vedi ricetta"
+  },
+  "myRecipes": {
+    "noRecipesSelected": "Nessuna ricetta selezionata",
+    "noRecipesDesc": "Aggiungi alcuni piatti al tuo menu per accedere alle loro ricette qui",
+    "recipesReady": "{{count}} ricette pronte da cucinare",
+    "searchPlaceholder": "Cerca le tue ricette...",
+    "noRecipesFound": "Nessuna ricetta trovata",
+    "startCooking": "Inizia a cucinare"
   }
 }
