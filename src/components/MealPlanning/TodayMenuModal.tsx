@@ -57,7 +57,7 @@ export default function TodayMenuModal({ isOpen, onClose }: TodayMenuModalProps)
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center gap-2">
                 <ChefHat className="h-5 w-5 text-white" />
-                <span className="text-white font-bold text-lg">Menu du jour</span>
+                <span className="text-white font-bold text-lg">{t('navigation.todayMenu')}</span>
               </div>
               <button
                 onClick={onClose}
@@ -73,15 +73,15 @@ export default function TodayMenuModal({ isOpen, onClose }: TodayMenuModalProps)
               <div className="flex gap-4 mt-3">
                 <div className="bg-white/20 rounded-xl px-3 py-1.5 text-center">
                   <p className="text-white font-bold text-sm">{todayMeals.length}</p>
-                  <p className="text-orange-100 text-xs">repas</p>
+                  <p className="text-orange-100 text-xs">{t('todayMenu.meals')}</p>
                 </div>
                 <div className="bg-white/20 rounded-xl px-3 py-1.5 text-center">
                   <p className="text-white font-bold text-sm">{totalTime} min</p>
-                  <p className="text-orange-100 text-xs">en cuisine</p>
+                  <p className="text-orange-100 text-xs">{t('todayMenu.inKitchen')}</p>
                 </div>
                 <div className="bg-white/20 rounded-xl px-3 py-1.5 text-center">
                   <p className="text-white font-bold text-sm">{totalCals} kcal</p>
-                  <p className="text-orange-100 text-xs">total</p>
+                  <p className="text-orange-100 text-xs">{t('todayMenu.total')}</p>
                 </div>
               </div>
             )}
@@ -92,9 +92,9 @@ export default function TodayMenuModal({ isOpen, onClose }: TodayMenuModalProps)
             {todayMeals.length === 0 ? (
               <div className="text-center py-12">
                 <UtensilsCrossed className="h-14 w-14 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500 font-medium">Aucun repas planifié aujourd'hui</p>
+                <p className="text-gray-500 font-medium">{t('todayMenu.noMealsToday')}</p>
                 <p className="text-gray-400 text-sm mt-1">
-                  Ajoutez des plats depuis la page Accueil
+                  {t('todayMenu.addFromHome')}
                 </p>
               </div>
             ) : (
@@ -146,7 +146,7 @@ export default function TodayMenuModal({ isOpen, onClose }: TodayMenuModalProps)
                         <button
                           onClick={() => setRecipeModal(meal)}
                           className="p-2 bg-orange-50 text-orange-500 rounded-xl hover:bg-orange-100 transition-all"
-                          title="Voir la recette"
+                          title={t('todayMenu.viewRecipe')}
                         >
                           <ChefHat className="h-4 w-4" />
                         </button>
@@ -164,7 +164,7 @@ export default function TodayMenuModal({ isOpen, onClose }: TodayMenuModalProps)
               onClick={onClose}
               className="w-full py-2.5 bg-orange-500 text-white rounded-xl font-semibold hover:bg-orange-600 transition-all"
             >
-              Fermer
+              {t('common.close')}
             </button>
           </div>
         </div>
