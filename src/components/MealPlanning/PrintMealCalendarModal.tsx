@@ -54,7 +54,7 @@ export default function PrintMealCalendarModal({ isOpen, onClose }: PrintMealCal
     date.toLocaleDateString(i18n.language, { weekday: "long", day: "numeric", month: "long" });
 
   const handleDownloadPDF = () => {
-    if (filteredMeals.length === 0) { toast.error("Aucun repas dans cette période"); return; }
+    if (filteredMeals.length === 0) { toast.error(t("mealPlan.print.noMealsInRange")); return; }
     generateMealCalendarPDF(startDate, endDate, mealsByDate, i18n.language, {
       title: t("mealPlan.print.title", "Planning des repas"),
       dateRange: t("mealPlan.print.dateRange", "Période"),
@@ -66,13 +66,13 @@ export default function PrintMealCalendarModal({ isOpen, onClose }: PrintMealCal
       snack: t("mealPlan.snack", "Collation"),
       servings: t("dish.servings", "portions"),
       cookingTime: t("dish.cookingTime", "Temps"),
-      noMeals: t("mealPlan.print.noMealsForDay", "Aucun repas"),
+      noMeals: t("mealPlan.print.noMealsForDay"),
     });
     toast.success("PDF téléchargé !");
   };
 
   const handlePrint = () => {
-    if (filteredMeals.length === 0) { toast.error("Aucun repas dans cette période"); return; }
+    if (filteredMeals.length === 0) { toast.error(t("mealPlan.print.noMealsInRange")); return; }
     setShowPreview(true);
     setTimeout(() => {
       const el = printRef.current;
@@ -189,7 +189,7 @@ export default function PrintMealCalendarModal({ isOpen, onClose }: PrintMealCal
                   </div>
 
                   {filteredMeals.length === 0 ? (
-                    <p className="text-center text-gray-400 py-8 text-sm">Aucun repas dans cette période</p>
+                    <p className="text-center text-gray-400 py-8 text-sm">{t('mealPlan.print.noMealsInRange')}</p>
                   ) : (
                     dateRange.map(date => {
                       const ds = date.toISOString().split("T")[0];
@@ -203,7 +203,7 @@ export default function PrintMealCalendarModal({ isOpen, onClose }: PrintMealCal
                             <h3 className="font-semibold text-gray-800 text-sm capitalize">{formatDate(date)}</h3>
                           </div>
                           {dayMeals.length === 0 ? (
-                            <p className="px-4 py-3 text-xs text-gray-400 italic">Aucun repas planifié</p>
+                            <p className="px-4 py-3 text-xs text-gray-400 italic">{t('mealPlan.print.noMealsForDay')}</p>
                           ) : (
                             <div className="divide-y divide-gray-50">
                               {dayMeals.map(meal => {
