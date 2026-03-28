@@ -16,16 +16,17 @@
     "logout": "Logout"
   },
   "landing": {
-  "title": "Welcome to King Menu",
-  "subtitle": "Discover a smarter way to plan your meals, explore recipes, and organize your kitchen.",
-  "featuresTitle": "King Menu allows you to:",
-  "featureRecipes": "Explore carefully curated and regularly updated recipes.",
-  "featureIngredients": "Find dishes based on ingredients you already have at home.",
-  "featurePlanner": "Plan your weekly meals with just a few clicks.",
-  "featureShoppingList": "Automatically generate your shopping list from your chosen menu.",
-  "loginButton": "Sign in to King Menu",
-  "footer": "Plan. Cook. Enjoy."
-},
+    "title": "Welcome to King Menu",
+    "subtitle": "Discover a smarter way to plan your meals, explore recipes, and organize your kitchen.",
+    "featuresTitle": "King Menu allows you to:",
+    "featureRecipes": "Explore carefully curated and regularly updated recipes.",
+    "featureIngredients": "Find dishes based on ingredients you already have at home.",
+    "featurePlanner": "Plan your weekly meals with just a few clicks.",
+    "featureShoppingList": "Automatically generate your shopping list from your chosen menu.",
+    "loginButton": "Sign in to King Menu",
+    "footer": "Plan. Cook. Enjoy.",
+    "logoAlt": "KingMenu logo"
+  },
   "auth": {
     "welcomeTitle": "Welcome to King Menu!",
     "login": "Login",
@@ -75,7 +76,11 @@
     "added": "Added",
     "cookMode": "Cook Mode"
   },
-  "recipe": "Recipe",
+  "recipe": {
+    "step": "Step",
+    "addToMenu": "Add to menu",
+    "addedToMenu": "{{title}} added to your menu!"
+  },
   "ingredientsSection": {
     "whatsInKitchen": "What's in Your Kitchen?",
     "whatsInKitchenDesc": "Select the ingredients you have at home, and we'll suggest delicious dishes you can make with minimal additional shopping.",
@@ -87,6 +92,7 @@
     "findingDishes": "Finding Dishes...",
     "selectAtLeastOne": "Please select at least one ingredient",
     "dishesFound": "{{count}} dishes found with these ingredients!",
+    "ingredientsLabel": "Ingredients",
     "categories": {
       "proteins": "Proteins",
       "vegetables": "Vegetables",
@@ -96,8 +102,7 @@
       "fruits": "Fruits",
       "condiments": "Condiments & Sauces",
       "herbs": "Herbs & Spices"
-    },
-    "ingredientsLabel": "Ingredients"
+    }
   },
   "recipeDetails": {
     "ingredients": "Ingredients",
@@ -129,6 +134,22 @@
     "near": "Almost There",
     "creative": "Creative Option"
   },
+  "errorLoadingDishes": "Error loading dishes. Please try again.",
+  "errors": {
+    "loadUserPreferences": "Error loading your preferences",
+    "mustBeLoggedIn": "You must be logged in to perform this action",
+    "updatePreferences": "Error updating preferences"
+  },
+  "favorites": {
+    "add": "Add to favorites",
+    "added": "Added to favorites",
+    "remove": "Remove from favorites",
+    "removed": "Removed from favorites",
+    "title": "Your Favorites",
+    "empty": "No favorites yet",
+    "emptyDesc": "Explore dishes and add your favorites here.",
+    "browse": "Browse dishes"
+  },
   "mealPlan": {
     "title": "Meal Plan",
     "description": "Plan your meals and organize your cooking schedule",
@@ -140,6 +161,7 @@
     "notes": "Notes",
     "notesPlaceholder": "Add special notes or modifications...",
     "schedule": "Schedule",
+    "addToPlan": "Add to Plan",
     "breakfast": "Breakfast",
     "lunch": "Lunch",
     "dinner": "Dinner",
@@ -209,7 +231,8 @@
     "copy": "Copy",
     "copied": "Copied!",
     "pdf": "PDF",
-    "share": "Share"
+    "share": "Share",
+    "downloadedPDF": "Shopping list downloaded as PDF!"
   },
   "profile": {
     "culinaryPreferences": "Culinary Preferences",
@@ -230,7 +253,15 @@
     "noDislikedIngredients": "No disliked ingredients added yet",
     "ingredientRemoved": "Ingredient removed",
     "noIngredientFound": "Not Found",
-    "add": "Add"
+    "add": "Add",
+    "accountDetails": "Account Details",
+    "anonymous": "Anonymous",
+    "dislikedIngredients": "Disliked Ingredients",
+    "email": "Email",
+    "invalidIngredient": "Invalid ingredient",
+    "loginPrompt": "Log in to access your profile",
+    "name": "Name",
+    "pleaseLogin": "Please log in"
   },
   "measurements": {
     "metric": "Metric",
@@ -280,7 +311,10 @@
     "more": "more",
     "optional": "optional",
     "unknown": "Unknown",
-    "no_recipe_selected": "No recipe selected"
+    "no_recipe_selected": "No recipe selected",
+    "date": "Date",
+    "errorOccurred": "An error occurred",
+    "servings": "servings"
   },
   "cuisines": {
     "italian": "Italian",
@@ -316,9 +350,9 @@
     "totalServings": "servings",
     "totalIngredients": "Total ingredients needed"
   },
-  "footer":{
-  "privacy": "Privacy Policy",
-  "terms": "Terms of Use"
+  "footer": {
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Use"
   },
   "tags": {
     "pasta": "pasta",
