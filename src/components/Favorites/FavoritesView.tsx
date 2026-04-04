@@ -1,89 +1,87 @@
-import { useEffect, useState } from "react";
-import { Heart, Loader2 } from "lucide-react";
-import { supabase } from "@/lib/supabase";
-import RecipeModal from "../Recipe/RecipeModal";
+import { useEffect, useState } from 'react';
+import { Heart, Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { supabase } from '@/lib/supabase';
+import { mapSupabaseDishToModel } from '@/dishMapper';
+import { useFavorites } from '@/hooks/useFavorites';
+import { useApp } from '@/context/AppContext';
+import DishCard from '@/components/Home/DishCard';
+import { Dish } from '@/types';
 
 export default function FavoritesView() {
-  const [favorites, setFavorites] = useState<any[]>([]);
+  const [dishes, setDishes] = useState<Dish[]>([]);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
-  const [selectedDish, setSelectedDish] = useState<any>(null); // Pour ouvrir RecipeModal
 
-  // Charger l'utilisateur
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user);
-    });
-  }, []);
+  const { i18n, t } = useTranslation();
+  const lang = i18n.language.split('-')[0] || 'fr';
 
-  // Charger les favoris
+  const { state } = useApp();
+  const userId = state.user?.id ?? '';
+  const { favorites, toggleFavorite } = useFavorites(userId);
+
   useEffect(() => {
-    if (!user) return;
+    if (!userId) return;
 
     const fetchFavorites = async () => {
       setLoading(true);
 
+      // 1. Récupérer les IDs favoris
       const { data: saved, error: savedError } = await supabase
-        .from("saved_dishes")
-        .select("dish_id")
-        .eq("user_id", user.id);
+        .from('saved_dishes')
+        .select('dish_id')
+        .eq('user_id', userId);
 
       if (savedError) {
-        console.error("Error loading favorites:", savedError);
+        console.error('Error loading favorites:', savedError);
         setLoading(false);
         return;
       }
 
       if (!saved || saved.length === 0) {
-        setFavorites([]);
+        setDishes([]);
         setLoading(false);
         return;
       }
 
-      const dishIds = saved.map((f) => f.dish_id);
+      const dishIds = saved.map((f: any) => f.dish_id);
 
-      const { data: dishes, error: dishesError } = await supabase
-        .from("dishes")
-        .select("*")
-        .in("id", dishIds);
+      // 2. Charger les plats avec leurs ingrédients
+      const { data: rawDishes, error: dishesError } = await supabase
+        .from('dishes')
+        .select(
+          '*, dish_ingredients(quantity, unit, ingredient:ingredient_id(id, name, category))'
+        )
+        .in('id', dishIds);
 
       if (dishesError) {
-        console.error("Error loading dishes:", dishesError);
-      } else {
-        setFavorites(dishes || []);
+        console.error('Error loading dishes:', dishesError);
+        setLoading(false);
+        return;
       }
 
+      // 3. Transformer via le mapper centralisé → format Dish complet
+      const mapped: Dish[] = (rawDishes || []).map((row: any) =>
+        mapSupabaseDishToModel(row, lang)
+      );
+
+      setDishes(mapped);
       setLoading(false);
     };
 
     fetchFavorites();
-  }, [user]);
+  }, [userId, lang]);
 
-  // Retirer un favori depuis la page
-  const removeFavorite = async (dishId: number) => {
-    if (!user) return;
-
-    await supabase
-      .from("saved_dishes")
-      .delete()
-      .eq("user_id", user.id)
-      .eq("dish_id", dishId);
-
-    setFavorites((prev) => prev.filter((f) => f.id !== dishId));
+  // Retirer la carte localement quand on retire un favori
+  const handleToggleFavorite = async (dishId: number) => {
+    const numId = Number(dishId);
+    const wasAlreadyFav = favorites.includes(numId);
+    await toggleFavorite(dishId);
+    if (wasAlreadyFav) {
+      setDishes((prev) => prev.filter((d) => Number(d.id) !== numId));
+    }
   };
 
-  // Mapper un plat DB → format attendu par RecipeModal
-  const formatForRecipeModal = (dish: any) => ({
-    id: dish.id,
-    title: dish.name?.fr || dish.name?.en || "Sans nom",
-    image: dish.image_url,
-    ingredients: dish.ingredients || [],
-    instructions: dish.steps || [],
-    difficulty: dish.difficulty,
-    cookingTime: dish.cooking_time,
-    servings: dish.servings,
-  });
-
+  // ── Chargement ────────────────────────────────────────────
   if (loading) {
     return (
       <div className="flex justify-center py-20">
@@ -92,7 +90,8 @@ export default function FavoritesView() {
     );
   }
 
-  if (!favorites.length) {
+  // ── Aucun favori ──────────────────────────────────────────
+  if (dishes.length === 0) {
     return (
       <div className="max-w-4xl mx-auto p-6">
         <div className="bg-white rounded-lg shadow-md p-8 text-center">
@@ -100,66 +99,42 @@ export default function FavoritesView() {
             <Heart className="h-8 w-8 text-gray-400" />
           </div>
           <h2 className="text-2xl font-heading font-bold text-gray-900 mb-2">
-            Aucun favori pour l’instant
+            {t('favorites.empty', "Aucun favori pour l'instant")}
           </h2>
           <p className="text-gray-600 font-body mb-6">
-            Explore les plats et ajoute ceux que tu apprécies à tes favoris.
+            {t('favorites.emptyDesc', 'Explorez les plats et ajoutez vos favoris.')}
           </p>
           <a
             href="/"
             className="inline-flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-all"
           >
-            Parcourir les plats
+            {t('favorites.browse', 'Parcourir les plats')}
           </a>
         </div>
       </div>
     );
   }
 
+  // ── Grille des favoris ────────────────────────────────────
   return (
-    <div className="max-w-5xl mx-auto p-6">
-      <h2 className="text-3xl font-heading font-bold mb-6">Vos favoris ❤️</h2>
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <h2 className="text-3xl font-heading font-bold mb-8">
+        {t('favorites.title', 'Vos favoris')} ❤️
+        <span className="ml-3 text-lg font-normal text-gray-500">
+          ({dishes.length})
+        </span>
+      </h2>
 
-      {/* Grille des favoris */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {favorites.map((dish) => (
-          <div
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {dishes.map((dish) => (
+          <DishCard
             key={dish.id}
-            className="bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition-all relative cursor-pointer"
-            onClick={() => setSelectedDish(formatForRecipeModal(dish))}
-          >
-            {/* Bouton retirer favori */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation(); // évite d’ouvrir le modal
-                removeFavorite(dish.id);
-              }}
-              className="absolute top-3 right-3 p-2 bg-white rounded-full shadow hover:bg-gray-100"
-            >
-              <Heart className="h-5 w-5 text-red-500 fill-red-500" />
-            </button>
-
-            <img
-              src={dish.image_url || "/placeholder.jpg"}
-              alt=""
-              className="rounded-md w-full h-40 object-cover mb-3"
-            />
-            <h3 className="font-bold text-lg">
-              {dish.name?.fr || dish.name?.en || "Sans nom"}
-            </h3>
-          </div>
+            dish={dish}
+            favorites={favorites}
+            toggleFavorite={handleToggleFavorite}
+          />
         ))}
       </div>
-
-      {/* Recipe Modal */}
-      {selectedDish && (
-        <RecipeModal
-          dish={selectedDish}
-          isOpen={true}
-          onClose={() => setSelectedDish(null)}
-          onEnterCookMode={() => {}}
-        />
-      )}
     </div>
   );
 }
