@@ -1,10 +1,12 @@
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { useApp } from '../context/AppContext';
 import { MealPlan } from '../types';
 
 export const useMealPlan = () => {
   const { state, dispatch } = useApp();
+  const { i18n } = useTranslation();
   const userId = state.user?.id;
 
   const loadMealPlans = useCallback(async () => {
@@ -29,7 +31,7 @@ export const useMealPlan = () => {
 
     if (error || !data || data.length === 0) return;
 
-    const lang = 'fr';
+    const lang = i18n.language || 'fr';
     const mealPlans: MealPlan[] = data.map((row: any) => {
       const dish = row.dishes;
       return {
@@ -42,7 +44,7 @@ export const useMealPlan = () => {
         createdAt: row.created_at,
         dish: {
           id: String(dish.id),
-          title: dish.name?.[lang] || dish.name?.en || 'Sans titre',
+          title: dish.name?.[lang] || dish.name?.en || dish.name?.fr || 'Untitled',
           image: dish.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80',
           cuisine: dish.cuisine_type?.[lang] || dish.cuisine_type?.en || '',
           cuisineId: dish['cuisineId'] ? String(dish['cuisineId']) : null,
@@ -65,7 +67,7 @@ export const useMealPlan = () => {
     });
 
     dispatch({ type: 'SET_MEAL_PLAN', payload: mealPlans });
-  }, [userId, dispatch]);
+  }, [userId, dispatch, i18n.language]);
 
   const saveMealPlan = useCallback(async (meal: MealPlan) => {
     if (!userId) return;

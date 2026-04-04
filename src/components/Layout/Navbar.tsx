@@ -27,10 +27,10 @@ export default function Navbar() {
       dispatch({ type: 'SET_USER', payload: null });
       dispatch({ type: 'CLEAR_SELECTED_DISHES' });
       dispatch({ type: 'SET_MEAL_PLAN', payload: [] });
-      toast.success(t('navigation.logout') + ' successful');
+      toast.success(t('navigation.logoutSuccess'));
     } catch (error) {
       console.error('Logout error:', error);
-      toast.error('An error occurred during logout');
+      toast.error(t('common.error'));
     }
   };
 

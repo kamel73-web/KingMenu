@@ -3,11 +3,15 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { Loader2, ArrowLeft, Heart } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import toast from "react-hot-toast";
 
 export default function DishPage() {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language || "fr";
   const [dish, setDish] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -65,7 +69,7 @@ export default function DishPage() {
     e.stopPropagation();
 
     if (!user) {
-      alert("Connectez-vous pour ajouter aux favoris.");
+      toast.error(t("favorites.loginRequired", "Connectez-vous pour ajouter aux favoris."));
       return;
     }
 
@@ -94,7 +98,7 @@ export default function DishPage() {
   }
 
   if (!dish) {
-    return <div className="p-6 text-center">Plat introuvable.</div>;
+    return <div className="p-6 text-center">{t("dish.notFound", "Plat introuvable.")}</div>;
   }
 
   return (
@@ -105,7 +109,7 @@ export default function DishPage() {
         className="flex items-center gap-2 text-primary hover:underline"
       >
         <ArrowLeft />
-        Retour
+        {t("common.back", "Retour")}
       </button>
 
       {/* Image */}
@@ -126,7 +130,7 @@ export default function DishPage() {
 
       {/* Title */}
       <h1 className="text-3xl font-bold">
-        {dish.name?.fr || dish.name?.en}
+        {dish.name?.[lang] || dish.name?.en || dish.name?.fr}
       </h1>
 
       {/* Metadata */}
@@ -138,15 +142,15 @@ export default function DishPage() {
       {/* Description */}
       {dish.description && (
         <p className="text-gray-700 leading-relaxed">
-          {dish.description?.fr || dish.description?.en}
+          {dish.description?.[lang] || dish.description?.en || dish.description?.fr}
         </p>
       )}
 
       {/* Steps */}
       {dish.steps && (
         <div className="space-y-2">
-          <h2 className="text-2xl font-bold mt-4">Étapes</h2>
-          {dish.steps?.fr?.map((s: string, i: number) => (
+          <h2 className="text-2xl font-bold mt-4">{t("dish.steps", "Étapes")}</h2>
+          {(dish.steps?.[lang] || dish.steps?.en || dish.steps?.fr || []).map((s: string, i: number) => (
             <div key={i} className="p-3 bg-gray-50 rounded-lg">
               {i + 1}. {s}
             </div>

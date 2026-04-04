@@ -13,7 +13,8 @@
     "myRecipes": "Le Mie Ricette",
     "shoppingList": "Lista della Spesa",
     "todayMenu": "Menu del giorno",
-    "logout": "Disconnessione"
+    "logout": "Disconnessione",
+    "logoutSuccess": "Disconnessione avvenuta"
   },
   "landing": {
     "title": "Benvenuto su King Menu",

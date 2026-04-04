@@ -13,7 +13,8 @@
     "myRecipes": "وصفاتي",
     "shoppingList": "قائمة التسوق",
     "todayMenu": "قائمة اليوم",
-    "logout": "تسجيل الخروج"
+    "logout": "تسجيل الخروج",
+    "logoutSuccess": "تم تسجيل الخروج بنجاح"
   },
   "landing": {
     "title": "مرحبًا بك في كينغ منيو",

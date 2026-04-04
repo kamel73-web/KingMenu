@@ -1,6 +1,7 @@
 // src/context/AppContext.tsx
 import React, { createContext, useContext, useEffect, useReducer } from "react";
 import { supabase } from "../lib/supabase";
+import i18n from "../i18n";
 import { Dish, Ingredient, MealPlan, OwnedIngredient } from "../types";
 
 // ─────────────────────────────────────────────────────────────
@@ -354,7 +355,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
             .order('date', { ascending: true });
 
           if (mealData && mealData.length > 0) {
-            const lang = 'fr';
+            const lang = i18n.language || 'fr';
             const meals: MealPlan[] = mealData.map((row: any) => {
               const dish = row.dishes;
               return {
@@ -367,7 +368,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
                 createdAt: row.created_at,
                 dish: {
                   id: String(dish.id),
-                  title: dish.name?.[lang] || dish.name?.en || 'Sans titre',
+                  title: dish.name?.[lang] || dish.name?.en || dish.name?.fr || 'Untitled',
                   image: dish.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80',
                   cuisine: dish.cuisine_type?.[lang] || dish.cuisine_type?.en || '',
                   cuisineId: dish.cuisineId ? String(dish.cuisineId) : null,

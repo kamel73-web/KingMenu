@@ -23,6 +23,7 @@ import MyRecipesPage from "./pages/MyRecipesPage";
 import MealPlanPage from "./pages/MealPlanPage";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfUse from "./pages/TermsOfUse";
+import DishPage from "./pages/DishPage";
 import "./i18n";
 import { Capacitor } from '@capacitor/core';
 import { App as CapacitorApp } from '@capacitor/app';
@@ -110,6 +111,7 @@ function AppRoutes() {
           <Route path="/my-recipes" element={state.user ? <MyRecipesPage /> : <Navigate to="/welcome" replace />} />
           <Route path="/shopping-list" element={state.user ? <ShoppingListView /> : <Navigate to="/welcome" replace />} />
           <Route path="/login" element={<LoginForm />} />
+          <Route path="/dish/:id" element={state.user ? <DishPage /> : <Navigate to="/welcome" replace />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-use" element={<TermsOfUse />} />
           <Route path="*" element={<Navigate to={state.user ? "/meal-plan" : "/welcome"} replace />} />

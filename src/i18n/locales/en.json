@@ -13,7 +13,8 @@
     "myRecipes": "My Recipes",
     "shoppingList": "Shopping List",
     "todayMenu": "Today's menu",
-    "logout": "Logout"
+    "logout": "Logout",
+    "logoutSuccess": "Logged out successfully"
   },
   "landing": {
     "title": "Welcome to King Menu",

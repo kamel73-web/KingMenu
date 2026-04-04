@@ -13,7 +13,8 @@
     "myRecipes": "Mis Recetas",
     "shoppingList": "Lista de Compras",
     "todayMenu": "Menú del día",
-    "logout": "Cerrar Sesión"
+    "logout": "Cerrar Sesión",
+    "logoutSuccess": "Sesión cerrada correctamente"
   },
   "landing": {
     "title": "Bienvenido a King Menu",

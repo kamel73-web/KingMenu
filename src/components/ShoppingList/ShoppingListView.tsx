@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Download, Share2, Copy, Check, ChefHat } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useApp } from '../../context/AppContext';
@@ -150,12 +151,12 @@ export default function ShoppingListView() {
           <p className="text-gray-600 font-body mb-6">
             {t('shoppingList.noShoppingListDesc')}
           </p>
-          <a
-            href="/"
+          <Link
+            to="/"
             className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all"
           >
             {t('shoppingList.browseDishes')}
-          </a>
+          </Link>
         </div>
       </div>
     );
