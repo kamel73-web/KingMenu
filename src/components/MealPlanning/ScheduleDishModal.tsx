@@ -25,28 +25,26 @@ export default function ScheduleDishModal({
     new Date().toISOString().split('T')[0]
   );
   const [mealType, setMealType] = useState<'breakfast' | 'lunch' | 'dinner' | 'snack'>('dinner');
-  const [servings, setServings] = useState(dish.defaultServings ?? 2);
+  const [servings, setServings] = useState(dish.servings ?? 2);
 
   if (!isOpen) return null;
 
   const handleSchedule = async () => {
     try {
       const newEntry: MealPlan = {
-        id: crypto.randomUUID(), // or use uuid lib
-        dishId: dish.id,
+        id: crypto.randomUUID(),
+        userId: state.user?.id ?? '',
         date: selectedDate,
         mealType,
         servings,
         createdAt: new Date().toISOString(),
+        dish: dish,  // objet Dish complet — requis par saveMealPlan
       };
 
-      // Option 1: update via context (if you keep full list in memory)
       dispatch({ type: 'ADD_MEAL_PLAN', payload: newEntry });
-
-      // Option 2: persist via your hook (localStorage / supabase / firebase / async-storage...)
       await saveMealPlan(newEntry);
 
-      toast.success(t('mealPlan.dishScheduled', { dish: dish.name }));
+      toast.success(t('mealPlan.dishScheduled', { title: dish.title }));
       onClose();
     } catch (err) {
       console.error(err);
@@ -66,7 +64,7 @@ export default function ScheduleDishModal({
             <X size={24} />
           </button>
           <h2 className="text-xl font-semibold">{t('mealPlan.scheduleDish')}</h2>
-          <p className="mt-1 text-sm opacity-90">{dish.name}</p>
+          <p className="mt-1 text-sm opacity-90">{dish.title}</p>
         </div>
 
         {/* Body */}
