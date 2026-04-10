@@ -4,7 +4,7 @@
     "tagline": "Planifiez. Cuisinez. Savourez.",
     "description": "Plateforme de planification culinaire"
   },
-   "navigation": {
+  "navigation": {
     "home": "Accueil",
     "useMyIngredients": "Utiliser mes ingrédients",
     "mealPlan": "Plan de repas",
@@ -14,6 +14,7 @@
     "shoppingList": "Liste de courses",
     "todayMenu": "Menu du jour",
     "logout": "Déconnexion",
+    "logoutSuccess": "Déconnexion réussie",
     "more": "Plus",
     "language": "Langue"
   },
@@ -76,12 +77,19 @@
     "recipe": "Recette",
     "add": "Ajouter",
     "added": "Ajouté",
-    "cookMode": "Mode cuisson"
+    "cookMode": "Mode cuisson",
+    "notFound": "Plat introuvable.",
+    "steps": "Étapes",
+    "viewDetails": "Voir le détail"
   },
   "recipe": {
     "step": "Étape",
     "addToMenu": "Ajouter au menu",
-    "addedToMenu": "{{title}} ajouté à votre menu !"
+    "addedToMenu": "{{title}} ajouté à votre menu !",
+    "ingredients": "Ingrédients",
+    "instructions": "Instructions",
+    "needIngredient": "Manquant : {{name}}",
+    "recipe": "Voir la recette"
   },
   "ingredientsSection": {
     "whatsInKitchen": "Qu'y a-t-il dans votre cuisine ?",
@@ -140,7 +148,8 @@
   "errors": {
     "loadUserPreferences": "Erreur lors du chargement de vos préférences",
     "mustBeLoggedIn": "Vous devez être connecté pour effectuer cette action",
-    "updatePreferences": "Erreur lors de la mise à jour des préférences"
+    "updatePreferences": "Erreur lors de la mise à jour des préférences",
+    "fetchFilters": "Erreur lors du chargement des filtres."
   },
   "favorites": {
     "add": "Ajouter aux favoris",
@@ -150,7 +159,8 @@
     "title": "Vos favoris",
     "empty": "Aucun favori pour l'instant",
     "emptyDesc": "Explorez les plats et ajoutez ceux que vous appréciez à vos favoris.",
-    "browse": "Parcourir les plats"
+    "browse": "Parcourir les plats",
+    "loginRequired": "Connectez-vous pour ajouter aux favoris."
   },
   "mealPlan": {
     "title": "Plan de repas",
@@ -263,7 +273,8 @@
     "invalidIngredient": "Ingrédient invalide",
     "loginPrompt": "Connectez-vous pour accéder à votre profil",
     "name": "Nom",
-    "pleaseLogin": "Veuillez vous connecter"
+    "pleaseLogin": "Veuillez vous connecter",
+    "removeIngredient": "Supprimer {{name}}"
   },
   "measurements": {
     "metric": "Métrique",
@@ -393,5 +404,7 @@
     "searchPlaceholder": "Rechercher vos recettes...",
     "noRecipesFound": "Aucune recette trouvée",
     "startCooking": "Commencer à cuisiner"
-  }
+  },
+  "no_steps": "Aucune instruction disponible.",
+  "select_recipe": "Choisir une recette"
 }
