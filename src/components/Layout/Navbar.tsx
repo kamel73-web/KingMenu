@@ -139,8 +139,7 @@ export default function Navbar() {
     },
   ];
 
-  const totalSecondaryBadge =
-    state.selectedDishes.length; // seul badge pertinent dans "Plus"
+  const totalSecondaryBadge = state.selectedDishes.length;
 
   // ─────────────────────────────────────────────────────────────────────────
   return (
@@ -152,11 +151,11 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <div className="flex justify-between items-center h-16">
 
-            {/* Logo avec gradient */}
+            {/* Logo avec gradient Sage & Terracotta */}
             <Link to="/" className="flex items-center space-x-2 group shrink-0">
               <div className="relative">
                 <Utensils className="h-8 w-8 text-primary-500 group-hover:text-primary-600 transition-colors duration-300" />
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-secondary-500 rounded-full flex items-center justify-center animate-pulse">
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-secondary-500 rounded-full flex items-center justify-center">
                   <div className="w-1.5 h-1.5 bg-white rounded-full" />
                 </div>
               </div>
@@ -220,16 +219,14 @@ export default function Navbar() {
                     {state.user?.location ?? state.user?.email}
                   </p>
                 </div>
-                {/* Indicateur badge total secondaires */}
                 {totalSecondaryBadge > 0 && (
-                  <span className="w-2 h-2 rounded-full bg-secondary-500 animate-pulse" />
+                  <span className="w-2 h-2 rounded-full bg-secondary-500" />
                 )}
               </button>
 
-              {/* Dropdown avec animation améliorée */}
+              {/* Dropdown */}
               {profileOpen && (
                 <div className="absolute right-0 top-[calc(100%+8px)] w-64 bg-white rounded-2xl shadow-elevated border border-warm-gray-100 py-2 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
-                  {/* En-tête utilisateur */}
                   <div className="px-4 py-3 border-b border-warm-gray-100">
                     <p className="font-heading font-bold text-warm-gray-900 truncate">
                       {state.user?.name}
@@ -237,7 +234,6 @@ export default function Navbar() {
                     <p className="text-xs text-warm-gray-500 truncate font-body">{state.user?.email}</p>
                   </div>
 
-                  {/* Liens secondaires */}
                   <div className="py-1">
                     {secondaryLinks.map(({ path, icon: Icon, label, badge }) => (
                       <Link
@@ -263,7 +259,6 @@ export default function Navbar() {
                     ))}
                   </div>
 
-                  {/* Sélecteur de langue */}
                   <div className="px-4 py-2 border-t border-warm-gray-100 flex items-center space-x-2 text-warm-gray-600">
                     <Globe className="h-4 w-4 shrink-0" />
                     <span className="text-sm font-semibold font-body">{t('navigation.language', 'Langue')}</span>
@@ -272,7 +267,6 @@ export default function Navbar() {
                     </div>
                   </div>
 
-                  {/* Déconnexion */}
                   <div className="py-1 border-t border-warm-gray-100">
                     <button
                       onClick={handleLogout}
@@ -291,10 +285,9 @@ export default function Navbar() {
       </nav>
 
       {/* ══════════════════════════════════════════════════════════════════
-          MOBILE : top bar (logo + "Menu du jour") + bottom tab bar
+          MOBILE : top bar + bottom tab bar
       ══════════════════════════════════════════════════════════════════ */}
 
-      {/* Top bar mobile */}
       <header className="md:hidden bg-white/95 backdrop-blur-md shadow-soft border-b border-warm-gray-100 sticky top-0 z-50">
         <div className="flex items-center justify-between h-14 px-4">
           <Link to="/" className="flex items-center space-x-2 group">
@@ -308,7 +301,6 @@ export default function Navbar() {
           </Link>
 
           <div className="flex items-center space-x-2">
-            {/* Menu du jour */}
             <button
               onClick={() => setShowTodayMenu(true)}
               className="relative p-2 text-warm-gray-600 hover:text-secondary-500 hover:bg-secondary-50 rounded-full transition-all duration-300"
@@ -317,18 +309,13 @@ export default function Navbar() {
               <Badge count={todayMealsCount} />
             </button>
 
-            {/* Avatar / accès profil rapide */}
-            <button
-              onClick={() => navigate('/profile')}
-              className="relative"
-            >
+            <button onClick={() => navigate('/profile')} className="relative">
               <Avatar name={state.user?.name ?? '?'} size="sm" />
             </button>
           </div>
         </div>
       </header>
 
-      {/* Bottom tab bar mobile */}
       <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-white/95 backdrop-blur-md border-t border-warm-gray-100 pb-safe">
         <div className="grid grid-cols-5 h-16">
 
@@ -342,7 +329,6 @@ export default function Navbar() {
                   : 'text-warm-gray-500 hover:text-primary-400'
               }`}
             >
-              {/* Indicateur actif */}
               {isActive(path) && (
                 <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary-500 rounded-b-full" />
               )}
@@ -356,7 +342,6 @@ export default function Navbar() {
             </Link>
           ))}
 
-          {/* Bouton "Plus" */}
           <div className="relative flex flex-col items-center justify-center" ref={mobileMoreRef}>
             <button
               onClick={() => setMobileMoreOpen(v => !v)}
@@ -366,7 +351,6 @@ export default function Navbar() {
             >
               <div className="relative">
                 {mobileMoreOpen ? <X className="h-5 w-5" /> : <MoreHorizontal className="h-5 w-5" />}
-                {/* badge si des plats sont sélectionnés */}
                 {!mobileMoreOpen && <Badge count={totalSecondaryBadge} />}
               </div>
               <span className="text-[10px] font-semibold leading-none font-body">
@@ -374,7 +358,6 @@ export default function Navbar() {
               </span>
             </button>
 
-            {/* Panneau "Plus" mobile */}
             {mobileMoreOpen && (
               <div className="absolute bottom-[calc(100%+8px)] right-0 w-56 bg-white rounded-2xl shadow-elevated border border-warm-gray-100 py-2 z-50">
                 {secondaryLinks.map(({ path, icon: Icon, label, badge }) => (
@@ -423,7 +406,6 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Spacer pour éviter que le contenu passe sous la bottom bar mobile */}
       <div className="md:hidden h-16" />
 
       <TodayMenuModal isOpen={showTodayMenu} onClose={() => setShowTodayMenu(false)} />
