@@ -4,7 +4,7 @@
     "tagline": "Pianifica. Cuoci. Gusta.",
     "description": "Piattaforma di pianificazione alimentare"
   },
-  "navigation": {
+   "navigation": {
     "home": "Home",
     "useMyIngredients": "Usa i Miei Ingredienti",
     "mealPlan": "Piano dei Pasti",
@@ -14,7 +14,8 @@
     "shoppingList": "Lista della Spesa",
     "todayMenu": "Menu del giorno",
     "logout": "Disconnessione",
-    "logoutSuccess": "Disconnessione avvenuta"
+    "more": "Altro",
+    "language": "Lingua"
   },
   "landing": {
     "title": "Benvenuto su King Menu",
