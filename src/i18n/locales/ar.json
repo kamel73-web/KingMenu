@@ -4,7 +4,7 @@
     "tagline": "خطط. اطبخ. استمتع.",
     "description": "منصة تخطيط الطعام"
   },
-   "navigation": {
+  "navigation": {
     "home": "الرئيسية",
     "useMyIngredients": "استخدام مكوناتي",
     "mealPlan": "خطة الوجبات",
@@ -14,6 +14,7 @@
     "shoppingList": "قائمة التسوق",
     "todayMenu": "قائمة اليوم",
     "logout": "تسجيل الخروج",
+    "logoutSuccess": "تم تسجيل الخروج بنجاح",
     "more": "المزيد",
     "language": "اللغة"
   },
@@ -76,12 +77,19 @@
     "recipe": "وصفة",
     "add": "أضف",
     "added": "تم الإضافة",
-    "cookMode": "وضع الطهي"
+    "cookMode": "وضع الطهي",
+    "notFound": "الطبق غير موجود.",
+    "steps": "الخطوات",
+    "viewDetails": "عرض التفاصيل"
   },
   "recipe": {
     "step": "الخطوة",
     "addToMenu": "أضف إلى القائمة",
-    "addedToMenu": "{{title}} تمت إضافته إلى قائمتك!"
+    "addedToMenu": "{{title}} تمت إضافته إلى قائمتك!",
+    "ingredients": "المقادير",
+    "instructions": "التعليمات",
+    "needIngredient": "مفقود: {{name}}",
+    "recipe": "عرض الوصفة"
   },
   "ingredientsSection": {
     "whatsInKitchen": "ما الذي لديك في مطبخك؟",
@@ -140,7 +148,8 @@
   "errors": {
     "loadUserPreferences": "خطأ في تحميل تفضيلاتك",
     "mustBeLoggedIn": "يجب أن تكون مسجّل الدخول لتنفيذ هذا الإجراء",
-    "updatePreferences": "خطأ في تحديث التفضيلات"
+    "updatePreferences": "خطأ في تحديث التفضيلات",
+    "fetchFilters": "خطأ في تحميل الفلاتر."
   },
   "favorites": {
     "add": "أضف إلى المفضلة",
@@ -150,7 +159,8 @@
     "title": "المفضلة لديك",
     "empty": "لا توجد مفضلة حتى الآن",
     "emptyDesc": "استكشف الأطباق وأضف ما يعجبك إلى مفضلتك.",
-    "browse": "تصفح الأطباق"
+    "browse": "تصفح الأطباق",
+    "loginRequired": "سجّل دخولك لإضافة إلى المفضلة."
   },
   "mealPlan": {
     "title": "خطة الوجبات",
@@ -263,7 +273,8 @@
     "invalidIngredient": "مكوّن غير صالح",
     "loginPrompt": "سجّل دخولك للوصول إلى ملفك الشخصي",
     "name": "الاسم",
-    "pleaseLogin": "يرجى تسجيل الدخول"
+    "pleaseLogin": "يرجى تسجيل الدخول",
+    "removeIngredient": "حذف {{name}}"
   },
   "measurements": {
     "metric": "متري",
@@ -393,5 +404,7 @@
     "searchPlaceholder": "ابحث في وصفاتك...",
     "noRecipesFound": "لم يتم العثور على وصفات",
     "startCooking": "ابدأ الطهي"
-  }
+  },
+  "no_steps": "لا توجد تعليمات متاحة.",
+  "select_recipe": "اختر وصفة"
 }
