@@ -92,7 +92,7 @@ export default function SelectedDishesPanel() {
           </div>
         </div>
 
-        <div className="space-y-3 max-h-80 overflow-y-auto">
+        <div className="space-y-3">
           {state.selectedDishes.map(dish => (
             <div key={dish.id} className="flex items-center space-x-4 p-4 bg-warm-gray-50 rounded-2xl hover:bg-warm-gray-100 transition-colors">
               <img
