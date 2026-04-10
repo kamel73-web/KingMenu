@@ -95,9 +95,6 @@ const IngredientCTA = () => {
           <h3 className="text-2xl font-heading font-bold mb-3">
             {t('home.cookWithIngredients')}
           </h3>
-          <p className="font-body opacity-95 text-base">
-            {t('home.cookWithIngredientsDesc')}
-          </p>
         </div>
         <Link
           to="/use-my-ingredients"
