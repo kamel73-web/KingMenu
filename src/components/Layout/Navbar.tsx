@@ -151,16 +151,17 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <div className="flex justify-between items-center h-16">
 
-            {/* Logo avec Archivo Black (au lieu de Playfair Display) */}
+            {/* Logo - l'icône garde ses couleurs, seul le texte est en noir */}
             <Link to="/" className="flex items-center space-x-2 group shrink-0">
               <div className="relative">
+                {/* L'icône Utensils garde sa couleur primary-500 */}
                 <Utensils className="h-8 w-8 text-primary-500 group-hover:text-primary-600 transition-colors duration-300" />
                 <div className="absolute -top-1 -right-1 w-3 h-3 bg-secondary-500 rounded-full flex items-center justify-center">
                   <div className="w-1.5 h-1.5 bg-white rounded-full" />
                 </div>
               </div>
-              {/* Utilisation de font-heading qui pointe vers Archivo Black */}
-              <span className="text-2xl font-heading bg-gradient-to-r from-primary-600 to-secondary-500 bg-clip-text text-transparent tracking-tight">
+              {/* Seul le texte KingMenu est en noir uni */}
+              <span className="text-2xl font-heading text-warm-gray-900 tracking-tight">
                 {t('brand.name')}
               </span>
               <span className="hidden lg:block text-sm text-warm-gray-600 font-body font-medium">
@@ -293,11 +294,12 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-14 px-4">
           <Link to="/" className="flex items-center space-x-2 group">
             <div className="relative">
+              {/* L'icône garde sa couleur primary-500 */}
               <Utensils className="h-7 w-7 text-primary-500" />
               <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-secondary-500 rounded-full" />
             </div>
-            {/* Logo mobile avec Archivo Black */}
-            <span className="text-xl font-heading bg-gradient-to-r from-primary-600 to-secondary-500 bg-clip-text text-transparent tracking-tight">
+            {/* Texte KingMenu en noir uni */}
+            <span className="text-xl font-heading text-warm-gray-900 tracking-tight">
               {t('brand.name')}
             </span>
           </Link>
