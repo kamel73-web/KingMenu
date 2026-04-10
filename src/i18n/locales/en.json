@@ -14,6 +14,7 @@
     "shoppingList": "Shopping List",
     "todayMenu": "Today's menu",
     "logout": "Logout",
+    "logoutSuccess": "Logged out successfully",
     "more": "More",
     "language": "Language"
   },
@@ -76,12 +77,19 @@
     "recipe": "Recipe",
     "add": "Add",
     "added": "Added",
-    "cookMode": "Cook Mode"
+    "cookMode": "Cook Mode",
+    "notFound": "Dish not found.",
+    "steps": "Steps",
+    "viewDetails": "View details"
   },
   "recipe": {
     "step": "Step",
     "addToMenu": "Add to menu",
-    "addedToMenu": "{{title}} added to your menu!"
+    "addedToMenu": "{{title}} added to your menu!",
+    "ingredients": "Ingredients",
+    "instructions": "Instructions",
+    "needIngredient": "Missing: {{name}}",
+    "recipe": "View recipe"
   },
   "ingredientsSection": {
     "whatsInKitchen": "What's in Your Kitchen?",
@@ -140,7 +148,8 @@
   "errors": {
     "loadUserPreferences": "Error loading your preferences",
     "mustBeLoggedIn": "You must be logged in to perform this action",
-    "updatePreferences": "Error updating preferences"
+    "updatePreferences": "Error updating preferences",
+    "fetchFilters": "Error loading filters."
   },
   "favorites": {
     "add": "Add to favorites",
@@ -150,7 +159,8 @@
     "title": "Your Favorites",
     "empty": "No favorites yet",
     "emptyDesc": "Explore dishes and add your favorites here.",
-    "browse": "Browse dishes"
+    "browse": "Browse dishes",
+    "loginRequired": "Log in to add to favorites."
   },
   "mealPlan": {
     "title": "Meal Plan",
@@ -263,7 +273,8 @@
     "invalidIngredient": "Invalid ingredient",
     "loginPrompt": "Log in to access your profile",
     "name": "Name",
-    "pleaseLogin": "Please log in"
+    "pleaseLogin": "Please log in",
+    "removeIngredient": "Remove {{name}}"
   },
   "measurements": {
     "metric": "Metric",
@@ -393,5 +404,7 @@
     "searchPlaceholder": "Search your recipes...",
     "noRecipesFound": "No recipes found",
     "startCooking": "Start Cooking"
-  }
+  },
+  "no_steps": "No instructions available.",
+  "select_recipe": "Choose a recipe"
 }
