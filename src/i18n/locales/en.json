@@ -14,7 +14,8 @@
     "shoppingList": "Shopping List",
     "todayMenu": "Today's menu",
     "logout": "Logout",
-    "logoutSuccess": "Logged out successfully"
+    "more": "More",
+    "language": "Language"
   },
   "landing": {
     "title": "Welcome to King Menu",
