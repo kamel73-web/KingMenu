@@ -151,7 +151,7 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <div className="flex justify-between items-center h-16">
 
-            {/* Logo avec gradient Sage & Terracotta */}
+            {/* Logo avec Archivo Black (au lieu de Playfair Display) */}
             <Link to="/" className="flex items-center space-x-2 group shrink-0">
               <div className="relative">
                 <Utensils className="h-8 w-8 text-primary-500 group-hover:text-primary-600 transition-colors duration-300" />
@@ -159,7 +159,8 @@ export default function Navbar() {
                   <div className="w-1.5 h-1.5 bg-white rounded-full" />
                 </div>
               </div>
-              <span className="text-2xl font-heading font-bold bg-gradient-to-r from-primary-600 to-secondary-500 bg-clip-text text-transparent">
+              {/* Utilisation de font-heading qui pointe vers Archivo Black */}
+              <span className="text-2xl font-heading bg-gradient-to-r from-primary-600 to-secondary-500 bg-clip-text text-transparent tracking-tight">
                 {t('brand.name')}
               </span>
               <span className="hidden lg:block text-sm text-warm-gray-600 font-body font-medium">
@@ -212,7 +213,7 @@ export default function Navbar() {
               >
                 <Avatar name={state.user?.name ?? '?'} />
                 <div className="hidden lg:block text-left">
-                  <p className="text-sm font-semibold text-warm-gray-900 leading-tight max-w-[120px] truncate font-heading">
+                  <p className="text-sm font-semibold text-warm-gray-900 leading-tight max-w-[120px] truncate font-subheading">
                     {state.user?.name}
                   </p>
                   <p className="text-xs text-warm-gray-500 leading-tight font-body">
@@ -228,7 +229,7 @@ export default function Navbar() {
               {profileOpen && (
                 <div className="absolute right-0 top-[calc(100%+8px)] w-64 bg-white rounded-2xl shadow-elevated border border-warm-gray-100 py-2 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
                   <div className="px-4 py-3 border-b border-warm-gray-100">
-                    <p className="font-heading font-bold text-warm-gray-900 truncate">
+                    <p className="font-subheading font-bold text-warm-gray-900 truncate">
                       {state.user?.name}
                     </p>
                     <p className="text-xs text-warm-gray-500 truncate font-body">{state.user?.email}</p>
@@ -295,7 +296,8 @@ export default function Navbar() {
               <Utensils className="h-7 w-7 text-primary-500" />
               <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-secondary-500 rounded-full" />
             </div>
-            <span className="text-xl font-heading font-bold bg-gradient-to-r from-primary-600 to-secondary-500 bg-clip-text text-transparent">
+            {/* Logo mobile avec Archivo Black */}
+            <span className="text-xl font-heading bg-gradient-to-r from-primary-600 to-secondary-500 bg-clip-text text-transparent tracking-tight">
               {t('brand.name')}
             </span>
           </Link>
