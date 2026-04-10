@@ -1,55 +1,153 @@
-/* Import fonts */
+/* src/index.css - Version 5 Forest & Blush */
+
+/* Import fonts - Version 5 Forest & Blush */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
+/* Lora pour les titres (serif élégant) */
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&display=swap');
+/* DM Sans pour le corps (sans-serif moderne) */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+/* Inter gardé comme fallback */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Modern food app styling */
+/* Modern food app styling - Version 5 Forest & Blush */
 @layer base {
   body {
-    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'SF Pro Rounded', system-ui, sans-serif;
-    background-color: #FFFFFF;
+    font-family: 'DM Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: linear-gradient(135deg, #FFFFFF 0%, #FAFAF9 100%);
+    color: #1C1917;
   }
 
   h1, h2, h3, h4, h5, h6 {
+    font-family: 'Lora', Georgia, serif;
     font-weight: 700;
     letter-spacing: -0.015em;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Selection color - Forest theme */
+  ::selection {
+    background-color: #1F7B3D;
+    color: #FFFFFF;
+  }
+
+  ::-moz-selection {
+    background-color: #1F7B3D;
+    color: #FFFFFF;
   }
 }
 
 @layer components {
+  /* Cards avec effets de profondeur - Version 5 */
   .card-modern {
-    @apply bg-white rounded-3xl shadow-soft hover:shadow-strong transition-all duration-300;
+    @apply bg-white rounded-2xl shadow-card hover:shadow-hover transition-all duration-300 border border-warm-gray-100;
   }
 
+  /* Card avec effet glassmorphism */
+  .card-glass {
+    @apply bg-white/80 backdrop-blur-md rounded-2xl shadow-elevated border border-white/20;
+  }
+
+  /* Card avec bordure gradient */
+  .card-gradient {
+    @apply bg-white rounded-2xl shadow-card transition-all duration-300;
+    border: 1px solid transparent;
+    background-image: linear-gradient(white, white), linear-gradient(135deg, #1F7B3D, #E86A8C);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+  }
+
+  /* Boutons - Version 5 Forest & Blush */
   .btn-primary {
-    @apply bg-primary-500 text-white font-semibold px-8 py-3.5 rounded-full shadow-medium hover:shadow-strong hover:bg-primary-600 transition-all duration-200 transform hover:scale-105;
+    @apply bg-primary-500 text-white font-semibold px-8 py-3.5 rounded-full shadow-medium hover:shadow-strong hover:bg-primary-600 transition-all duration-200 transform hover:scale-105 active:scale-95;
   }
 
   .btn-secondary {
-    @apply bg-white border-2 border-primary-500 text-primary-500 font-semibold px-8 py-3.5 rounded-full shadow-soft hover:bg-primary-50 transition-all duration-200 transform hover:scale-105;
+    @apply bg-white border-2 border-primary-500 text-primary-500 font-semibold px-8 py-3.5 rounded-full shadow-soft hover:bg-primary-50 transition-all duration-200 transform hover:scale-105 active:scale-95;
   }
 
   .btn-accent {
-    @apply bg-secondary-500 text-white font-semibold px-8 py-3.5 rounded-full shadow-medium hover:shadow-strong hover:bg-secondary-600 transition-all duration-200 transform hover:scale-105;
+    @apply bg-secondary-500 text-white font-semibold px-8 py-3.5 rounded-full shadow-medium hover:shadow-strong hover:bg-secondary-600 transition-all duration-200 transform hover:scale-105 active:scale-95;
   }
 
-  .food-image {
-    @apply w-full h-48 object-cover rounded-t-3xl;
+  /* Bouton outline pour Version 5 */
+  .btn-outline {
+    @apply bg-transparent border-2 border-secondary-500 text-secondary-500 font-semibold px-8 py-3.5 rounded-full hover:bg-secondary-50 transition-all duration-200;
   }
 
+  /* Badges modernes - Version 5 */
   .badge-modern {
     @apply px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-sm shadow-soft;
   }
+
+  .badge-forest {
+    @apply bg-primary-500/10 text-primary-600 border border-primary-200;
+  }
+
+  .badge-blush {
+    @apply bg-secondary-500/10 text-secondary-600 border border-secondary-200;
+  }
+
+  /* Images de nourriture */
+  .food-image {
+    @apply w-full h-48 object-cover rounded-t-2xl;
+  }
+
+  .food-image-circle {
+    @apply w-24 h-24 rounded-full object-cover shadow-medium;
+  }
+
+  /* Animations personnalisées */
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-gentle-pulse {
+    animation: gentlePulse 2s ease-in-out infinite;
+  }
+
+  /* Gradient text pour Version 5 */
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary-600 to-secondary-500 bg-clip-text text-transparent;
+  }
 }
 
-/* RTL Support */
+/* Keyframes supplémentaires pour Version 5 */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes gentlePulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* ============================================
+   RTL Support - Préservé et amélioré
+   ============================================ */
+
+/* RTL Base */
 .rtl {
   direction: rtl;
 }
 
+/* RTL Space utilities */
 .rtl .space-x-2 > * + * {
   margin-left: 0;
   margin-right: 0.5rem;
@@ -65,17 +163,17 @@
   margin-right: 1rem;
 }
 
-/* Arabic typography */
+/* Arabic typography - RTL */
 .rtl {
-  font-family: 'Noto Naskh Arabic', serif;
+  font-family: 'Noto Naskh Arabic', 'DM Sans', 'Inter', serif;
 }
 
 .rtl .font-heading {
-  font-family: 'Noto Naskh Arabic', serif;
+  font-family: 'Noto Naskh Arabic', 'Lora', Georgia, serif;
 }
 
 .rtl .font-body {
-  font-family: 'Noto Naskh Arabic', serif;
+  font-family: 'Noto Naskh Arabic', 'DM Sans', 'Inter', sans-serif;
 }
 
 /* RTL-specific positioning */
@@ -116,22 +214,33 @@
   justify-content: space-between;
 }
 
+/* RTL Flex items with space */
+.rtl .flex.items-center.space-x-2 {
+  flex-direction: row-reverse;
+}
+
+.rtl .flex.items-center.space-x-2 > * + * {
+  margin-left: 0;
+  margin-right: 0.5rem;
+}
+
 /* Custom scrollbar for RTL */
 .rtl ::-webkit-scrollbar {
   width: 8px;
 }
 
 .rtl ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #F5F5F4;
+  border-radius: 4px;
 }
 
 .rtl ::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
+  background: #A8A29E;
   border-radius: 4px;
 }
 
 .rtl ::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+  background: #78716C;
 }
 
 /* Animation adjustments for RTL */
@@ -164,7 +273,10 @@
   font-size: 1.2rem;
 }
 
-/* Mobile optimizations */
+/* ============================================
+   Mobile Optimizations
+   ============================================ */
+
 @media (max-width: 640px) {
   /* Ensure buttons don't overflow */
   .dish-card-buttons {
@@ -192,9 +304,25 @@
     overflow-wrap: break-word;
     hyphens: auto;
   }
+
+  /* Cards margin adjustment on mobile */
+  .card-modern {
+    margin-bottom: 1rem;
+  }
+
+  /* Touch targets minimum size */
+  button, 
+  [role="button"],
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
 }
 
-/* Responsive typography for different languages */
+/* ============================================
+   Responsive typography
+   ============================================ */
+
 @media (max-width: 768px) {
   .rtl .text-3xl {
     font-size: 1.75rem;
@@ -203,9 +331,29 @@
   .rtl .text-2xl {
     font-size: 1.5rem;
   }
+
+  h1 {
+    font-size: 1.75rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
 }
 
-/* Form input adjustments for RTL */
+/* ============================================
+   Form inputs - Version 5 styling
+   ============================================ */
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+textarea,
+select {
+  @apply rounded-xl border-warm-gray-200 focus:border-primary-500 focus:ring-primary-500 transition-all duration-200;
+}
+
 .rtl input[type="text"],
 .rtl input[type="email"],
 .rtl input[type="password"],
@@ -221,17 +369,10 @@
   text-align: right;
 }
 
-/* Button adjustments for RTL */
-.rtl .flex.items-center.space-x-2 {
-  flex-direction: row-reverse;
-}
+/* ============================================
+   Grid and Navigation RTL adjustments
+   ============================================ */
 
-.rtl .flex.items-center.space-x-2 > * + * {
-  margin-left: 0;
-  margin-right: 0.5rem;
-}
-
-/* Grid adjustments for RTL */
 .rtl .grid {
   direction: rtl;
 }
@@ -240,7 +381,6 @@
   direction: ltr;
 }
 
-/* Navigation adjustments for RTL */
 .rtl .navbar {
   direction: rtl;
 }
@@ -249,7 +389,10 @@
   flex-direction: row-reverse;
 }
 
-/* Modal adjustments for RTL */
+/* ============================================
+   Modal RTL adjustments
+   ============================================ */
+
 .rtl .modal {
   direction: rtl;
 }
@@ -259,7 +402,10 @@
   left: 1rem;
 }
 
-/* Card adjustments for RTL */
+/* ============================================
+   Card RTL adjustments
+   ============================================ */
+
 .rtl .card {
   direction: rtl;
 }
@@ -272,4 +418,56 @@
 .rtl .card .absolute.top-3.right-3 {
   right: auto;
   left: 0.75rem;
+}
+
+/* ============================================
+   Loading animations - Version 5
+   ============================================ */
+
+.loading-spinner {
+  @apply w-8 h-8 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin;
+}
+
+.loading-pulse {
+  animation: loadingPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes loadingPulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   Toast notifications - Version 5
+   ============================================ */
+
+.toast-success {
+  @apply bg-primary-500 text-white rounded-xl shadow-elevated;
+}
+
+.toast-error {
+  @apply bg-error text-white rounded-xl shadow-elevated;
+}
+
+.toast-warning {
+  @apply bg-warning text-white rounded-xl shadow-elevated;
+}
+
+/* ============================================
+   Scroll reveal animations
+   ============================================ */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease-out;
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
 }
