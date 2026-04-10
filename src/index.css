@@ -1,15 +1,16 @@
-/* src/index.css - Version 1 Sage & Terracotta */
+/* src/index.css - Version Sage & Terracotta avec Archivo Black */
 
 /* Import fonts */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Modern food app styling - Version 1 Sage & Terracotta */
+/* Modern food app styling - Version 1 Sage & Terracotta avec Archivo Black */
 @layer base {
   body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
@@ -17,7 +18,15 @@
     color: #1C1917;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  /* Titres principaux - Archivo Black */
+  h1, .heading-primary {
+    font-family: 'Archivo Black', 'Playfair Display', Georgia, serif;
+    font-weight: 400; /* Archivo Black n'a qu'un seul poids */
+    letter-spacing: -0.01em;
+  }
+
+  /* Sous-titres - Playfair Display */
+  h2, h3, h4, h5, h6, .heading-secondary {
     font-family: 'Playfair Display', Georgia, serif;
     font-weight: 700;
     letter-spacing: -0.015em;
@@ -63,14 +72,6 @@
     @apply px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-sm shadow-soft;
   }
 
-  .badge-sage {
-    @apply bg-primary-500/10 text-primary-600 border border-primary-200;
-  }
-
-  .badge-terracotta {
-    @apply bg-secondary-500/10 text-secondary-600 border border-secondary-200;
-  }
-
   .food-image {
     @apply w-full h-48 object-cover rounded-t-2xl;
   }
@@ -94,7 +95,7 @@
 }
 
 /* ============================================
-   RTL Support - Préservé
+   RTL Support
    ============================================ */
 
 .rtl {
@@ -120,57 +121,16 @@
   font-family: 'Noto Naskh Arabic', 'Inter', serif;
 }
 
-.rtl .font-heading {
+.rtl h1, .rtl .heading-primary {
+  font-family: 'Noto Naskh Arabic', 'Archivo Black', 'Playfair Display', serif;
+}
+
+.rtl h2, .rtl h3, .rtl h4, .rtl h5, .rtl h6, .rtl .heading-secondary {
   font-family: 'Noto Naskh Arabic', 'Playfair Display', Georgia, serif;
 }
 
 .rtl .font-body {
   font-family: 'Noto Naskh Arabic', 'Inter', sans-serif;
-}
-
-.rtl .absolute.left-3 {
-  left: auto;
-  right: 0.75rem;
-}
-
-.rtl .absolute.right-3 {
-  right: auto;
-  left: 0.75rem;
-}
-
-.rtl .pl-10 {
-  padding-left: 1rem;
-  padding-right: 2.5rem;
-}
-
-.rtl .pr-4 {
-  padding-right: 1rem;
-  padding-left: 1rem;
-}
-
-.rtl .text-left {
-  text-align: right;
-}
-
-.rtl .text-right {
-  text-align: left;
-}
-
-.rtl .flex.items-center.space-x-2 {
-  flex-direction: row-reverse;
-}
-
-.rtl .flex.items-center.space-x-2 > * + * {
-  margin-left: 0;
-  margin-right: 0.5rem;
-}
-
-.rtl .grid {
-  direction: rtl;
-}
-
-.rtl .grid > * {
-  direction: ltr;
 }
 
 /* Mobile optimizations */
