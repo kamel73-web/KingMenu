@@ -1,11 +1,10 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { Search, Filter, Shuffle, Sparkles } from 'lucide-react';
+import { Search, Filter, Shuffle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import DishCard from './DishCard';
 import { useTranslatedContent } from '../../hooks/useTranslatedContent';
 import { useSupabaseData } from '../../hooks/useSupabaseData';
 import { useApp } from '../../context/AppContext';
-import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { supabase } from '../../lib/supabase';
 import { useFavorites } from '../../hooks/useFavorites';
@@ -85,28 +84,7 @@ const ResultsHeader = ({ count }: { count: number }) => {
   );
 };
 
-const IngredientCTA = () => {
-  const { t } = useTranslation();
 
-  return (
-    <div className="bg-secondary-500 text-white rounded-3xl p-8 shadow-medium">
-      <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-        <div className="flex-1">
-          <h3 className="text-2xl font-heading font-bold mb-3">
-            {t('home.cookWithIngredients')}
-          </h3>
-        </div>
-        <Link
-          to="/use-my-ingredients"
-          className="flex items-center space-x-2 px-8 py-4 bg-white text-secondary-500 rounded-full hover:bg-warm-gray-50 transition-all font-body font-bold shadow-medium hover:shadow-strong transform hover:scale-105"
-        >
-          <Sparkles className="h-6 w-6" />
-          <span>{t('home.startWithIngredients')}</span>
-        </Link>
-      </div>
-    </div>
-  );
-};
 
 const SearchAndFilters = ({
   searchTerm,
@@ -373,8 +351,6 @@ export default function DishGrid() {
 
   return (
     <div className="space-y-6">
-      <IngredientCTA />
-      
       <SearchAndFilters
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
