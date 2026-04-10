@@ -4,7 +4,7 @@
     "tagline": "خطط. اطبخ. استمتع.",
     "description": "منصة تخطيط الطعام"
   },
-  "navigation": {
+   "navigation": {
     "home": "الرئيسية",
     "useMyIngredients": "استخدام مكوناتي",
     "mealPlan": "خطة الوجبات",
@@ -14,7 +14,8 @@
     "shoppingList": "قائمة التسوق",
     "todayMenu": "قائمة اليوم",
     "logout": "تسجيل الخروج",
-    "logoutSuccess": "تم تسجيل الخروج بنجاح"
+    "more": "المزيد",
+    "language": "اللغة"
   },
   "landing": {
     "title": "مرحبًا بك في كينغ منيو",
