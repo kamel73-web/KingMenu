@@ -1,4 +1,3 @@
-// tailwind.config.js
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
@@ -7,40 +6,40 @@ export default {
     extend: {
       colors: {
         primary: {
-          50: '#ECF7F0',
-          100: '#D3ECD9',
-          200: '#A8D9B6',
-          300: '#7AC690',
-          400: '#4EB36A',
-          500: '#1F7B3D',    // Vert forêt profond
-          600: '#186231',
-          700: '#124A25',
-          800: '#0C351A',
-          900: '#072311',
+          50: '#F4F6F2',
+          100: '#E4E8DF',
+          200: '#CBD3C2',
+          300: '#AEBBA2',
+          400: '#8F9F80',
+          500: '#6B7B5E',    // Sage principal
+          600: '#556348',
+          700: '#434E39',
+          800: '#333C2B',
+          900: '#262E1F',
         },
         secondary: {
-          50: '#FEF6F8',
-          100: '#FCE9EF',
-          200: '#F9D3DE',
-          300: '#F5B8C8',
-          400: '#F198AD',
-          500: '#E86A8C',    // Blush rose
-          600: '#D44A6F',
-          700: '#B83556',
-          800: '#962843',
-          900: '#771D34',
+          50: '#FFF6F0',
+          100: '#FEE8DB',
+          200: '#FDD0B6',
+          300: '#FBB38A',
+          400: '#F8925C',
+          500: '#E26D32',    // Terracotta
+          600: '#C45824',
+          700: '#9E461C',
+          800: '#7A3614',
+          900: '#5E290F',
         },
         accent: {
-          50: '#FEFCE8',
-          100: '#FEF9C3',
-          200: '#FEF08A',
-          300: '#FDE047',
-          400: '#FACC15',
-          500: '#EAB308',    // Jaune moutarde
-          600: '#CA8A04',
-          700: '#A16207',
-          800: '#854D0E',
-          900: '#713F12',
+          50: '#F0F7F4',
+          100: '#D9EDE4',
+          200: '#B5DDCE',
+          300: '#8DCAB5',
+          400: '#65B89B',
+          500: '#3FA682',    // Menthe douce
+          600: '#2F8A6B',
+          700: '#236E54',
+          800: '#19543F',
+          900: '#113D2E',
         },
         success: '#10B981',
         warning: '#F59E0B',
@@ -60,8 +59,8 @@ export default {
       },
 
       fontFamily: {
-        heading: ['Lora', 'Georgia', 'serif'],
-        body: ['DM Sans', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+        heading: ['Playfair Display', 'Georgia', 'serif'],
+        body: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
         arabic: ['Noto Naskh Arabic', 'serif'],
       },
 
@@ -90,9 +89,9 @@ export default {
         soft: '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
         medium: '0 4px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
         strong: '0 10px 40px -10px rgba(0, 0, 0, 0.15), 0 4px 25px -5px rgba(0, 0, 0, 0.1)',
-        elevated: '0 20px 35px -10px rgba(0, 0, 0, 0.1)',
-        card: '0 5px 20px rgba(0, 0, 0, 0.04)',
-        hover: '0 15px 30px rgba(0, 0, 0, 0.08)',
+        elevated: '0 20px 35px -12px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.02)',
+        card: '0 8px 30px -8px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.02)',
+        hover: '0 25px 40px -12px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.02)',
       },
 
       animation: {
