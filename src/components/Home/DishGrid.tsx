@@ -369,7 +369,7 @@ export default function DishGrid() {
       
       {/* Dish Grid */}
       {filteredDishes.length > 0 ? (
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8 w-full">
+  <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 gap-8 w-full">
     {filteredDishes.map(dish => (
       <DishCard key={dish.id} dish={dish} favorites={favorites} toggleFavorite={toggleFavorite} />
     ))}
