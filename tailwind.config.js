@@ -1,3 +1,4 @@
+// tailwind.config.js
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
@@ -6,40 +7,40 @@ export default {
     extend: {
       colors: {
         primary: {
-          50: '#F5F3FF',
-          100: '#EDE9FE',
-          200: '#DDD6FE',
-          300: '#C4B5FD',
-          400: '#A78BFA',
-          500: '#5E2EED',
-          600: '#5326D3',
-          700: '#4920B8',
-          800: '#3E1A9D',
-          900: '#341582',
+          50: '#ECF7F0',
+          100: '#D3ECD9',
+          200: '#A8D9B6',
+          300: '#7AC690',
+          400: '#4EB36A',
+          500: '#1F7B3D',    // Vert forêt profond
+          600: '#186231',
+          700: '#124A25',
+          800: '#0C351A',
+          900: '#072311',
         },
         secondary: {
-          50: '#FFF7ED',
-          100: '#FFEDD5',
-          200: '#FED7AA',
-          300: '#FDBA74',
-          400: '#FB923C',
-          500: '#FF6B00',
-          600: '#EA5F00',
-          700: '#C24F00',
-          800: '#9A3F00',
-          900: '#7C3200',
+          50: '#FEF6F8',
+          100: '#FCE9EF',
+          200: '#F9D3DE',
+          300: '#F5B8C8',
+          400: '#F198AD',
+          500: '#E86A8C',    // Blush rose
+          600: '#D44A6F',
+          700: '#B83556',
+          800: '#962843',
+          900: '#771D34',
         },
         accent: {
-          50: '#ECFDF5',
-          100: '#D1FAE5',
-          200: '#A7F3D0',
-          300: '#6EE7B7',
-          400: '#34D399',
-          500: '#10B981',
-          600: '#059669',
-          700: '#047857',
-          800: '#065F46',
-          900: '#064E3B',
+          50: '#FEFCE8',
+          100: '#FEF9C3',
+          200: '#FEF08A',
+          300: '#FDE047',
+          400: '#FACC15',
+          500: '#EAB308',    // Jaune moutarde
+          600: '#CA8A04',
+          700: '#A16207',
+          800: '#854D0E',
+          900: '#713F12',
         },
         success: '#10B981',
         warning: '#F59E0B',
@@ -59,24 +60,8 @@ export default {
       },
 
       fontFamily: {
-        heading: [
-          'Nunito',
-          '-apple-system',
-          'BlinkMacSystemFont',
-          'Segoe UI',
-          'SF Pro Rounded',
-          'system-ui',
-          'sans-serif',
-        ],
-        body: [
-          'Nunito',
-          '-apple-system',
-          'BlinkMacSystemFont',
-          'Segoe UI',
-          'SF Pro Rounded',
-          'system-ui',
-          'sans-serif',
-        ],
+        heading: ['Lora', 'Georgia', 'serif'],
+        body: ['DM Sans', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
         arabic: ['Noto Naskh Arabic', 'serif'],
       },
 
@@ -105,6 +90,9 @@ export default {
         soft: '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
         medium: '0 4px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
         strong: '0 10px 40px -10px rgba(0, 0, 0, 0.15), 0 4px 25px -5px rgba(0, 0, 0, 0.1)',
+        elevated: '0 20px 35px -10px rgba(0, 0, 0, 0.1)',
+        card: '0 5px 20px rgba(0, 0, 0, 0.04)',
+        hover: '0 15px 30px rgba(0, 0, 0, 0.08)',
       },
 
       animation: {
