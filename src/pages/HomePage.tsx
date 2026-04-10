@@ -13,10 +13,8 @@ export default function HomePage() {
           </div>
 
           {/* Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto pr-1 rounded-3xl">
-              <SelectedDishesPanel />
-            </div>
+          <div className="lg:col-span-1 lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto lg:pr-1 lg:rounded-3xl">
+            <SelectedDishesPanel />
           </div>
 
         </div>
