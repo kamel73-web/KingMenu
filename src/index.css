@@ -1,70 +1,52 @@
-/* src/index.css - Version 5 Forest & Blush */
+/* src/index.css - Version 1 Sage & Terracotta */
 
-/* Import fonts - Version 5 Forest & Blush */
+/* Import fonts */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
-/* Lora pour les titres (serif élégant) */
-@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&display=swap');
-/* DM Sans pour le corps (sans-serif moderne) */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
-/* Inter gardé comme fallback */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Modern food app styling - Version 5 Forest & Blush */
+/* Modern food app styling - Version 1 Sage & Terracotta */
 @layer base {
   body {
-    font-family: 'DM Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     background: linear-gradient(135deg, #FFFFFF 0%, #FAFAF9 100%);
     color: #1C1917;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Lora', Georgia, serif;
+    font-family: 'Playfair Display', Georgia, serif;
     font-weight: 700;
     letter-spacing: -0.015em;
   }
 
-  /* Smooth scrolling */
   html {
     scroll-behavior: smooth;
   }
 
-  /* Selection color - Forest theme */
   ::selection {
-    background-color: #1F7B3D;
+    background-color: #6B7B5E;
     color: #FFFFFF;
   }
 
   ::-moz-selection {
-    background-color: #1F7B3D;
+    background-color: #6B7B5E;
     color: #FFFFFF;
   }
 }
 
 @layer components {
-  /* Cards avec effets de profondeur - Version 5 */
   .card-modern {
     @apply bg-white rounded-2xl shadow-card hover:shadow-hover transition-all duration-300 border border-warm-gray-100;
   }
 
-  /* Card avec effet glassmorphism */
   .card-glass {
     @apply bg-white/80 backdrop-blur-md rounded-2xl shadow-elevated border border-white/20;
   }
 
-  /* Card avec bordure gradient */
-  .card-gradient {
-    @apply bg-white rounded-2xl shadow-card transition-all duration-300;
-    border: 1px solid transparent;
-    background-image: linear-gradient(white, white), linear-gradient(135deg, #1F7B3D, #E86A8C);
-    background-origin: border-box;
-    background-clip: padding-box, border-box;
-  }
-
-  /* Boutons - Version 5 Forest & Blush */
   .btn-primary {
     @apply bg-primary-500 text-white font-semibold px-8 py-3.5 rounded-full shadow-medium hover:shadow-strong hover:bg-primary-600 transition-all duration-200 transform hover:scale-105 active:scale-95;
   }
@@ -77,49 +59,31 @@
     @apply bg-secondary-500 text-white font-semibold px-8 py-3.5 rounded-full shadow-medium hover:shadow-strong hover:bg-secondary-600 transition-all duration-200 transform hover:scale-105 active:scale-95;
   }
 
-  /* Bouton outline pour Version 5 */
-  .btn-outline {
-    @apply bg-transparent border-2 border-secondary-500 text-secondary-500 font-semibold px-8 py-3.5 rounded-full hover:bg-secondary-50 transition-all duration-200;
-  }
-
-  /* Badges modernes - Version 5 */
   .badge-modern {
     @apply px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-sm shadow-soft;
   }
 
-  .badge-forest {
+  .badge-sage {
     @apply bg-primary-500/10 text-primary-600 border border-primary-200;
   }
 
-  .badge-blush {
+  .badge-terracotta {
     @apply bg-secondary-500/10 text-secondary-600 border border-secondary-200;
   }
 
-  /* Images de nourriture */
   .food-image {
     @apply w-full h-48 object-cover rounded-t-2xl;
   }
 
-  .food-image-circle {
-    @apply w-24 h-24 rounded-full object-cover shadow-medium;
-  }
-
-  /* Animations personnalisées */
-  .animate-float {
-    animation: float 3s ease-in-out infinite;
-  }
-
-  .animate-gentle-pulse {
-    animation: gentlePulse 2s ease-in-out infinite;
-  }
-
-  /* Gradient text pour Version 5 */
   .gradient-text {
     @apply bg-gradient-to-r from-primary-600 to-secondary-500 bg-clip-text text-transparent;
   }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
 }
 
-/* Keyframes supplémentaires pour Version 5 */
 @keyframes float {
   0%, 100% {
     transform: translateY(0px);
@@ -129,25 +93,14 @@
   }
 }
 
-@keyframes gentlePulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
-  }
-}
-
 /* ============================================
-   RTL Support - Préservé et amélioré
+   RTL Support - Préservé
    ============================================ */
 
-/* RTL Base */
 .rtl {
   direction: rtl;
 }
 
-/* RTL Space utilities */
 .rtl .space-x-2 > * + * {
   margin-left: 0;
   margin-right: 0.5rem;
@@ -163,20 +116,18 @@
   margin-right: 1rem;
 }
 
-/* Arabic typography - RTL */
 .rtl {
-  font-family: 'Noto Naskh Arabic', 'DM Sans', 'Inter', serif;
+  font-family: 'Noto Naskh Arabic', 'Inter', serif;
 }
 
 .rtl .font-heading {
-  font-family: 'Noto Naskh Arabic', 'Lora', Georgia, serif;
+  font-family: 'Noto Naskh Arabic', 'Playfair Display', Georgia, serif;
 }
 
 .rtl .font-body {
-  font-family: 'Noto Naskh Arabic', 'DM Sans', 'Inter', sans-serif;
+  font-family: 'Noto Naskh Arabic', 'Inter', sans-serif;
 }
 
-/* RTL-specific positioning */
 .rtl .absolute.left-3 {
   left: auto;
   right: 0.75rem;
@@ -205,16 +156,6 @@
   text-align: left;
 }
 
-/* RTL flexbox adjustments */
-.rtl .flex-row-reverse {
-  flex-direction: row-reverse;
-}
-
-.rtl .justify-between {
-  justify-content: space-between;
-}
-
-/* RTL Flex items with space */
 .rtl .flex.items-center.space-x-2 {
   flex-direction: row-reverse;
 }
@@ -224,61 +165,16 @@
   margin-right: 0.5rem;
 }
 
-/* Custom scrollbar for RTL */
-.rtl ::-webkit-scrollbar {
-  width: 8px;
+.rtl .grid {
+  direction: rtl;
 }
 
-.rtl ::-webkit-scrollbar-track {
-  background: #F5F5F4;
-  border-radius: 4px;
+.rtl .grid > * {
+  direction: ltr;
 }
 
-.rtl ::-webkit-scrollbar-thumb {
-  background: #A8A29E;
-  border-radius: 4px;
-}
-
-.rtl ::-webkit-scrollbar-thumb:hover {
-  background: #78716C;
-}
-
-/* Animation adjustments for RTL */
-.rtl .animate-slide-up {
-  animation: slideUpRTL 0.3s ease-out;
-}
-
-@keyframes slideUpRTL {
-  0% {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-/* Language-specific adjustments */
-.lang-ar {
-  line-height: 1.8;
-  letter-spacing: 0.02em;
-}
-
-.lang-ar .text-sm {
-  font-size: 0.9rem;
-}
-
-.lang-ar .text-lg {
-  font-size: 1.2rem;
-}
-
-/* ============================================
-   Mobile Optimizations
-   ============================================ */
-
+/* Mobile optimizations */
 @media (max-width: 640px) {
-  /* Ensure buttons don't overflow */
   .dish-card-buttons {
     gap: 0.25rem;
   }
@@ -288,7 +184,6 @@
     flex-shrink: 1;
   }
   
-  /* Cook mode mobile optimizations */
   .cook-mode-mobile {
     padding: 1rem;
   }
@@ -298,19 +193,16 @@
     line-height: 1.5;
   }
   
-  /* Ensure text doesn't overflow in cook mode */
   .cook-mode-instruction {
     word-wrap: break-word;
     overflow-wrap: break-word;
     hyphens: auto;
   }
 
-  /* Cards margin adjustment on mobile */
   .card-modern {
     margin-bottom: 1rem;
   }
 
-  /* Touch targets minimum size */
   button, 
   [role="button"],
   .touch-target {
@@ -318,10 +210,6 @@
     min-width: 44px;
   }
 }
-
-/* ============================================
-   Responsive typography
-   ============================================ */
 
 @media (max-width: 768px) {
   .rtl .text-3xl {
@@ -341,10 +229,7 @@
   }
 }
 
-/* ============================================
-   Form inputs - Version 5 styling
-   ============================================ */
-
+/* Form inputs */
 input[type="text"],
 input[type="email"],
 input[type="password"],
@@ -362,89 +247,12 @@ select {
   text-align: right;
 }
 
-.rtl input[type="text"]::placeholder,
-.rtl input[type="email"]::placeholder,
-.rtl input[type="password"]::placeholder,
-.rtl textarea::placeholder {
-  text-align: right;
-}
-
-/* ============================================
-   Grid and Navigation RTL adjustments
-   ============================================ */
-
-.rtl .grid {
-  direction: rtl;
-}
-
-.rtl .grid > * {
-  direction: ltr;
-}
-
-.rtl .navbar {
-  direction: rtl;
-}
-
-.rtl .navbar .flex.justify-between {
-  flex-direction: row-reverse;
-}
-
-/* ============================================
-   Modal RTL adjustments
-   ============================================ */
-
-.rtl .modal {
-  direction: rtl;
-}
-
-.rtl .modal .absolute.top-4.right-4 {
-  right: auto;
-  left: 1rem;
-}
-
-/* ============================================
-   Card RTL adjustments
-   ============================================ */
-
-.rtl .card {
-  direction: rtl;
-}
-
-.rtl .card .absolute.top-3.left-3 {
-  left: auto;
-  right: 0.75rem;
-}
-
-.rtl .card .absolute.top-3.right-3 {
-  right: auto;
-  left: 0.75rem;
-}
-
-/* ============================================
-   Loading animations - Version 5
-   ============================================ */
-
+/* Loading animations */
 .loading-spinner {
   @apply w-8 h-8 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin;
 }
 
-.loading-pulse {
-  animation: loadingPulse 1.5s ease-in-out infinite;
-}
-
-@keyframes loadingPulse {
-  0%, 100% {
-    opacity: 0.6;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-/* ============================================
-   Toast notifications - Version 5
-   ============================================ */
-
+/* Toast notifications */
 .toast-success {
   @apply bg-primary-500 text-white rounded-xl shadow-elevated;
 }
@@ -455,19 +263,4 @@ select {
 
 .toast-warning {
   @apply bg-warning text-white rounded-xl shadow-elevated;
-}
-
-/* ============================================
-   Scroll reveal animations
-   ============================================ */
-
-.reveal {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.6s ease-out;
-}
-
-.reveal.active {
-  opacity: 1;
-  transform: translateY(0);
 }
