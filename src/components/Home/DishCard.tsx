@@ -164,33 +164,35 @@ export default function DishCard({ dish, favorites = [], toggleFavorite }: DishC
             </div>
 
             {/* DESKTOP */}
-            <div className="hidden sm:flex w-full gap-3">
+            <div className="hidden sm:grid sm:grid-cols-4 w-full gap-2">
               <button
                 onClick={() => setShowRecipeModal(true)}
-                className="flex-1 flex items-center justify-center py-3 px-4 border-2 border-primary-500 text-primary-500 rounded-full hover:bg-primary-50 text-sm font-semibold"
+                className="flex items-center justify-center py-3 border-2 border-primary-500 text-primary-500 rounded-full hover:bg-primary-50 transition-all"
+                title={t('dish.recipe')}
               >
                 <Eye className="h-4 w-4" />
               </button>
 
               <button
                 onClick={handleScheduleDish}
-                className="flex-1 flex items-center justify-center py-3 px-4 border-2 border-secondary-500 text-secondary-500 rounded-full hover:bg-secondary-50 text-sm font-semibold"
+                className="flex items-center justify-center py-3 border-2 border-secondary-500 text-secondary-500 rounded-full hover:bg-secondary-50 transition-all"
+                title={t('mealPlan.scheduleDish')}
               >
                 <Calendar className="h-4 w-4" />
               </button>
 
               <button
                 onClick={handleAddDish}
-                className={`flex-1 flex items-center justify-center py-3 px-4 rounded-full text-sm font-semibold transition-all ${
+                className={`flex items-center justify-center py-3 rounded-full transition-all ${
                   isSelected ? 'bg-accent-500 text-white' : 'bg-primary-500 text-white'
                 }`}
+                title={isSelected ? t('dish.added') : t('dish.add')}
               >
                 {isSelected ? <Check className="h-5 w-5" /> : <Plus className="h-5 w-5" />}
               </button>
 
-              {/* ❤️ Favoris */}
-              <div className="flex items-center justify-center px-4">
-                <AddToFavoritesButton dishId={dish.id} size={24} favorites={favorites} toggleFavorite={toggleFavorite} />
+              <div className="flex items-center justify-center py-3 border-2 border-warm-gray-200 rounded-full hover:bg-warm-gray-50 transition-all">
+                <AddToFavoritesButton dishId={dish.id} size={20} favorites={favorites} toggleFavorite={toggleFavorite} />
               </div>
             </div>
           </div>
