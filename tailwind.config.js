@@ -11,7 +11,7 @@ export default {
           200: '#CBD3C2',
           300: '#AEBBA2',
           400: '#8F9F80',
-          500: '#6B7B5E',    // Sage principal
+          500: '#6B7B5E',
           600: '#556348',
           700: '#434E39',
           800: '#333C2B',
@@ -23,7 +23,7 @@ export default {
           200: '#FDD0B6',
           300: '#FBB38A',
           400: '#F8925C',
-          500: '#E26D32',    // Terracotta
+          500: '#E26D32',
           600: '#C45824',
           700: '#9E461C',
           800: '#7A3614',
@@ -35,7 +35,7 @@ export default {
           200: '#B5DDCE',
           300: '#8DCAB5',
           400: '#65B89B',
-          500: '#3FA682',    // Menthe douce
+          500: '#3FA682',
           600: '#2F8A6B',
           700: '#236E54',
           800: '#19543F',
@@ -59,7 +59,11 @@ export default {
       },
 
       fontFamily: {
-        heading: ['Playfair Display', 'Georgia', 'serif'],
+        // Archivo Black pour les titres principaux (remplace Georgia)
+        heading: ['Archivo Black', 'Playfair Display', 'Georgia', 'serif'],
+        // Playfair Display pour les sous-titres élégants
+        subheading: ['Playfair Display', 'Georgia', 'serif'],
+        // Inter pour le corps de texte
         body: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
         arabic: ['Noto Naskh Arabic', 'serif'],
       },
