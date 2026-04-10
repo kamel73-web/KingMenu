@@ -14,7 +14,8 @@
     "shoppingList": "Lista de Compras",
     "todayMenu": "Menú del día",
     "logout": "Cerrar Sesión",
-    "logoutSuccess": "Sesión cerrada correctamente"
+    "more": "Más",
+    "language": "Idioma"
   },
   "landing": {
     "title": "Bienvenido a King Menu",
