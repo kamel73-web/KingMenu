@@ -14,7 +14,7 @@ export default function HomePage() {
 
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <div className="sticky top-24">
+            <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto pr-1 rounded-3xl">
               <SelectedDishesPanel />
             </div>
           </div>
