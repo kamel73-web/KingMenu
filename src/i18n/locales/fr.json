@@ -4,7 +4,7 @@
     "tagline": "Planifiez. Cuisinez. Savourez.",
     "description": "Plateforme de planification culinaire"
   },
-  "navigation": {
+   "navigation": {
     "home": "Accueil",
     "useMyIngredients": "Utiliser mes ingrédients",
     "mealPlan": "Plan de repas",
@@ -14,7 +14,8 @@
     "shoppingList": "Liste de courses",
     "todayMenu": "Menu du jour",
     "logout": "Déconnexion",
-    "logoutSuccess": "Déconnexion réussie"
+    "more": "Plus",
+    "language": "Langue"
   },
   "landing": {
     "title": "Bienvenue sur King Menu",
