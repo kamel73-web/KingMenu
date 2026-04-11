@@ -50,7 +50,15 @@
     "emailLabel": "Email address",
     "emailPlaceholder": "Enter your email",
     "passwordLabel": "Password",
-    "passwordPlaceholder": "Enter your password"
+    "passwordPlaceholder": "Enter your password",
+    "continueWithGoogle": "Continue with Google",
+    "loading": "Loading...",
+    "loginSuccess": "Login successful!",
+    "signUpSuccess": "Account created successfully!",
+    "fillAllFields": "Please fill in all fields",
+    "googleError": "Google error: {{message}}",
+    "unknownError": "An error occurred",
+    "googleConnectionError": "Google connection error"
   },
   "home": {
     "recommendedDishes": "Recommended Dishes",
