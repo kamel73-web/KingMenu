@@ -1,12 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import {
-  Carrot,
-  ShoppingCart,
-  CookingPot,
-  CalendarDays,
-} from "lucide-react";
 
 const PublicLandingPage: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -18,119 +12,90 @@ const PublicLandingPage: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col overflow-hidden">
-      {/* Background */}
-      <div
-        className="fixed inset-0 bg-cover bg-center"
-        style={{
-          backgroundImage:
-            "url('https://vehqvqlbtotljstixklz.supabase.co/storage/v1/object/public/Brand/Background%20v2.jpg')",
-        }}
-      />
-      <div className="fixed inset-0 bg-black/55" />
+    <div
+      className="relative min-h-screen flex flex-col items-center justify-center bg-cover bg-center text-gray-800"
+      style={{
+        backgroundImage:
+          "url('https://vehqvqlbtotljstixklz.supabase.co/storage/v1/object/sign/Brand/background.avif?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8xNDFhMTczOS01YTg0LTQ0NmQtODgxMC0wNGRiNjQ2ZGRlMzciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJCcmFuZC9iYWNrZ3JvdW5kLmF2aWYiLCJpYXQiOjE3NjExMzg0MDAsImV4cCI6MTc5MjY3NDQwMH0.ONd-VSDJH9-_KNgHZC27ZbGqBr19GaP34kvkir0obDk')",
+      }}
+    >
+      {/* Overlay sombre */}
+      <div className="absolute inset-0 bg-black/50"></div>
 
-      {/* Main content */}
-      <main className="relative z-10 flex flex-col items-center justify-center px-5 sm:px-8 py-12 pb-32">
-        <div className="w-full max-w-3xl text-center">
-          {/* Logo */}
-          <img
-            src="https://vehqvqlbtotljstixklz.supabase.co/storage/v1/object/public/Brand/logo%20KM.jpg"
-            alt={t("landing.logoAlt") || "King Menu Logo"}
-            className="mx-auto w-28 h-28 sm:w-36 sm:h-36 rounded-full shadow-2xl mb-8 object-cover ring-2 ring-yellow-400/30"
-          />
+      {/* Contenu principal */}
+      <div className="relative z-10 text-center px-6 max-w-3xl">
+        {/* Logo */}
+        <img
+          src="https://vehqvqlbtotljstixklz.supabase.co/storage/v1/object/sign/Brand/logo%20KM.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8xNDFhMTczOS01YTg0LTQ0NmQtODgxMC0wNGRiNjQ2ZGRlMzciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJCcmFuZC9sb2dvIEtNLmpwZyIsImlhdCI6MTc2MTEzOTQ5OCwiZXhwIjoxNzkyNjc1NDk4fQ.Etkb-QlejLXww_i4V0dHvb3zTudbJhbNw-KAjI7pMXQ"
+          alt="King Menu Logo"
+          className="mx-auto w-32 h-32 rounded-full shadow-lg mb-6 object-cover"
+        />
 
-          {/* Language selector */}
-          <div className="flex justify-center flex-wrap gap-2.5 mb-8">
-            {["en", "fr", "es", "it", "ar"].map((lang) => (
-              <button
-                key={lang}
-                onClick={() => handleLanguageChange(lang)}
-                className={`px-4 py-2 rounded-full text-sm font-semibold transition
-                  ${
-                    i18n.language === lang
-                      ? "bg-yellow-500 text-white shadow-lg"
-                      : "bg-white/90 text-gray-900 hover:bg-white"
-                  }`}
-              >
-                {lang.toUpperCase()}
-              </button>
-            ))}
-          </div>
+        {/* Titre principal */}
+        <h1 className="text-4xl md:text-5xl font-bold text-white drop-shadow-lg mb-4">
+          {t("landing.title")}
+        </h1>
 
-          {/* Title */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white mb-6 drop-shadow-xl">
-            {t("landing.title")}
-          </h1>
+        {/* Sous-titre */}
+        <p className="text-lg md:text-xl text-gray-100 mb-8 leading-relaxed">
+          {t("landing.subtitle")}
+        </p>
 
-          {/* Subtitle */}
-          <p className="text-lg sm:text-xl text-gray-100 mb-12 max-w-2xl mx-auto drop-shadow">
-            {t("landing.subtitle")}
-          </p>
-
-          {/* Features */}
-          <div className="bg-black/40 backdrop-blur-lg rounded-3xl p-6 sm:p-8 mb-14 shadow-2xl border border-white/10">
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6">
-              {t("landing.featuresTitle")}
-            </h2>
-            <ul className="space-y-4 text-left text-gray-100 text-base sm:text-lg max-w-md mx-auto">
-              <li className="flex items-center gap-3">
-                <CookingPot className="w-5 h-5 text-yellow-400" />
-                <span>{t("landing.featureRecipes")}</span>
-              </li>
-
-              <li className="flex items-center gap-3">
-                <Carrot className="w-5 h-5 text-yellow-400" />
-                <span>{t("landing.featureIngredients")}</span>
-              </li>
-
-              <li className="flex items-center gap-3">
-                <CalendarDays className="w-5 h-5 text-yellow-400" />
-                <span>{t("landing.featurePlanner")}</span>
-              </li>
-
-              <li className="flex items-center gap-3">
-                <ShoppingCart className="w-5 h-5 text-yellow-400" />
-                <span>{t("landing.featureShoppingList")}</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* CTA Button */}
-          <div className="flex justify-center mb-16">
-            <button
-              onClick={() => navigate("/login")}
-              className="
-                bg-yellow-500 hover:bg-yellow-600
-                text-white text-lg sm:text-xl font-bold
-                px-10 py-4 rounded-full
-                shadow-xl shadow-yellow-600/40
-                transition transform hover:scale-105
-                focus:outline-none focus:ring-4 focus:ring-yellow-400
-              "
-            >
-              {t("landing.loginButton")}
-            </button>
-          </div>
+        {/* Bloc des fonctionnalités */}
+        <div className="bg-white/15 backdrop-blur-md rounded-2xl p-6 text-gray-100 mb-10 shadow-lg">
+          <h2 className="text-2xl font-semibold mb-4">{t("landing.featuresTitle")}</h2>
+          <ul className="space-y-2 text-left mx-auto max-w-md">
+            <li>🍲 {t("landing.featureRecipes")}</li>
+            <li>🥕 {t("landing.featureIngredients")}</li>
+            <li>📅 {t("landing.featurePlanner")}</li>
+            <li>🛒 {t("landing.featureShoppingList")}</li>
+          </ul>
         </div>
-      </main>
+
+        {/* Bouton Connexion */}
+        <button
+          onClick={() => navigate("/login")}
+          className="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-full font-semibold shadow-lg transition-transform transform hover:scale-105"
+        >
+          {t("landing.loginButton")}
+        </button>
+
+        {/* Sélecteur de langue */}
+        <div className="mt-10 flex justify-center gap-3">
+          {["en", "fr", "es", "it", "ar"].map((lang) => (
+            <button
+              key={lang}
+              onClick={() => handleLanguageChange(lang)}
+              className={`px-3 py-1 rounded-full text-sm font-medium ${
+                i18n.language === lang
+                  ? "bg-yellow-500 text-white"
+                  : "bg-white/20 text-gray-200 hover:bg-white/40"
+              }`}
+            >
+              {lang.toUpperCase()}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {/* Footer */}
-     <footer className="relative z-10 bg-black/70 backdrop-blur-sm px-6 py-6 text-gray-300 border-t border-white/10">
-  <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
-    <div className="flex gap-4">
-      <a href="/privacy" className="hover:text-white hover:underline">
-        Privacy Policy
-      </a>
-      <a href="/terms" className="hover:text-white hover:underline">
-        Terms of Use
-      </a>
-    </div>
-
-    <div className="text-center sm:text-right">
-      © {new Date().getFullYear()} King Menu — Plan. Cook. Enjoy
-    </div>
-  </div>
-</footer>
+      <footer className="absolute bottom-4 text-gray-300 text-sm flex flex-col items-center gap-2">
+        <div className="flex gap-4">
+          <a
+            href="/KingMenu/privacy-policy.html"
+            className="hover:text-white underline"
+          >
+            Privacy Policy
+          </a>
+          <a
+            href="/KingMenu/terms-of-use.html"
+            className="hover:text-white underline"
+          >
+            Terms of Use
+          </a>
+        </div>
+        <span>© {new Date().getFullYear()} King Menu — {t("landing.footer")}</span>
+      </footer>
     </div>
   );
 };
