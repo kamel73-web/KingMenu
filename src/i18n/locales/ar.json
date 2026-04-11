@@ -50,7 +50,15 @@
     "emailLabel": "البريد الإلكتروني",
     "emailPlaceholder": "أدخل بريدك الإلكتروني",
     "passwordLabel": "كلمة المرور",
-    "passwordPlaceholder": "أدخل كلمة المرور الخاصة بك"
+    "passwordPlaceholder": "أدخل كلمة المرور الخاصة بك",
+    "continueWithGoogle": "المتابعة مع Google",
+    "loading": "جارٍ التحميل...",
+    "loginSuccess": "تم تسجيل الدخول بنجاح!",
+    "signUpSuccess": "تم إنشاء الحساب بنجاح!",
+    "fillAllFields": "يرجى ملء جميع الحقول",
+    "googleError": "خطأ Google: {{message}}",
+    "unknownError": "حدث خطأ",
+    "googleConnectionError": "خطأ في الاتصال بـ Google"
   },
   "home": {
     "recommendedDishes": "الأطباق الموصى بها",
