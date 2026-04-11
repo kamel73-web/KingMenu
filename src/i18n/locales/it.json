@@ -4,7 +4,7 @@
     "tagline": "Pianifica. Cuoci. Gusta.",
     "description": "Piattaforma di pianificazione alimentare"
   },
-   "navigation": {
+  "navigation": {
     "home": "Home",
     "useMyIngredients": "Usa i Miei Ingredienti",
     "mealPlan": "Piano dei Pasti",
@@ -14,6 +14,7 @@
     "shoppingList": "Lista della Spesa",
     "todayMenu": "Menu del giorno",
     "logout": "Disconnessione",
+    "logoutSuccess": "Disconnessione avvenuta",
     "more": "Altro",
     "language": "Lingua"
   },
@@ -76,12 +77,19 @@
     "recipe": "Ricetta",
     "add": "Aggiungi",
     "added": "Aggiunto",
-    "cookMode": "Modalità Cottura"
+    "cookMode": "Modalità Cottura",
+    "notFound": "Piatto non trovato.",
+    "steps": "Passi",
+    "viewDetails": "Vedi dettagli"
   },
   "recipe": {
     "step": "Passo",
     "addToMenu": "Aggiungi al menu",
-    "addedToMenu": "{{title}} aggiunto al tuo menu!"
+    "addedToMenu": "{{title}} aggiunto al tuo menu!",
+    "ingredients": "Ingredienti",
+    "instructions": "Istruzioni",
+    "needIngredient": "Mancante: {{name}}",
+    "recipe": "Vedi la ricetta"
   },
   "ingredientsSection": {
     "whatsInKitchen": "Cosa hai in Cucina?",
@@ -140,7 +148,8 @@
   "errors": {
     "loadUserPreferences": "Errore nel caricamento delle tue preferenze",
     "mustBeLoggedIn": "Devi essere connesso per eseguire questa azione",
-    "updatePreferences": "Errore nell'aggiornamento delle preferenze"
+    "updatePreferences": "Errore nell'aggiornamento delle preferenze",
+    "fetchFilters": "Errore nel caricamento dei filtri."
   },
   "favorites": {
     "add": "Aggiungi ai preferiti",
@@ -150,7 +159,8 @@
     "title": "I Tuoi Preferiti",
     "empty": "Nessun preferito per ora",
     "emptyDesc": "Esplora i piatti e aggiungi i tuoi preferiti qui.",
-    "browse": "Sfoglia i piatti"
+    "browse": "Sfoglia i piatti",
+    "loginRequired": "Accedi per aggiungere ai preferiti."
   },
   "mealPlan": {
     "title": "Piano dei Pasti",
@@ -263,7 +273,8 @@
     "invalidIngredient": "Ingrediente non valido",
     "loginPrompt": "Accedi per visualizzare il tuo profilo",
     "name": "Nome",
-    "pleaseLogin": "Per favore accedi"
+    "pleaseLogin": "Per favore accedi",
+    "removeIngredient": "Rimuovi {{name}}"
   },
   "measurements": {
     "metric": "Metrico",
@@ -393,5 +404,7 @@
     "searchPlaceholder": "Cerca le tue ricette...",
     "noRecipesFound": "Nessuna ricetta trovata",
     "startCooking": "Inizia a cucinare"
-  }
+  },
+  "no_steps": "Nessuna istruzione disponibile.",
+  "select_recipe": "Scegli una ricetta"
 }
