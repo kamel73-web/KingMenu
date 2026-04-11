@@ -14,6 +14,7 @@
     "shoppingList": "Lista de Compras",
     "todayMenu": "Menú del día",
     "logout": "Cerrar Sesión",
+    "logoutSuccess": "Sesión cerrada correctamente",
     "more": "Más",
     "language": "Idioma"
   },
@@ -76,12 +77,19 @@
     "recipe": "Receta",
     "add": "Añadir",
     "added": "Añadido",
-    "cookMode": "Modo de Cocina"
+    "cookMode": "Modo de Cocina",
+    "notFound": "Plato no encontrado.",
+    "steps": "Pasos",
+    "viewDetails": "Ver detalles"
   },
   "recipe": {
     "step": "Paso",
     "addToMenu": "Añadir al menú",
-    "addedToMenu": "¡{{title}} añadido a tu menú!"
+    "addedToMenu": "¡{{title}} añadido a tu menú!",
+    "ingredients": "Ingredientes",
+    "instructions": "Instrucciones",
+    "needIngredient": "Falta: {{name}}",
+    "recipe": "Ver la receta"
   },
   "ingredientsSection": {
     "whatsInKitchen": "¿Qué tienes en la Cocina?",
@@ -140,7 +148,8 @@
   "errors": {
     "loadUserPreferences": "Error al cargar tus preferencias",
     "mustBeLoggedIn": "Debes iniciar sesión para realizar esta acción",
-    "updatePreferences": "Error al actualizar las preferencias"
+    "updatePreferences": "Error al actualizar las preferencias",
+    "fetchFilters": "Error al cargar los filtros."
   },
   "favorites": {
     "add": "Añadir a favoritos",
@@ -150,7 +159,8 @@
     "title": "Tus Favoritos",
     "empty": "Aún no hay favoritos",
     "emptyDesc": "Explora los platos y añade tus favoritos aquí.",
-    "browse": "Explorar platos"
+    "browse": "Explorar platos",
+    "loginRequired": "Inicia sesión para añadir a favoritos."
   },
   "mealPlan": {
     "title": "Plan de Comidas",
@@ -263,7 +273,8 @@
     "invalidIngredient": "Ingrediente inválido",
     "loginPrompt": "Inicia sesión para acceder a tu perfil",
     "name": "Nombre",
-    "pleaseLogin": "Por favor, inicia sesión"
+    "pleaseLogin": "Por favor, inicia sesión",
+    "removeIngredient": "Eliminar {{name}}"
   },
   "measurements": {
     "metric": "Métrico",
@@ -393,5 +404,7 @@
     "searchPlaceholder": "Buscar tus recetas...",
     "noRecipesFound": "No se encontraron recetas",
     "startCooking": "Empezar a cocinar"
-  }
+  },
+  "no_steps": "No hay instrucciones disponibles.",
+  "select_recipe": "Elegir una receta"
 }
