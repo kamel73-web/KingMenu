@@ -28,7 +28,7 @@ export default function LoginForm() {
     setError(null);
 
     if (!formData.email || !formData.password || (!isLogin && !formData.name)) {
-      const msg = "Veuillez remplir tous les champs";
+      const msg = t("auth.fillAllFields");
       setError(msg);
       toast.error(msg);
       return;
@@ -50,10 +50,10 @@ export default function LoginForm() {
       }
 
       toast.success(
-        isLogin ? "Connexion réussie !" : "Compte créé avec succès !"
+        isLogin ? t("auth.loginSuccess") : t("auth.signUpSuccess")
       );
     } catch (err: any) {
-      const msg = err?.message || "Une erreur est survenue";
+      const msg = err?.message || t("auth.unknownError");
       setError(msg);
       toast.error(msg);
       console.error("Auth error:", err);
@@ -97,7 +97,7 @@ export default function LoginForm() {
 
       if (error) {
         setError(error.message);
-        toast.error("Erreur Google : " + error.message);
+        toast.error(t("auth.googleError", { message: error.message }));
         console.error("OAuth error:", error);
       }
 
@@ -106,7 +106,7 @@ export default function LoginForm() {
       // AppContext captera la session au reload
 
     } catch (err: any) {
-      const msg = err?.message || "Erreur connexion Google";
+      const msg = err?.message || t("auth.googleConnectionError");
       setError(msg);
       toast.error(msg);
       console.error("OAuth fatal error:", err);
@@ -131,7 +131,7 @@ export default function LoginForm() {
                 isLogin ? "bg-orange-500 text-white" : "text-gray-600"
               }`}
             >
-              {t("auth.login") || "Connexion"}
+              {t("auth.login")}
             </button>
             <button
               onClick={() => setIsLogin(false)}
@@ -139,7 +139,7 @@ export default function LoginForm() {
                 !isLogin ? "bg-orange-500 text-white" : "text-gray-600"
               }`}
             >
-              {t("auth.signUp") || "Inscription"}
+              {t("auth.signUp")}
             </button>
           </div>
 
@@ -148,7 +148,7 @@ export default function LoginForm() {
             {!isLogin && (
               <input
                 type="text"
-                placeholder={t("auth.fullName") || "Nom complet"}
+                placeholder={t("auth.fullName")}
                 value={formData.name}
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
@@ -164,7 +164,7 @@ export default function LoginForm() {
               />
               <input
                 type="email"
-                placeholder={t("auth.email") || "Email"}
+                placeholder={t("auth.email")}
                 value={formData.email}
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
@@ -180,7 +180,7 @@ export default function LoginForm() {
               />
               <input
                 type={showPassword ? "text" : "password"}
-                placeholder={t("auth.password") || "Mot de passe"}
+                placeholder={t("auth.password")}
                 value={formData.password}
                 onChange={(e) =>
                   setFormData({ ...formData, password: e.target.value })
@@ -212,7 +212,7 @@ export default function LoginForm() {
               }`}
             >
               {isLoading
-                ? "Chargement..."
+                ? t("auth.loading")
                 : isLogin
                 ? t("auth.login")
                 : t("auth.signUp")}
@@ -220,7 +220,7 @@ export default function LoginForm() {
           </form>
 
           <div className="my-6 text-center text-gray-500">
-            {t("auth.orContinueWith") || "ou continuer avec"}
+            {t("auth.orContinueWith")}
           </div>
 
           <button
@@ -233,7 +233,7 @@ export default function LoginForm() {
               alt="Google"
               className="w-5 h-5"
             />
-            Continuer avec Google
+            {t("auth.continueWithGoogle")}
           </button>
         </div>
       </div>
