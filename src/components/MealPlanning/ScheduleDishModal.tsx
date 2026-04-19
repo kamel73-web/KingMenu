@@ -54,7 +54,7 @@ export default function ScheduleDishModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="w-full max-w-md rounded-2xl bg-white dark:bg-neutral-900 shadow-2xl overflow-hidden">
+      <div className="w-full max-w-md rounded-2xl bg-white dark:bg-gray-900 shadow-2xl overflow-hidden">
         {/* Header */}
         <div className="relative bg-gradient-to-r from-amber-600 to-orange-600 px-6 py-5 text-white">
           <button
@@ -71,7 +71,7 @@ export default function ScheduleDishModal({
         <div className="p-6 space-y-6">
           {/* Date */}
           <div>
-            <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-content-body dark:text-content-hint">
+            <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
               <Calendar size={18} />
               {t('common.date')}
             </label>
@@ -80,13 +80,13 @@ export default function ScheduleDishModal({
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
               min={new Date().toISOString().split('T')[0]}
-              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-neutral-800 px-4 py-2.5 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/30 outline-none"
+              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2.5 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/30 outline-none"
             />
           </div>
 
           {/* Meal type */}
           <div>
-            <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-content-body dark:text-content-hint">
+            <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
               <Clock size={18} />
               {t('mealPlan.mealType')}
             </label>
@@ -98,8 +98,8 @@ export default function ScheduleDishModal({
                   onClick={() => setMealType(type)}
                   className={`rounded-lg py-2.5 text-sm font-medium transition-colors ${
                     mealType === type
-                      ? 'bg-amber-600 text-white shadow-card'
-                      : 'bg-neutral-100 dark:bg-neutral-800 hover:bg-gray-200 dark:hover:bg-gray-700'
+                      ? 'bg-amber-600 text-white shadow-md'
+                      : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700'
                   }`}
                 >
                   {t(`mealTypes.${type}`)}
@@ -110,7 +110,7 @@ export default function ScheduleDishModal({
 
           {/* Servings */}
           <div>
-            <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-content-body dark:text-content-hint">
+            <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
               <Users size={18} />
               {t('common.servings')}
             </label>
@@ -120,16 +120,16 @@ export default function ScheduleDishModal({
               max={20}
               value={servings}
               onChange={(e) => setServings(Math.max(1, Number(e.target.value)))}
-              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-neutral-800 px-4 py-2.5 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/30 outline-none"
+              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2.5 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/30 outline-none"
             />
           </div>
         </div>
 
         {/* Footer */}
-        <div className="flex items-center gap-3 border-t border-neutral-200 dark:border-gray-700 px-6 py-4">
+        <div className="flex items-center gap-3 border-t border-gray-200 dark:border-gray-700 px-6 py-4">
           <button
             onClick={onClose}
-            className="flex-1 rounded-lg border border-gray-300 dark:border-gray-600 py-2.5 font-medium hover:bg-neutral-50 dark:hover:bg-neutral-800 transition"
+            className="flex-1 rounded-lg border border-gray-300 dark:border-gray-600 py-2.5 font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition"
           >
             {t('common.cancel')}
           </button>

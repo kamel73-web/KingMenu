@@ -77,7 +77,8 @@ export const getDishes = async (language: string = 'en') => {
           category
         )
       )
-    `);
+    `)
+    .order('created_at', { ascending: false });
 
   if (error) {
     console.error('Erreur getDishes:', error);

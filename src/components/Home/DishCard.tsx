@@ -62,6 +62,13 @@ export default function DishCard({ dish, favorites = [], toggleFavorite }: DishC
             loading="lazy"
             decoding="async"
             className="w-full h-72 object-cover group-hover:scale-105 transition-transform duration-500 rounded-t-3xl"
+            onError={(e) => {
+              const target = e.currentTarget;
+              if (!target.dataset.fallback) {
+                target.dataset.fallback = '1';
+                target.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80';
+              }
+            }}
           />
 
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-3xl" />

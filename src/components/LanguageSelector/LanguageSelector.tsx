@@ -42,7 +42,7 @@ export default function LanguageSelector() {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 px-3 py-2 text-content-muted hover:text-primary hover:bg-neutral-50 rounded-lg transition-all duration-200"
+        className="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-lg transition-all duration-200"
       >
         <Globe className="h-5 w-5" />
         <span className="text-xl">{currentLanguage.flag}</span>
@@ -57,13 +57,13 @@ export default function LanguageSelector() {
             className="fixed inset-0 z-10"
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-soft border border-neutral-200 py-2 z-20">
+          <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-20">
             {languages.map((language) => (
               <button
                 key={language.code}
                 onClick={() => handleLanguageChange(language.code)}
-                className={`w-full flex items-center justify-between px-4 py-2 text-left hover:bg-neutral-50 transition-colors ${
-                  i18n.language === language.code ? 'bg-primary/5 text-primary' : 'text-content-body'
+                className={`w-full flex items-center justify-between px-4 py-2 text-left hover:bg-gray-50 transition-colors ${
+                  i18n.language === language.code ? 'bg-primary/5 text-primary' : 'text-gray-700'
                 }`}
               >
                 <div className="flex items-center space-x-3">

@@ -211,7 +211,9 @@
       "print": "Stampa",
       "downloadPDF": "Scarica PDF",
       "downloadedPDF": "Calendario dei pasti scaricato come PDF!",
-      "noMealsForDay": "Nessun pasto programmato per questo giorno"
+      "noMealsForDay": "Nessun pasto programmato per questo giorno",
+      "filename": "piano-pasti",
+      "downloaded": "PDF scaricato!"
     }
   },
   "calendar": {
@@ -252,7 +254,8 @@
     "copied": "Copiato!",
     "pdf": "PDF",
     "share": "Condividi",
-    "downloadedPDF": "Lista della spesa scaricata come PDF!"
+    "downloadedPDF": "Lista della spesa scaricata come PDF!",
+    "uncategorized": "Altro"
   },
   "profile": {
     "culinaryPreferences": "Preferenze Culinarie",

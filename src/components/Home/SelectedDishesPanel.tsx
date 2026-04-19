@@ -34,7 +34,7 @@ export default function SelectedDishesPanel() {
           {/* Main icon container with gradient */}
           <div className="relative w-24 h-24 mx-auto">
             <div className="absolute inset-0 bg-gradient-to-br from-primary-200/30 via-secondary-200/30 to-warm-gray-200/30 rounded-full blur-md"></div>
-            <div className="relative w-full h-full bg-gradient-to-br from-white to-warm-gray-50 rounded-full flex items-center justify-center shadow-strong border border-neutral-100">
+            <div className="relative w-full h-full bg-gradient-to-br from-white to-warm-gray-50 rounded-full flex items-center justify-center shadow-strong border border-warm-gray-100">
               <div className="relative">
                 {/* Menu text curved around icon */}
                 <div className="absolute -top-10 left-1/2 transform -translate-x-1/2">
@@ -54,10 +54,10 @@ export default function SelectedDishesPanel() {
           </div>
         </div>
 
-        <h3 className="text-2xl font-heading font-bold text-content-title mb-3">
+        <h3 className="text-2xl font-heading font-bold text-warm-gray-900 mb-3">
           {t('selectedDishes.noDishesSelected')}
         </h3>
-        <p className="text-content-muted font-body leading-relaxed text-base">
+        <p className="text-warm-gray-600 font-body leading-relaxed text-base">
           {t('selectedDishes.startAdding')}
         </p>
 
@@ -77,10 +77,10 @@ export default function SelectedDishesPanel() {
     <div className="space-y-6">
       <div className="bg-white rounded-3xl shadow-soft p-8">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-2xl font-heading font-bold text-content-title">
+          <h3 className="text-2xl font-heading font-bold text-warm-gray-900">
             {t('selectedDishes.title')} ({state.selectedDishes.length})
           </h3>
-          <div className="flex items-center space-x-4 text-sm text-content-muted">
+          <div className="flex items-center space-x-4 text-sm text-warm-gray-600">
             <div className="flex items-center space-x-1.5">
               <Clock className="h-5 w-5 text-primary-500" />
               <span className="font-semibold">{totalCookingTime}m {t('selectedDishes.totalTime')}</span>
@@ -94,17 +94,17 @@ export default function SelectedDishesPanel() {
 
         <div className="space-y-3">
           {state.selectedDishes.map(dish => (
-            <div key={dish.id} className="flex items-center space-x-4 p-4 bg-neutral-50 rounded-2xl hover:bg-neutral-100 transition-colors">
+            <div key={dish.id} className="flex items-center space-x-4 p-4 bg-warm-gray-50 rounded-2xl hover:bg-warm-gray-100 transition-colors">
               <img
                 src={dish.image}
                 alt={dish.title}
                 className="w-16 h-16 object-cover rounded-2xl shadow-soft"
               />
               <div className="flex-1 min-w-0">
-                <h4 className="font-heading font-bold text-content-title truncate">
+                <h4 className="font-heading font-bold text-warm-gray-900 truncate">
                   {dish.title}
                 </h4>
-                <p className="text-sm text-content-muted font-semibold">
+                <p className="text-sm text-warm-gray-600 font-semibold">
                   {dish.cuisine} • {dish.cookingTime}m • {dish.servings} {t('dish.servings')}
                 </p>
               </div>
@@ -117,7 +117,7 @@ export default function SelectedDishesPanel() {
               </button>
               <button
                 onClick={() => handleRemoveDish(dish.id)}
-                className="p-3 text-content-hint hover:text-error-500 hover:bg-red-50 rounded-full transition-all"
+                className="p-3 text-warm-gray-400 hover:text-error hover:bg-red-50 rounded-full transition-all"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -125,9 +125,9 @@ export default function SelectedDishesPanel() {
           ))}
         </div>
 
-        <div className="mt-6 pt-6 border-t border-neutral-200">
+        <div className="mt-6 pt-6 border-t border-warm-gray-200">
           <div className="flex items-center justify-between">
-            <p className="text-sm text-content-muted font-semibold">
+            <p className="text-sm text-warm-gray-600 font-semibold">
               {t('selectedDishes.totalIngredients')}: {state.shoppingList.length}
             </p>
             <button

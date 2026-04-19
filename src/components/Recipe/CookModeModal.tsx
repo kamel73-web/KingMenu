@@ -118,18 +118,18 @@ export default function CookModeModal({ dish, isOpen, onClose }: CookModeModalPr
     <div className="fixed inset-0 bg-gray-950 z-50 flex flex-col">
 
       {/* ── Header ── */}
-      <div className="bg-neutral-900 border-b border-gray-800 text-white px-3 sm:px-4 py-3 flex items-center justify-between gap-3">
+      <div className="bg-gray-900 border-b border-gray-800 text-white px-3 sm:px-4 py-3 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
           <button
             onClick={onClose}
-            className="p-2 hover:bg-neutral-800 rounded-lg transition-all flex-shrink-0"
+            className="p-2 hover:bg-gray-800 rounded-lg transition-all flex-shrink-0"
             aria-label={t('common.close', { ns: 'translation' })}
           >
-            <X className="h-5 w-5 text-content-hint" />
+            <X className="h-5 w-5 text-gray-300" />
           </button>
           <div className="min-w-0">
             <h2 className="text-base sm:text-lg font-bold text-white truncate">{dish.title}</h2>
-            <p className="text-xs text-content-hint">{tc('title')}</p>
+            <p className="text-xs text-gray-400">{tc('title')}</p>
           </div>
         </div>
 
@@ -148,9 +148,9 @@ export default function CookModeModal({ dish, isOpen, onClose }: CookModeModalPr
           </span>
           <button
             onClick={() => { setTimer(0); setIsTimerRunning(false); }}
-            className="p-1.5 hover:bg-neutral-800 rounded-lg transition-all"
+            className="p-1.5 hover:bg-gray-800 rounded-lg transition-all"
           >
-            <RotateCcw className="h-4 w-4 text-content-hint" />
+            <RotateCcw className="h-4 w-4 text-gray-400" />
           </button>
 
           <div className="w-px h-6 bg-gray-700 mx-1" />
@@ -159,7 +159,7 @@ export default function CookModeModal({ dish, isOpen, onClose }: CookModeModalPr
             onClick={toggleVoice}
             title={voiceEnabled ? tc('mute') : tc('unmute')}
             className={`p-1.5 rounded-lg transition-all ${
-              voiceEnabled ? 'bg-violet-600 text-white' : 'hover:bg-neutral-800 text-content-hint'
+              voiceEnabled ? 'bg-violet-600 text-white' : 'hover:bg-gray-800 text-gray-400'
             }`}
           >
             {voiceEnabled
@@ -172,7 +172,7 @@ export default function CookModeModal({ dish, isOpen, onClose }: CookModeModalPr
             <select
               value={selectedVoice}
               onChange={e => setSelectedVoice(e.target.value)}
-              className="text-xs bg-neutral-800 text-gray-200 border border-gray-700 rounded px-1 py-1 max-w-[120px]"
+              className="text-xs bg-gray-800 text-gray-200 border border-gray-700 rounded px-1 py-1 max-w-[120px]"
             >
               {voices.map(v => (
                 <option key={v.voiceURI} value={v.voiceURI}>
@@ -185,14 +185,14 @@ export default function CookModeModal({ dish, isOpen, onClose }: CookModeModalPr
       </div>
 
       {/* ── Progress bar ── */}
-      <div className="bg-neutral-900 px-4 pt-3 pb-3 border-b border-gray-800">
-        <div className="flex items-center justify-between text-xs text-content-hint mb-2">
+      <div className="bg-gray-900 px-4 pt-3 pb-3 border-b border-gray-800">
+        <div className="flex items-center justify-between text-xs text-gray-400 mb-2">
           <span className="font-medium text-gray-200">
             {tc('stepCount', { current: currentStep + 1, total })}
           </span>
           <span>{tc('percentComplete', { percent: progress })}</span>
         </div>
-        <div className="w-full bg-neutral-800 rounded-full h-1.5">
+        <div className="w-full bg-gray-800 rounded-full h-1.5">
           <div
             className="bg-violet-500 h-1.5 rounded-full transition-all duration-300"
             style={{ width: `${progress}%` }}
@@ -204,9 +204,9 @@ export default function CookModeModal({ dish, isOpen, onClose }: CookModeModalPr
       <div className="flex-1 flex overflow-hidden">
 
         {/* Sidebar ingredients (lg+) */}
-        <div className="hidden lg:flex flex-col w-72 xl:w-80 bg-neutral-900 border-r border-gray-800 overflow-y-auto">
+        <div className="hidden lg:flex flex-col w-72 xl:w-80 bg-gray-900 border-r border-gray-800 overflow-y-auto">
           <div className="px-5 pt-5 pb-3">
-            <h3 className="text-sm font-semibold text-content-hint uppercase tracking-wider">
+            <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider">
               {tc('ingredients')}
             </h3>
           </div>
@@ -214,7 +214,7 @@ export default function CookModeModal({ dish, isOpen, onClose }: CookModeModalPr
             {dish.ingredients.map((ing, i) => (
               <div
                 key={i}
-                className="flex items-center justify-between px-3 py-2.5 bg-neutral-800 rounded-xl border border-gray-700"
+                className="flex items-center justify-between px-3 py-2.5 bg-gray-800 rounded-xl border border-gray-700"
               >
                 <span className="text-sm text-gray-200 font-medium">{ing.name}</span>
                 <span className="text-sm text-violet-400 font-semibold ml-3 flex-shrink-0">
@@ -246,14 +246,14 @@ export default function CookModeModal({ dish, isOpen, onClose }: CookModeModalPr
 
               {/* Completed badge */}
               {completedSteps.has(currentStep) && (
-                <div className="mt-6 p-4 bg-accent-600/30 border border-accent-400 rounded-xl text-center">
-                  <p className="text-accent-300 font-medium">{tc('stepCompletedBadge')}</p>
+                <div className="mt-6 p-4 bg-green-900/60 border border-green-700 rounded-xl text-center">
+                  <p className="text-green-300 font-medium">{tc('stepCompletedBadge')}</p>
                 </div>
               )}
 
               {/* Mobile ingredients */}
-              <div className="lg:hidden mt-8 p-4 bg-neutral-800 rounded-xl border border-gray-700">
-                <h4 className="text-xs font-semibold text-content-hint uppercase tracking-wider mb-3">
+              <div className="lg:hidden mt-8 p-4 bg-gray-800 rounded-xl border border-gray-700">
+                <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
                   {tc('ingredientsStep')}
                 </h4>
                 <div className="grid grid-cols-2 gap-2">
@@ -267,7 +267,7 @@ export default function CookModeModal({ dish, isOpen, onClose }: CookModeModalPr
                   ))}
                 </div>
                 {dish.ingredients.length > 4 && (
-                  <p className="text-xs text-content-muted mt-2 text-center">
+                  <p className="text-xs text-gray-500 mt-2 text-center">
                     {tc('moreIngredients', { count: dish.ingredients.length - 4 })}
                   </p>
                 )}
@@ -277,7 +277,7 @@ export default function CookModeModal({ dish, isOpen, onClose }: CookModeModalPr
           </div>
 
           {/* ── Navigation controls ── */}
-          <div className="bg-neutral-900 border-t border-gray-800 px-4 py-4">
+          <div className="bg-gray-900 border-t border-gray-800 px-4 py-4">
             <div className="max-w-2xl mx-auto">
 
               {/* Mobile */}
@@ -285,14 +285,14 @@ export default function CookModeModal({ dish, isOpen, onClose }: CookModeModalPr
                 <button
                   onClick={() => go(-1)}
                   disabled={currentStep === 0}
-                  className="w-12 h-12 bg-neutral-800 text-content-hint rounded-full hover:bg-gray-700 transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center"
+                  className="w-12 h-12 bg-gray-800 text-gray-300 rounded-full hover:bg-gray-700 transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center"
                 >
                   <ChevronLeft className="h-6 w-6" />
                 </button>
 
                 <button
                   onClick={handleStepComplete}
-                  className="w-16 h-16 bg-violet-600 hover:bg-violet-500 text-white rounded-full transition-all shadow-soft flex items-center justify-center text-lg font-bold"
+                  className="w-16 h-16 bg-violet-600 hover:bg-violet-500 text-white rounded-full transition-all shadow-lg flex items-center justify-center text-lg font-bold"
                 >
                   {currentStep === total - 1 ? '✓' : currentStep + 2}
                 </button>
@@ -300,7 +300,7 @@ export default function CookModeModal({ dish, isOpen, onClose }: CookModeModalPr
                 <button
                   onClick={() => go(1)}
                   disabled={currentStep === total - 1}
-                  className="w-12 h-12 bg-neutral-800 text-content-hint rounded-full hover:bg-gray-700 transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center"
+                  className="w-12 h-12 bg-gray-800 text-gray-300 rounded-full hover:bg-gray-700 transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center"
                 >
                   <ChevronRight className="h-6 w-6" />
                 </button>
@@ -311,7 +311,7 @@ export default function CookModeModal({ dish, isOpen, onClose }: CookModeModalPr
                 <button
                   onClick={() => go(-1)}
                   disabled={currentStep === 0}
-                  className="flex items-center gap-2 px-6 py-3 bg-neutral-800 text-gray-200 rounded-xl hover:bg-gray-700 transition-all disabled:opacity-30 disabled:cursor-not-allowed font-medium"
+                  className="flex items-center gap-2 px-6 py-3 bg-gray-800 text-gray-200 rounded-xl hover:bg-gray-700 transition-all disabled:opacity-30 disabled:cursor-not-allowed font-medium"
                 >
                   <ChevronLeft className="h-5 w-5" />
                   {t('recipeDetails.previous', { ns: 'translation' })}
@@ -319,7 +319,7 @@ export default function CookModeModal({ dish, isOpen, onClose }: CookModeModalPr
 
                 <button
                   onClick={handleStepComplete}
-                  className="px-8 py-3 bg-violet-600 hover:bg-violet-500 text-white rounded-xl transition-all font-semibold shadow-card"
+                  className="px-8 py-3 bg-violet-600 hover:bg-violet-500 text-white rounded-xl transition-all font-semibold shadow-md"
                 >
                   {currentStep === total - 1
                     ? t('recipeDetails.finishCooking',  { ns: 'translation' })
@@ -329,7 +329,7 @@ export default function CookModeModal({ dish, isOpen, onClose }: CookModeModalPr
                 <button
                   onClick={() => go(1)}
                   disabled={currentStep === total - 1}
-                  className="flex items-center gap-2 px-6 py-3 bg-neutral-800 text-gray-200 rounded-xl hover:bg-gray-700 transition-all disabled:opacity-30 disabled:cursor-not-allowed font-medium"
+                  className="flex items-center gap-2 px-6 py-3 bg-gray-800 text-gray-200 rounded-xl hover:bg-gray-700 transition-all disabled:opacity-30 disabled:cursor-not-allowed font-medium"
                 >
                   {t('recipeDetails.next', { ns: 'translation' })}
                   <ChevronRight className="h-5 w-5" />

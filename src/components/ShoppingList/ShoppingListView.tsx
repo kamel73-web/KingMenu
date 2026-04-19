@@ -34,6 +34,8 @@ export default function ShoppingListView() {
       generatedOn: t('common.generatedOn'),
       totalItems: t('common.totalItems'),
       itemsToBuyTitle: t('shoppingList.itemsToBuyTitle'),
+      tagline: t('brand.tagline'),
+      uncategorized: t('shoppingList.uncategorized', { defaultValue: 'Other' }),
     };
 
     generateShoppingListPDF(title, unownedIngredients, i18n.language, translations);
@@ -141,19 +143,19 @@ export default function ShoppingListView() {
   if (state.shoppingList.length === 0) {
     return (
       <div className="max-w-4xl mx-auto p-6">
-        <div className="bg-white rounded-lg shadow-card p-8 text-center">
-          <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="bg-white rounded-lg shadow-md p-8 text-center">
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-2xl">🛒</span>
           </div>
-          <h2 className="text-2xl font-heading font-bold text-content-title mb-2">
+          <h2 className="text-2xl font-heading font-bold text-gray-900 mb-2">
             {t('shoppingList.noShoppingList')}
           </h2>
-          <p className="text-content-muted font-body mb-6">
+          <p className="text-gray-600 font-body mb-6">
             {t('shoppingList.noShoppingListDesc')}
           </p>
           <Link
             to="/"
-            className="inline-flex items-center px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-blue-700 transition-all"
+            className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all"
           >
             {t('shoppingList.browseDishes')}
           </Link>
@@ -166,18 +168,18 @@ export default function ShoppingListView() {
     <>
       <div className="max-w-4xl mx-auto p-6 space-y-6">
         {/* --- Header --- */}
-        <div className="bg-white rounded-lg shadow-card p-6">
+        <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
-              <h1 className="text-3xl font-heading font-bold text-content-title mb-2">
+              <h1 className="text-3xl font-heading font-bold text-gray-900 mb-2">
                 {t('shoppingList.title')}
               </h1>
               {/* ✅ Sous-titre ajouté ici */}
-              <p className="text-content-muted font-body mb-3">
+              <p className="text-gray-500 font-body mb-3">
                 {t('shoppingList.subtitle')}
               </p>
 
-              <p className="text-content-muted font-body">
+              <p className="text-gray-600 font-body">
                 {unownedIngredients.length} {t('shoppingList.itemsToBuy')} •{' '}
                 {ownedIngredients.length} {t('shoppingList.itemsYouHave')}
               </p>
@@ -188,7 +190,7 @@ export default function ShoppingListView() {
               {/* Télécharger PDF */}
               <button
                 onClick={generatePDF}
-                className="flex items-center space-x-2 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-blue-700 transition-all"
+                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all"
               >
                 <Download className="h-4 w-4" />
                 <span className="font-body font-medium">{t('shoppingList.pdf')}</span>
@@ -197,7 +199,7 @@ export default function ShoppingListView() {
               {/* Copier */}
               <button
                 onClick={copyToClipboard}
-                className="flex items-center space-x-2 px-4 py-2 bg-accent-400 text-white rounded-lg hover:bg-green-700 transition-all"
+                className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all"
               >
                 {copiedToClipboard ? (
                   <Check className="h-4 w-4" />
@@ -212,7 +214,7 @@ export default function ShoppingListView() {
               {/* Partager */}
               <button
                 onClick={shareList}
-                className="flex items-center space-x-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-purple-700 transition-all"
+                className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all"
               >
                 <Share2 className="h-4 w-4" />
                 <span className="font-body font-medium">{t('shoppingList.share')}</span>
@@ -224,8 +226,8 @@ export default function ShoppingListView() {
         {/* --- Liste des ingrédients --- */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* À acheter */}
-          <div className="bg-white rounded-lg shadow-card p-6">
-            <h2 className="text-xl font-heading font-semibold text-content-title mb-4">
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-xl font-heading font-semibold text-gray-900 mb-4">
               {t('shoppingList.itemsToBuyTitle')} ({unownedIngredients.length})
             </h2>
 
@@ -236,7 +238,7 @@ export default function ShoppingListView() {
                   return (
                     <div
                       key={ingredient.id}
-                      className="flex items-center space-x-3 p-3 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors"
+                      className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                     >
                       <button
                         onClick={() => handleToggleOwned(ingredient.id)}
@@ -244,17 +246,17 @@ export default function ShoppingListView() {
                       />
                       <div className="flex-1">
                         <div className="flex items-center justify-between">
-                          <span className="font-body font-medium text-content-title">
+                          <span className="font-body font-medium text-gray-900">
                             {ingredient.name}
                           </span>
                           <div className="flex items-center space-x-2">
-                            <span className="text-sm text-content-muted">
+                            <span className="text-sm text-gray-600">
                               {ingredient.amount} {ingredient.unit}
                             </span>
                             {sourceDish && (
                               <button
                                 onClick={() => setSelectedRecipeDish(sourceDish)}
-                                className="p-1 text-primary-500 hover:bg-primary-50 rounded transition-all"
+                                className="p-1 text-blue-600 hover:bg-blue-50 rounded transition-all"
                                 title={`${t('common.from')} ${sourceDish.title}`}
                               >
                                 <ChefHat className="h-4 w-4" />
@@ -263,11 +265,11 @@ export default function ShoppingListView() {
                           </div>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-xs text-content-muted capitalize">
+                          <span className="text-xs text-gray-500 capitalize">
                             {ingredient.category}
                           </span>
                           {sourceDish && (
-                            <span className="text-xs text-content-hint">
+                            <span className="text-xs text-gray-400">
                               {t('common.from')} {sourceDish.title}
                             </span>
                           )}
@@ -278,15 +280,15 @@ export default function ShoppingListView() {
                 })}
               </div>
             ) : (
-              <p className="text-content-muted font-body text-center py-8">
+              <p className="text-gray-500 font-body text-center py-8">
                 {t('shoppingList.allItemsOwned')}
               </p>
             )}
           </div>
 
           {/* En stock */}
-          <div className="bg-white rounded-lg shadow-card p-6">
-            <h2 className="text-xl font-heading font-semibold text-content-title mb-4">
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-xl font-heading font-semibold text-gray-900 mb-4">
               {t('shoppingList.itemsYouHaveTitle')} ({ownedIngredients.length})
             </h2>
 
@@ -297,27 +299,27 @@ export default function ShoppingListView() {
                   return (
                     <div
                       key={ingredient.id}
-                      className="flex items-center space-x-3 p-3 bg-accent-50 border border-accent-100 rounded-lg"
+                      className="flex items-center space-x-3 p-3 bg-green-50 border border-green-200 rounded-lg"
                     >
                       <button
                         onClick={() => handleToggleOwned(ingredient.id)}
-                        className="w-5 h-5 bg-accent-400 border-2 border-accent-400 rounded flex items-center justify-center"
+                        className="w-5 h-5 bg-green-500 border-2 border-green-500 rounded flex items-center justify-center"
                       >
                         <Check className="h-3 w-3 text-white" />
                       </button>
                       <div className="flex-1">
                         <div className="flex items-center justify-between">
-                          <span className="font-body font-medium text-content-title line-through">
+                          <span className="font-body font-medium text-gray-900 line-through">
                             {ingredient.name}
                           </span>
                           <div className="flex items-center space-x-2">
-                            <span className="text-sm text-content-muted">
+                            <span className="text-sm text-gray-600">
                               {ingredient.amount} {ingredient.unit}
                             </span>
                             {sourceDish && (
                               <button
                                 onClick={() => setSelectedRecipeDish(sourceDish)}
-                                className="p-1 text-primary-500 hover:bg-primary-50 rounded transition-all"
+                                className="p-1 text-blue-600 hover:bg-blue-50 rounded transition-all"
                                 title={`${t('common.from')} ${sourceDish.title}`}
                               >
                                 <ChefHat className="h-4 w-4" />
@@ -326,11 +328,11 @@ export default function ShoppingListView() {
                           </div>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-xs text-content-muted capitalize">
+                          <span className="text-xs text-gray-500 capitalize">
                             {ingredient.category}
                           </span>
                           {sourceDish && (
-                            <span className="text-xs text-content-hint">
+                            <span className="text-xs text-gray-400">
                               {t('common.from')} {sourceDish.title}
                             </span>
                           )}
@@ -341,7 +343,7 @@ export default function ShoppingListView() {
                 })}
               </div>
             ) : (
-              <p className="text-content-muted font-body text-center py-8">
+              <p className="text-gray-500 font-body text-center py-8">
                 {t('shoppingList.noItemsOwned')}
               </p>
             )}
@@ -350,32 +352,36 @@ export default function ShoppingListView() {
 
         {/* --- Dishes sélectionnés --- */}
         {state.selectedDishes.length > 0 && (
-          <div className="bg-white rounded-lg shadow-card p-6">
-            <h2 className="text-xl font-heading font-semibold text-content-title mb-4">
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-xl font-heading font-semibold text-gray-900 mb-4">
               {t('shoppingList.selectedDishes')}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {state.selectedDishes.map(dish => (
                 <div
                   key={dish.id}
-                  className="flex items-center space-x-3 p-3 bg-neutral-50 rounded-lg"
+                  className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg"
                 >
                   <img
                     src={dish.image}
                     alt={dish.title}
                     className="w-12 h-12 object-cover rounded-lg"
+                    onError={(e) => {
+                      const t = e.currentTarget;
+                      if (!t.dataset.fallback) { t.dataset.fallback = '1'; t.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80'; }
+                    }}
                   />
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-body font-medium text-content-title truncate">
+                    <h4 className="font-body font-medium text-gray-900 truncate">
                       {dish.title}
                     </h4>
-                    <p className="text-sm text-content-muted">
+                    <p className="text-sm text-gray-600">
                       {dish.cuisine} • {dish.servings} {t('dish.servings')}
                     </p>
                   </div>
                   <button
                     onClick={() => setCookModeDish(dish)}
-                    className="p-2 text-primary-500 hover:bg-primary-50 rounded-lg transition-all"
+                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
                     title={t('dish.cookMode')}
                   >
                     <ChefHat className="h-4 w-4" />

@@ -116,7 +116,7 @@ export default function DishPage() {
       <div className="relative">
         <img
           src={dish.image_url}
-          className="w-full rounded-xl shadow-card object-cover max-h-96"
+          className="w-full rounded-xl shadow-md object-cover max-h-96"
         />
 
         {/* Favorite button */}
@@ -124,7 +124,7 @@ export default function DishPage() {
           onClick={toggleFavorite}
           className="absolute top-4 right-4 bg-white p-2 rounded-full shadow"
         >
-          <Heart className={isFavorite ? "text-red-600 fill-red-600" : "text-content-hint"} />
+          <Heart className={isFavorite ? "text-red-600 fill-red-600" : "text-gray-400"} />
         </button>
       </div>
 
@@ -134,14 +134,14 @@ export default function DishPage() {
       </h1>
 
       {/* Metadata */}
-      <div className="flex gap-4 text-content-muted">
+      <div className="flex gap-4 text-gray-600">
         {dish.cooking_time && <span>🕒 {dish.cooking_time} min</span>}
         {dish.calories && <span>🔥 {dish.calories} kcal</span>}
       </div>
 
       {/* Description */}
       {dish.description && (
-        <p className="text-content-body leading-relaxed">
+        <p className="text-gray-700 leading-relaxed">
           {dish.description?.[lang] || dish.description?.en || dish.description?.fr}
         </p>
       )}
@@ -151,7 +151,7 @@ export default function DishPage() {
         <div className="space-y-2">
           <h2 className="text-2xl font-bold mt-4">{t("dish.steps", "Étapes")}</h2>
           {(dish.steps?.[lang] || dish.steps?.en || dish.steps?.fr || []).map((s: string, i: number) => (
-            <div key={i} className="p-3 bg-neutral-50 rounded-lg">
+            <div key={i} className="p-3 bg-gray-50 rounded-lg">
               {i + 1}. {s}
             </div>
           ))}

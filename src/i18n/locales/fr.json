@@ -211,7 +211,9 @@
       "print": "Imprimer",
       "downloadPDF": "Télécharger PDF",
       "downloadedPDF": "Calendrier des repas téléchargé en PDF !",
-      "noMealsForDay": "Aucun repas prévu ce jour"
+      "noMealsForDay": "Aucun repas prévu ce jour",
+      "filename": "planning-repas",
+      "downloaded": "PDF téléchargé !"
     }
   },
   "calendar": {
@@ -252,7 +254,8 @@
     "copied": "Copié !",
     "pdf": "PDF",
     "share": "Partager",
-    "downloadedPDF": "Liste de courses téléchargée en PDF !"
+    "downloadedPDF": "Liste de courses téléchargée en PDF !",
+    "uncategorized": "Autre"
   },
   "profile": {
     "culinaryPreferences": "Préférences culinaires",

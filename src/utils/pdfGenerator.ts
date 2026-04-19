@@ -36,6 +36,8 @@ export const generateShoppingListPDF = (
     generatedOn: string;
     totalItems: string;
     itemsToBuyTitle: string;
+    tagline?: string;
+    uncategorized?: string;
   }
 ) => {
   const doc = new jsPDF();
@@ -83,7 +85,7 @@ export const generateShoppingListPDF = (
 
   const grouped: Record<string, typeof items> = {};
   items.forEach(item => {
-    const cat = item.category || "Autre";
+    const cat = item.category || translations.uncategorized || 'Other';
     if (!grouped[cat]) grouped[cat] = [];
     grouped[cat].push(item);
   });
@@ -158,7 +160,7 @@ export const generateShoppingListPDF = (
   doc.setFont("helvetica", "italic");
   doc.setFontSize(8);
   doc.setTextColor(...COLOR_MUTED);
-  doc.text("KingMenu — Planifiez. Cuisinez. Savourez.", pageWidth / 2, footerY, { align: "center" });
+  doc.text(`KingMenu — ${translations.tagline || 'Plan. Cook. Enjoy.'}`, pageWidth / 2, footerY, { align: "center" });
 
   doc.save(`${title.replace(/\s+/g, "-").toLowerCase()}.pdf`);
 };
@@ -322,7 +324,8 @@ export const generateMealCalendarPDF = (
   translations: {
     title: string; dateRange: string; generatedOn: string; totalMeals: string;
     breakfast: string; lunch: string; dinner: string; snack: string;
-    servings: string; cookingTime: string; noMeals: string;
+    servings: string; cookingTime: string; noMeals: string; tagline?: string;
+    mealPlanFilename?: string;
   }
 ) => {
   const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
@@ -429,9 +432,9 @@ export const generateMealCalendarPDF = (
     doc.setDrawColor(...BORDER); doc.setLineWidth(0.3);
     doc.line(M,pageH-6,pageW-M,pageH-6);
     doc.setFont('helvetica','italic'); doc.setFontSize(6.5); doc.setTextColor(...GRAY_TXT);
-    doc.text('KingMenu — Planifiez. Cuisinez. Savourez.',pageW/2,pageH-2,{align:'center'});
+    doc.text(`KingMenu — ${translations.tagline || 'Plan. Cook. Enjoy.'}`,pageW/2,pageH-2,{align:'center'});
   };
 
   weeks.forEach((wd,wi) => { if(wi>0) doc.addPage(); drawWeek(wd); });
-  doc.save(`planning-repas-${startDate}-${endDate}.pdf`);
+  doc.save(`${translations.mealPlanFilename || 'meal-plan'}-${startDate}-${endDate}.pdf`);
 };

@@ -90,9 +90,9 @@ function AppRoutes() {
 
   if (state.isLoading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-neutral-50">
-        <div className="animate-spin h-12 w-12 rounded-full border-4 border-secondary-500 border-t-transparent mb-4" />
-        <p className="text-content-muted font-medium">Vérification session...</p>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
+        <div className="animate-spin h-12 w-12 rounded-full border-4 border-orange-500 border-t-transparent mb-4" />
+        <p className="text-gray-600 font-medium">Vérification session...</p>
       </div>
     );
   }
@@ -132,8 +132,8 @@ export default function App() {
         toastOptions={{
           duration: 3000,
           style: { background: "#363636", color: "#fff" },
-          success: { style: { background: "#00C896" } },
-          error: { style: { background: "#E84040" } },
+          success: { style: { background: "#22C55E" } },
+          error: { style: { background: "#EF4444" } },
         }}
       />
     </AppProvider>

@@ -150,11 +150,11 @@ export default function ProfileView() {
   const renderSuggestions = () => {
     if (!showSuggestions || !filteredIngredients.length) return null;
     return (
-      <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-lg shadow-soft mt-1 max-h-60 overflow-auto">
+      <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-lg shadow-lg mt-1 max-h-60 overflow-auto">
         {filteredIngredients.map((ingr) => (
           <li
             key={ingr.id}
-            className="px-4 py-2 hover:bg-neutral-100 cursor-pointer font-body"
+            className="px-4 py-2 hover:bg-gray-100 cursor-pointer font-body"
             onMouseDown={() => {
               setDislikedIngredient(getIngredientName(ingr));
               setShowSuggestions(false);
@@ -171,10 +171,10 @@ export default function ProfileView() {
   if (!state.user) {
     return (
       <div className="text-center py-12">
-        <h2 className="text-2xl font-heading font-semibold text-content-title mb-2">
+        <h2 className="text-2xl font-heading font-semibold text-gray-900 mb-2">
           {t('profile.pleaseLogin')}
         </h2>
-        <p className="text-content-muted font-body">{t('profile.loginPrompt')}</p>
+        <p className="text-gray-600 font-body">{t('profile.loginPrompt')}</p>
       </div>
     );
   }
@@ -185,31 +185,31 @@ export default function ProfileView() {
     <div className="max-w-4xl mx-auto p-6 space-y-6">
 
       {/* ── Compte ── */}
-      <div className="bg-white rounded-lg shadow-card p-6">
-        <h2 className="text-2xl font-heading font-semibold text-content-title mb-4">
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <h2 className="text-2xl font-heading font-semibold text-gray-900 mb-4">
           {t('profile.accountDetails')}
         </h2>
         <div className="space-y-4">
           <div>
-            <label className="block text-content-body font-body font-medium">
+            <label className="block text-gray-700 font-body font-medium">
               {t('profile.name')}
             </label>
-            <p className="text-content-title font-body">
+            <p className="text-gray-900 font-body">
               {state.user.name || t('profile.anonymous')}
             </p>
           </div>
           <div>
-            <label className="block text-content-body font-body font-medium">
+            <label className="block text-gray-700 font-body font-medium">
               {t('profile.email')}
             </label>
-            <p className="text-content-title font-body">{state.user.email}</p>
+            <p className="text-gray-900 font-body">{state.user.email}</p>
           </div>
         </div>
       </div>
 
       {/* ── Ingrédients non aimés ── */}
-      <div className="bg-white rounded-lg shadow-card p-6">
-        <h2 className="text-2xl font-heading font-semibold text-content-title mb-4">
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <h2 className="text-2xl font-heading font-semibold text-gray-900 mb-4">
           {t('profile.dislikedIngredients')} ({dislikedIds.length})
         </h2>
 
@@ -250,7 +250,7 @@ export default function ProfileView() {
                   key={ingredientId}
                   className="flex items-center justify-between p-3 bg-red-50 border border-red-200 rounded-lg"
                 >
-                  <span className="font-body font-medium text-content-title truncate mr-2">
+                  <span className="font-body font-medium text-gray-900 truncate mr-2">
                     {name}
                   </span>
                   <button
@@ -266,7 +266,7 @@ export default function ProfileView() {
             })}
           </div>
         ) : (
-          <p className="text-content-muted font-body text-center py-8">
+          <p className="text-gray-500 font-body text-center py-8">
             {t('profile.noDislikedIngredients')}
           </p>
         )}

@@ -211,7 +211,9 @@
       "print": "Print",
       "downloadPDF": "Download PDF",
       "downloadedPDF": "Meal calendar downloaded as PDF!",
-      "noMealsForDay": "No meals scheduled for this day"
+      "noMealsForDay": "No meals scheduled for this day",
+      "filename": "meal-plan",
+      "downloaded": "PDF downloaded!"
     }
   },
   "calendar": {
@@ -252,7 +254,8 @@
     "copied": "Copied!",
     "pdf": "PDF",
     "share": "Share",
-    "downloadedPDF": "Shopping list downloaded as PDF!"
+    "downloadedPDF": "Shopping list downloaded as PDF!",
+    "uncategorized": "Other"
   },
   "profile": {
     "culinaryPreferences": "Culinary Preferences",

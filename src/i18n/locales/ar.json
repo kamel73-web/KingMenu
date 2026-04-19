@@ -211,7 +211,9 @@
       "print": "اطبع",
       "downloadPDF": "تحميل PDF",
       "downloadedPDF": "تم تحميل تقويم الوجبات كملف PDF!",
-      "noMealsForDay": "لا توجد وجبات مجدولة لهذا اليوم"
+      "noMealsForDay": "لا توجد وجبات مجدولة لهذا اليوم",
+      "filename": "meal-plan",
+      "downloaded": "تم تحميل ملف PDF!"
     }
   },
   "calendar": {
@@ -252,7 +254,8 @@
     "copied": "تم النسخ!",
     "pdf": "PDF",
     "share": "مشاركة",
-    "downloadedPDF": "تم تحميل قائمة التسوق كملف PDF!"
+    "downloadedPDF": "تم تحميل قائمة التسوق كملف PDF!",
+    "uncategorized": "أخرى"
   },
   "profile": {
     "culinaryPreferences": "التفضيلات الطهوية",

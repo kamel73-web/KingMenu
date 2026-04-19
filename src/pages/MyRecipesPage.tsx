@@ -26,14 +26,14 @@ export default function MyRecipesPage() {
   if (state.selectedDishes.length === 0) {
     return (
       <div className="max-w-4xl mx-auto p-6">
-        <div className="bg-white rounded-lg shadow-card p-8 text-center">
-          <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <ChefHat className="h-8 w-8 text-content-hint" />
+        <div className="bg-white rounded-lg shadow-md p-8 text-center">
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <ChefHat className="h-8 w-8 text-gray-400" />
           </div>
-          <h2 className="text-2xl font-heading font-bold text-content-title mb-2">
+          <h2 className="text-2xl font-heading font-bold text-gray-900 mb-2">
             {t('myRecipes.noRecipesSelected')}
           </h2>
-          <p className="text-content-muted font-body mb-6">
+          <p className="text-gray-600 font-body mb-6">
             {t('myRecipes.noRecipesDesc')}
           </p>
           <a
@@ -50,18 +50,18 @@ export default function MyRecipesPage() {
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
       {/* Header */}
-      <div className="bg-white rounded-lg shadow-card p-6">
+      <div className="bg-white rounded-lg shadow-md p-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
           <div>
-            <h1 className="text-3xl font-heading font-bold text-content-title mb-2">
+            <h1 className="text-3xl font-heading font-bold text-gray-900 mb-2">
               {t('navigation.myRecipes')}
             </h1>
-            <p className="text-content-muted font-body">
+            <p className="text-gray-600 font-body">
               {t('myRecipes.recipesReady', { count: state.selectedDishes.length })}
             </p>
           </div>
           
-          <div className="flex items-center space-x-4 text-sm text-content-muted mt-4 md:mt-0">
+          <div className="flex items-center space-x-4 text-sm text-gray-600 mt-4 md:mt-0">
             <div className="flex items-center space-x-1">
               <Clock className="h-4 w-4" />
               <span className="font-body">
@@ -81,7 +81,7 @@ export default function MyRecipesPage() {
         <div className="flex flex-col md:flex-row gap-4">
           {/* Search */}
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-3 h-5 w-5 text-content-hint" />
+            <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
             <input
               type="text"
               placeholder={t('myRecipes.searchPlaceholder')}
@@ -109,17 +109,17 @@ export default function MyRecipesPage() {
       {filteredDishes.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredDishes.map(dish => (
-            <div key={dish.id} className="bg-white rounded-lg shadow-card overflow-hidden hover:shadow-soft transition-all">
+            <div key={dish.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all">
               <img
                 src={dish.image}
                 alt={dish.title}
                 className="w-full h-48 object-cover"
               />
               <div className="p-4">
-                <h3 className="font-heading font-semibold text-lg text-content-title mb-2">
+                <h3 className="font-heading font-semibold text-lg text-gray-900 mb-2">
                   {dish.title}
                 </h3>
-                <div className="flex items-center space-x-4 text-sm text-content-muted mb-4">
+                <div className="flex items-center space-x-4 text-sm text-gray-600 mb-4">
                   <div className="flex items-center space-x-1">
                     <Clock className="h-4 w-4" />
                     <span>{dish.cookingTime}m</span>
@@ -128,7 +128,7 @@ export default function MyRecipesPage() {
                     <Users className="h-4 w-4" />
                     <span>{dish.servings} {t('common.servings')}</span>
                   </div>
-                  <span className="px-2 py-1 bg-neutral-100 text-content-muted text-xs rounded-full">
+                  <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
                     {dish.difficulty}
                   </span>
                 </div>
@@ -145,11 +145,11 @@ export default function MyRecipesPage() {
         </div>
       ) : (
         <div className="text-center py-12">
-          <Filter className="h-12 w-12 text-content-hint mx-auto mb-4" />
-          <h3 className="text-lg font-heading font-semibold text-content-title mb-2">
+          <Filter className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <h3 className="text-lg font-heading font-semibold text-gray-900 mb-2">
             {t('myRecipes.noRecipesFound')}
           </h3>
-          <p className="text-content-muted font-body">
+          <p className="text-gray-600 font-body">
             {t('home.adjustFilters')}
           </p>
         </div>

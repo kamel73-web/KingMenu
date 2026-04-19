@@ -7,7 +7,7 @@ export default function LocationBanner() {
   const { t } = useTranslation();
 
   return (
-    <div className="w-full bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-card">
+    <div className="w-full bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-md">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-6 sm:px-8 animate-fade-in">
         {/* Section gauche */}
         <div className="flex items-center gap-4">
