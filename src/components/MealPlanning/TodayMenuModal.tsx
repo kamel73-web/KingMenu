@@ -13,9 +13,9 @@ interface TodayMenuModalProps {
 
 const MEAL_CONFIG = {
   breakfast: { icon: Coffee,  labelKey: 'mealPlan.breakfast', color: 'bg-yellow-50 border-yellow-200 text-yellow-700' },
-  lunch:     { icon: Sun,     labelKey: 'mealPlan.lunch',     color: 'bg-blue-50   border-blue-200   text-blue-700'   },
-  dinner:    { icon: Sunset,  labelKey: 'mealPlan.dinner',    color: 'bg-purple-50 border-purple-200 text-purple-700' },
-  snack:     { icon: Apple,   labelKey: 'mealPlan.snack',     color: 'bg-green-50  border-green-200  text-green-700'  },
+  lunch:     { icon: Sun,     labelKey: 'mealPlan.lunch',     color: 'bg-primary-50   border-blue-200   text-primary-600'   },
+  dinner:    { icon: Sunset,  labelKey: 'mealPlan.dinner',    color: 'bg-primary-100 border-purple-200 text-primary-700' },
+  snack:     { icon: Apple,   labelKey: 'mealPlan.snack',     color: 'bg-accent-50  border-green-200  text-accent-600'  },
 };
 
 const MEAL_ORDER = ['breakfast', 'lunch', 'snack', 'dinner'];
@@ -91,9 +91,9 @@ export default function TodayMenuModal({ isOpen, onClose }: TodayMenuModalProps)
           <div className="overflow-y-auto flex-1 px-4 py-4 space-y-3">
             {todayMeals.length === 0 ? (
               <div className="text-center py-12">
-                <UtensilsCrossed className="h-14 w-14 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500 font-medium">{t('todayMenu.noMealsToday')}</p>
-                <p className="text-gray-400 text-sm mt-1">
+                <UtensilsCrossed className="h-14 w-14 text-content-hint mx-auto mb-3" />
+                <p className="text-content-muted font-medium">{t('todayMenu.noMealsToday')}</p>
+                <p className="text-content-hint text-sm mt-1">
                   {t('todayMenu.addFromHome')}
                 </p>
               </div>
@@ -104,7 +104,7 @@ export default function TodayMenuModal({ isOpen, onClose }: TodayMenuModalProps)
                 return (
                   <div
                     key={meal.id}
-                    className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all"
+                    className="bg-white border border-neutral-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-card transition-all"
                   >
                     {/* Meal type badge */}
                     <div className={`flex items-center gap-2 px-4 py-2 border-b ${cfg.color}`}>
@@ -122,8 +122,8 @@ export default function TodayMenuModal({ isOpen, onClose }: TodayMenuModalProps)
                         className="w-16 h-16 object-cover rounded-xl flex-shrink-0"
                       />
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-gray-900 truncate">{meal.dish.title}</h3>
-                        <div className="flex items-center gap-3 mt-1 text-xs text-gray-500">
+                        <h3 className="font-bold text-content-title truncate">{meal.dish.title}</h3>
+                        <div className="flex items-center gap-3 mt-1 text-xs text-content-muted">
                           <span className="flex items-center gap-1">
                             <Clock className="h-3 w-3" />
                             {meal.dish.cookingTime} min
@@ -135,7 +135,7 @@ export default function TodayMenuModal({ isOpen, onClose }: TodayMenuModalProps)
                           <span>{meal.dish.calories} kcal</span>
                         </div>
                         {meal.notes && (
-                          <p className="text-xs text-gray-400 mt-1 italic truncate">
+                          <p className="text-xs text-content-hint mt-1 italic truncate">
                             💬 {meal.notes}
                           </p>
                         )}
@@ -159,7 +159,7 @@ export default function TodayMenuModal({ isOpen, onClose }: TodayMenuModalProps)
           </div>
 
           {/* Footer */}
-          <div className="px-4 py-3 border-t border-gray-100 bg-gray-50">
+          <div className="px-4 py-3 border-t border-neutral-100 bg-neutral-50">
             <button
               onClick={onClose}
               className="w-full py-2.5 bg-orange-500 text-white rounded-xl font-semibold hover:bg-orange-600 transition-all"

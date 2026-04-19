@@ -38,7 +38,7 @@ export default function AddToFavoritesButton({
     >
       <Heart
         size={size}
-        className={isFav ? "text-red-500 fill-red-500" : "text-gray-400 hover:text-red-400"}
+        className={isFav ? "text-red-500 fill-red-500" : "text-content-hint hover:text-red-400"}
       />
     </button>
   );

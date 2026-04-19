@@ -94,14 +94,14 @@ export default function FavoritesView() {
   if (dishes.length === 0) {
     return (
       <div className="max-w-4xl mx-auto p-6">
-        <div className="bg-white rounded-lg shadow-md p-8 text-center">
-          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Heart className="h-8 w-8 text-gray-400" />
+        <div className="bg-white rounded-lg shadow-card p-8 text-center">
+          <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Heart className="h-8 w-8 text-content-hint" />
           </div>
-          <h2 className="text-2xl font-heading font-bold text-gray-900 mb-2">
+          <h2 className="text-2xl font-heading font-bold text-content-title mb-2">
             {t('favorites.empty', "Aucun favori pour l'instant")}
           </h2>
-          <p className="text-gray-600 font-body mb-6">
+          <p className="text-content-muted font-body mb-6">
             {t('favorites.emptyDesc', 'Explorez les plats et ajoutez vos favoris.')}
           </p>
           <a
@@ -120,7 +120,7 @@ export default function FavoritesView() {
     <div className="max-w-7xl mx-auto px-4 py-8">
       <h2 className="text-3xl font-heading font-bold mb-8">
         {t('favorites.title', 'Vos favoris')} ❤️
-        <span className="ml-3 text-lg font-normal text-gray-500">
+        <span className="ml-3 text-lg font-normal text-content-muted">
           ({dishes.length})
         </span>
       </h2>

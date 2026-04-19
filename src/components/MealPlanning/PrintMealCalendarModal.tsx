@@ -13,9 +13,9 @@ interface PrintMealCalendarModalProps {
 
 const MEAL_META: Record<string, { icon: string; color: string }> = {
   breakfast: { icon: '🌅', color: 'text-amber-700' },
-  lunch:     { icon: '☀️', color: 'text-blue-700' },
-  dinner:    { icon: '🌙', color: 'text-purple-700' },
-  snack:     { icon: '🍎', color: 'text-green-700' },
+  lunch:     { icon: '☀️', color: 'text-primary-600' },
+  dinner:    { icon: '🌙', color: 'text-primary-700' },
+  snack:     { icon: '🍎', color: 'text-accent-600' },
 };
 
 export default function PrintMealCalendarModal({ isOpen, onClose }: PrintMealCalendarModalProps) {
@@ -125,29 +125,29 @@ export default function PrintMealCalendarModal({ isOpen, onClose }: PrintMealCal
                 <X className="h-5 w-5 text-white" />
               </button>
             </div>
-            <p className="text-purple-200 text-sm">Générez et imprimez votre planning</p>
+            <p className="text-primary-200 text-sm">Générez et imprimez votre planning</p>
           </div>
 
           <div className="overflow-y-auto flex-1 p-6 space-y-5">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                <label className="block text-xs font-semibold text-content-muted uppercase tracking-wide mb-2">
                   {t("mealPlan.print.startDate", "Date de début")}
                 </label>
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-content-hint" />
                   <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:border-violet-400 outline-none transition-all" />
+                    className="w-full pl-9 pr-3 py-2.5 border-2 border-neutral-200 rounded-xl text-sm focus:border-violet-400 outline-none transition-all" />
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                <label className="block text-xs font-semibold text-content-muted uppercase tracking-wide mb-2">
                   {t("mealPlan.print.endDate", "Date de fin")}
                 </label>
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-content-hint" />
                   <input type="date" value={endDate} min={startDate} onChange={e => setEndDate(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:border-violet-400 outline-none transition-all" />
+                    className="w-full pl-9 pr-3 py-2.5 border-2 border-neutral-200 rounded-xl text-sm focus:border-violet-400 outline-none transition-all" />
                 </div>
               </div>
             </div>
@@ -157,9 +157,9 @@ export default function PrintMealCalendarModal({ isOpen, onClose }: PrintMealCal
                 <p className="text-2xl font-bold text-violet-700">{dateRange.length}</p>
                 <p className="text-xs text-violet-500 mt-0.5">Jours</p>
               </div>
-              <div className="bg-green-50 border border-green-100 rounded-2xl p-3 text-center">
-                <p className="text-2xl font-bold text-green-700">{filteredMeals.length}</p>
-                <p className="text-xs text-green-500 mt-0.5">Repas</p>
+              <div className="bg-accent-50 border border-accent-100 rounded-2xl p-3 text-center">
+                <p className="text-2xl font-bold text-accent-600">{filteredMeals.length}</p>
+                <p className="text-xs text-accent-500 mt-0.5">Repas</p>
               </div>
               <div className="bg-orange-50 border border-orange-100 rounded-2xl p-3 text-center">
                 <p className="text-2xl font-bold text-orange-700">{totalCookTime}m</p>
@@ -168,20 +168,20 @@ export default function PrintMealCalendarModal({ isOpen, onClose }: PrintMealCal
             </div>
 
             <button onClick={() => setShowPreview(v => !v)}
-              className="w-full flex items-center justify-center gap-2 py-2.5 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 hover:border-violet-400 hover:text-violet-600 transition-all text-sm font-medium">
+              className="w-full flex items-center justify-center gap-2 py-2.5 border-2 border-dashed border-gray-300 rounded-xl text-content-muted hover:border-violet-400 hover:text-violet-600 transition-all text-sm font-medium">
               {showPreview ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               {showPreview ? "Masquer l'aperçu" : "Afficher l'aperçu"}
             </button>
 
             {showPreview && (
-              <div className="border-2 border-gray-100 rounded-2xl overflow-hidden">
+              <div className="border-2 border-neutral-100 rounded-2xl overflow-hidden">
                 <div ref={printRef} className="print-content p-5 space-y-4 bg-white">
-                  <div className="text-center pb-4 border-b-2 border-gray-100">
+                  <div className="text-center pb-4 border-b-2 border-neutral-100">
                     <div className="flex items-center justify-center gap-2 mb-1">
                       <ChefHat className="h-6 w-6 text-violet-600" />
-                      <h1 className="text-xl font-bold text-gray-900">Planning des repas</h1>
+                      <h1 className="text-xl font-bold text-content-title">Planning des repas</h1>
                     </div>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-content-muted">
                       {new Date(startDate).toLocaleDateString(i18n.language, { day: "numeric", month: "long", year: "numeric" })}
                       {" → "}
                       {new Date(endDate).toLocaleDateString(i18n.language, { day: "numeric", month: "long", year: "numeric" })}
@@ -189,7 +189,7 @@ export default function PrintMealCalendarModal({ isOpen, onClose }: PrintMealCal
                   </div>
 
                   {filteredMeals.length === 0 ? (
-                    <p className="text-center text-gray-400 py-8 text-sm">{t('mealPlan.print.noMealsInRange')}</p>
+                    <p className="text-center text-content-hint py-8 text-sm">{t('mealPlan.print.noMealsInRange')}</p>
                   ) : (
                     dateRange.map(date => {
                       const ds = date.toISOString().split("T")[0];
@@ -198,12 +198,12 @@ export default function PrintMealCalendarModal({ isOpen, onClose }: PrintMealCal
                         return order.indexOf(a.mealType) - order.indexOf(b.mealType);
                       });
                       return (
-                        <div key={ds} className="rounded-2xl overflow-hidden border border-gray-100">
+                        <div key={ds} className="rounded-2xl overflow-hidden border border-neutral-100">
                           <div className="bg-gradient-to-r from-violet-50 to-purple-50 px-4 py-2.5 border-b border-violet-100">
-                            <h3 className="font-semibold text-gray-800 text-sm capitalize">{formatDate(date)}</h3>
+                            <h3 className="font-semibold text-content-title text-sm capitalize">{formatDate(date)}</h3>
                           </div>
                           {dayMeals.length === 0 ? (
-                            <p className="px-4 py-3 text-xs text-gray-400 italic">{t('mealPlan.print.noMealsForDay')}</p>
+                            <p className="px-4 py-3 text-xs text-content-hint italic">{t('mealPlan.print.noMealsForDay')}</p>
                           ) : (
                             <div className="divide-y divide-gray-50">
                               {dayMeals.map(meal => {
@@ -212,13 +212,13 @@ export default function PrintMealCalendarModal({ isOpen, onClose }: PrintMealCal
                                   <div key={meal.id} className="flex items-center gap-3 px-4 py-3">
                                     <span className="text-lg flex-shrink-0">{meta.icon}</span>
                                     <div className="flex-1 min-w-0">
-                                      <p className="font-semibold text-gray-900 text-sm truncate">{meal.dish.title}</p>
-                                      <div className="flex items-center gap-3 mt-0.5 text-xs text-gray-500">
+                                      <p className="font-semibold text-content-title text-sm truncate">{meal.dish.title}</p>
+                                      <div className="flex items-center gap-3 mt-0.5 text-xs text-content-muted">
                                         <span className={"font-medium " + meta.color}>{t("mealPlan." + meal.mealType)}</span>
                                         <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{meal.dish.cookingTime} min</span>
                                         <span className="flex items-center gap-1"><Users className="h-3 w-3" />{meal.servings} pers.</span>
                                       </div>
-                                      {meal.notes && <p className="text-xs text-gray-400 mt-0.5 italic">💬 {meal.notes}</p>}
+                                      {meal.notes && <p className="text-xs text-content-hint mt-0.5 italic">💬 {meal.notes}</p>}
                                     </div>
                                   </div>
                                 );
@@ -229,7 +229,7 @@ export default function PrintMealCalendarModal({ isOpen, onClose }: PrintMealCal
                       );
                     })
                   )}
-                  <div className="text-center pt-2 text-xs text-gray-400 border-t border-gray-100">
+                  <div className="text-center pt-2 text-xs text-content-hint border-t border-neutral-100">
                     KingMenu — Généré le {new Date().toLocaleDateString()}
                   </div>
                 </div>
@@ -237,17 +237,17 @@ export default function PrintMealCalendarModal({ isOpen, onClose }: PrintMealCal
             )}
           </div>
 
-          <div className="p-4 border-t border-gray-100 bg-gray-50 flex gap-3 flex-shrink-0">
+          <div className="p-4 border-t border-neutral-100 bg-neutral-50 flex gap-3 flex-shrink-0">
             <button onClick={onClose}
-              className="flex-1 py-3 border-2 border-gray-200 text-gray-600 rounded-2xl font-semibold hover:bg-gray-100 transition-all text-sm">
+              className="flex-1 py-3 border-2 border-neutral-200 text-content-muted rounded-2xl font-semibold hover:bg-neutral-100 transition-all text-sm">
               Annuler
             </button>
             <button onClick={handleDownloadPDF} disabled={filteredMeals.length === 0}
-              className="flex-1 py-3 bg-violet-600 text-white rounded-2xl font-semibold hover:bg-violet-700 transition-all text-sm flex items-center justify-center gap-2 disabled:opacity-40 shadow-md shadow-violet-200">
+              className="flex-1 py-3 bg-violet-600 text-white rounded-2xl font-semibold hover:bg-violet-700 transition-all text-sm flex items-center justify-center gap-2 disabled:opacity-40 shadow-card shadow-violet-200">
               <Download className="h-4 w-4" />PDF
             </button>
             <button onClick={handlePrint} disabled={filteredMeals.length === 0}
-              className="flex-1 py-3 bg-orange-500 text-white rounded-2xl font-semibold hover:bg-orange-600 transition-all text-sm flex items-center justify-center gap-2 disabled:opacity-40 shadow-md shadow-orange-200">
+              className="flex-1 py-3 bg-orange-500 text-white rounded-2xl font-semibold hover:bg-orange-600 transition-all text-sm flex items-center justify-center gap-2 disabled:opacity-40 shadow-card shadow-orange-200">
               <Printer className="h-4 w-4" />Imprimer
             </button>
           </div>

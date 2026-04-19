@@ -36,7 +36,7 @@ export default function PreferenceSelector() {
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full flex items-center justify-between"
       >
-        <h3 className="text-2xl font-heading font-bold text-warm-gray-900">
+        <h3 className="text-2xl font-heading font-bold text-content-title">
           {t('preferences.culinaryPreferences')}
         </h3>
         {isExpanded ? (
@@ -48,7 +48,7 @@ export default function PreferenceSelector() {
 
       {isExpanded && (
         <div className="mt-6 animate-slide-up">
-          <p className="text-warm-gray-600 font-body mb-6 text-base">
+          <p className="text-content-muted font-body mb-6 text-base">
             {t('preferences.selectFavorites')}
           </p>
 
@@ -60,7 +60,7 @@ export default function PreferenceSelector() {
                 className={`p-5 rounded-2xl border-2 transition-all duration-200 hover:scale-105 ${
                   (state.user?.preferences ?? []).includes(cuisine.name)
                     ? 'border-primary-500 bg-primary-500 text-white shadow-medium'
-                    : 'border-warm-gray-200 bg-white text-warm-gray-700 hover:border-primary-300 hover:bg-primary-50'
+                    : 'border-neutral-200 bg-white text-content-body hover:border-primary-300 hover:bg-primary-50'
                 }`}
               >
                 <div className="text-3xl mb-2">{cuisine.icon}</div>

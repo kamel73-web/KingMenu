@@ -15,8 +15,14 @@ export const useSupabaseData = () => {
       setLoading(true);
       setError(null);
 
-      // Récupération des plats
-      const rawDishes = await getDishes(i18n.language);
+      // ── CORRECTION : fetch en parallèle au lieu de séquentiel ─────────────
+      // Avant : getDishes puis getIngredients en séquence (l'un attend l'autre)
+      // Après : Promise.all → les deux partent en même temps, gain ~50% de temps
+      const [rawDishes, ingData] = await Promise.all([
+        getDishes(i18n.language),
+        getIngredients(i18n.language),
+      ]);
+      // ──────────────────────────────────────────────────────────────────────
 
       if (!Array.isArray(rawDishes)) {
         throw new Error('Données plats invalides (pas un tableau)');
@@ -30,7 +36,7 @@ export const useSupabaseData = () => {
           return null;
         }
 
-        // Normalisation difficulty (simplifiée)
+        // Normalisation difficulty (inchangée)
         let difficulty = 'medium';
         if (dish.difficulty) {
           if (typeof dish.difficulty === 'string') {
@@ -63,12 +69,10 @@ export const useSupabaseData = () => {
           instructionTranslations: dish.instructionTranslations || {},
           _originalDifficulty: dish.difficulty,
         } as Dish;
-      }).filter((d): d is Dish => d !== null); // filtre les plats invalides
+      }).filter((d): d is Dish => d !== null);
 
+      // Un seul batch de setState → un seul re-render
       setDishes(transformed);
-
-      // Ingrédients
-      const ingData = await getIngredients(i18n.language);
       setIngredients(Array.isArray(ingData) ? ingData : []);
 
     } catch (err: any) {
@@ -77,7 +81,7 @@ export const useSupabaseData = () => {
     } finally {
       setLoading(false);
     }
-  }, [i18n.language]); // Dépendance : langue uniquement (ou + user.preferences si besoin)
+  }, [i18n.language]);
 
   useEffect(() => {
     fetchData();

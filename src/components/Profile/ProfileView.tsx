@@ -10,16 +10,26 @@ interface Ingredient {
   name: Record<string, string>;
 }
 
+// Normalize i18n.language → 2-letter code ("fr-FR" → "fr")
+const shortLang = (lang: string) => lang.split('-')[0];
+
 export default function ProfileView() {
   const { state, dispatch } = useApp();
   const { t, i18n } = useTranslation();
-  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const lang = shortLang(i18n.language);
+
+  const [ingredients, setIngredients]               = useState<Ingredient[]>([]);
   const [dislikedIngredient, setDislikedIngredient] = useState('');
   const [filteredIngredients, setFilteredIngredients] = useState<Ingredient[]>([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showSuggestions, setShowSuggestions]       = useState(false);
+
+  // ── FIX 2 : dépendre de user.id seulement, pas de l'objet entier
+  //    Évite la boucle infinie causée par dispatch(SET_USER) dans l'effet.
+  const userId = state.user?.id;
 
   useEffect(() => {
-    if (!state.user) return;
+    if (!userId) return;
+
     async function fetchData() {
       try {
         const { data: ingredientsData, error: ingredientsError } = await supabase
@@ -28,20 +38,20 @@ export default function ProfileView() {
         if (ingredientsError) throw ingredientsError;
         setIngredients(ingredientsData || []);
 
-        if (!state.user) return;
-
         const { data: userPrefs, error: prefsError } = await supabase
           .from('user_preferences')
           .select('disliked_ingredients')
-          .eq('user_id', state.user.id)
+          .eq('user_id', userId)
           .single();
-        if (prefsError && prefsError.code !== 'PGRST116') {
-          throw prefsError;
-        }
+
+        if (prefsError && prefsError.code !== 'PGRST116') throw prefsError;
+
+        if (!state.user) return;
         dispatch({
           type: 'SET_USER',
           payload: {
             ...state.user,
+            // FIX 1 : tout convertir en string dès le chargement
             dislikedIngredients: (userPrefs?.disliked_ingredients ?? []).map(String),
           },
         });
@@ -50,9 +60,12 @@ export default function ProfileView() {
         console.error('Error fetching user preferences:', error);
       }
     }
-    fetchData();
-  }, [state.user, dispatch, t]);
 
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId]); // ← uniquement l'ID, pas state.user
+
+  // ── Suggestions autocomplete ──
   useEffect(() => {
     if (!dislikedIngredient.trim()) {
       setFilteredIngredients([]);
@@ -60,26 +73,21 @@ export default function ProfileView() {
       return;
     }
     const query = dislikedIngredient.toLowerCase();
-    const lang = i18n.language;
+    // FIX 3 : utiliser le code court (ex: "fr" et non "fr-FR")
     const matches = ingredients.filter((ingr) => {
-      const nameInLang = ingr.name?.[lang] || ingr.name?.en || '';
-      return nameInLang.toLowerCase().includes(query);
+      const name = ingr.name?.[lang] || ingr.name?.en || '';
+      return name.toLowerCase().includes(query);
     });
     setFilteredIngredients(matches);
     setShowSuggestions(true);
-  }, [dislikedIngredient, ingredients, i18n.language]);
+  }, [dislikedIngredient, ingredients, lang]);
 
-  const saveUserPreferences = async (newPrefs: {
-    disliked_ingredients?: string[];
-  }) => {
+  const saveUserPreferences = async (newPrefs: { disliked_ingredients?: string[] }) => {
     if (!state.user) return false;
     try {
       const { error } = await supabase
         .from('user_preferences')
-        .upsert(
-          { user_id: state.user.id, ...newPrefs },
-          { onConflict: 'user_id' }
-        );
+        .upsert({ user_id: state.user.id, ...newPrefs }, { onConflict: 'user_id' });
       if (error) throw error;
       return true;
     } catch (error) {
@@ -91,20 +99,30 @@ export default function ProfileView() {
 
   const handleAddDislikedIngredient = async () => {
     if (!state.user) return;
+
     const selected = filteredIngredients.find(
-      (ingr) => (ingr.name[i18n.language] || ingr.name.en) === dislikedIngredient
+      (ingr) => (ingr.name[lang] || ingr.name.en) === dislikedIngredient
     );
     if (!selected) {
       toast.error(t('profile.invalidIngredient'));
       return;
     }
-    const newDisliked = [...(state.user.dislikedIngredients || []), String(selected.id)];
+
+    const selectedId = String(selected.id);
+
+    // FIX 4 : éviter les doublons
+    if ((state.user.dislikedIngredients || []).includes(selectedId)) {
+      toast.error(t('profile.ingredientAdded')); // déjà présent
+      setDislikedIngredient('');
+      setShowSuggestions(false);
+      return;
+    }
+
+    const newDisliked = [...(state.user.dislikedIngredients || []), selectedId];
     const ok = await saveUserPreferences({ disliked_ingredients: newDisliked });
     if (!ok) return;
-    dispatch({
-      type: 'SET_USER',
-      payload: { ...state.user, dislikedIngredients: newDisliked },
-    });
+
+    dispatch({ type: 'SET_USER', payload: { ...state.user, dislikedIngredients: newDisliked } });
     setDislikedIngredient('');
     setShowSuggestions(false);
     toast.success(t('profile.ingredientAdded'));
@@ -117,111 +135,129 @@ export default function ProfileView() {
     );
     const ok = await saveUserPreferences({ disliked_ingredients: newDisliked });
     if (!ok) return;
-    dispatch({
-      type: 'SET_USER',
-      payload: { ...state.user, dislikedIngredients: newDisliked },
-    });
+    dispatch({ type: 'SET_USER', payload: { ...state.user, dislikedIngredients: newDisliked } });
     toast.success(t('profile.ingredientRemoved'));
   };
+
+  // ── Helpers ──
+  // FIX 1 : comparaison String(ing.id) === ingredientId
+  const findIngredient = (id: string) =>
+    ingredients.find((ing) => String(ing.id) === id);
+
+  const getIngredientName = (ingr: Ingredient) =>
+    ingr.name[lang] || ingr.name.en || String(ingr.id);
 
   const renderSuggestions = () => {
     if (!showSuggestions || !filteredIngredients.length) return null;
     return (
-      <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-lg shadow-lg mt-1 max-h-60 overflow-auto">
+      <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-lg shadow-soft mt-1 max-h-60 overflow-auto">
         {filteredIngredients.map((ingr) => (
           <li
             key={ingr.id}
-            className="px-4 py-2 hover:bg-gray-100 cursor-pointer font-body"
+            className="px-4 py-2 hover:bg-neutral-100 cursor-pointer font-body"
             onMouseDown={() => {
-              setDislikedIngredient(ingr.name[i18n.language] || ingr.name.en);
+              setDislikedIngredient(getIngredientName(ingr));
               setShowSuggestions(false);
             }}
           >
-            {ingr.name[i18n.language] || ingr.name.en}
+            {getIngredientName(ingr)}
           </li>
         ))}
       </ul>
     );
   };
 
+  // ── Non connecté ──
   if (!state.user) {
     return (
       <div className="text-center py-12">
-        <h2 className="text-2xl font-heading font-semibold text-gray-900 mb-2">
+        <h2 className="text-2xl font-heading font-semibold text-content-title mb-2">
           {t('profile.pleaseLogin')}
         </h2>
-        <p className="text-gray-600 font-body">{t('profile.loginPrompt')}</p>
+        <p className="text-content-muted font-body">{t('profile.loginPrompt')}</p>
       </div>
     );
   }
 
+  const dislikedIds: string[] = state.user.dislikedIngredients || [];
+
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-2xl font-heading font-semibold text-gray-900 mb-4">
+
+      {/* ── Compte ── */}
+      <div className="bg-white rounded-lg shadow-card p-6">
+        <h2 className="text-2xl font-heading font-semibold text-content-title mb-4">
           {t('profile.accountDetails')}
         </h2>
         <div className="space-y-4">
           <div>
-            <label className="block text-gray-700 font-body font-medium">
+            <label className="block text-content-body font-body font-medium">
               {t('profile.name')}
             </label>
-            <p className="text-gray-900 font-body">
+            <p className="text-content-title font-body">
               {state.user.name || t('profile.anonymous')}
             </p>
           </div>
           <div>
-            <label className="block text-gray-700 font-body font-medium">
+            <label className="block text-content-body font-body font-medium">
               {t('profile.email')}
             </label>
-            <p className="text-gray-900 font-body">{state.user.email}</p>
+            <p className="text-content-title font-body">{state.user.email}</p>
           </div>
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-2xl font-heading font-semibold text-gray-900 mb-4">
-          {t('profile.dislikedIngredients')} ({state.user.dislikedIngredients?.length || 0})
+      {/* ── Ingrédients non aimés ── */}
+      <div className="bg-white rounded-lg shadow-card p-6">
+        <h2 className="text-2xl font-heading font-semibold text-content-title mb-4">
+          {t('profile.dislikedIngredients')} ({dislikedIds.length})
         </h2>
-        <div className="relative mb-6">
+
+        {/* Champ + suggestions */}
+        <div className="relative mb-3">
           <input
             type="text"
             value={dislikedIngredient}
             onChange={(e) => setDislikedIngredient(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleAddDislikedIngredient()}
             placeholder={t('profile.addIngredientPlaceholder')}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             autoComplete="off"
-            onFocus={() => setShowSuggestions(true)}
+            onFocus={() => dislikedIngredient.trim() && setShowSuggestions(true)}
             onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
             aria-label={t('profile.addIngredientPlaceholder')}
           />
           {renderSuggestions()}
         </div>
+
         <button
           onClick={handleAddDislikedIngredient}
-          className="w-full px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-all font-body font-medium"
-          disabled={!dislikedIngredient}
+          disabled={!dislikedIngredient.trim()}
+          className="w-full px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-all font-body font-medium disabled:opacity-40 disabled:cursor-not-allowed mb-6"
         >
           {t('profile.add')}
         </button>
-        {state.user.dislikedIngredients?.length ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-6">
-            {state.user.dislikedIngredients.map((ingredientId: string) => {
-              const ingredient = ingredients.find((ing) => ing.id === ingredientId);
+
+        {/* Liste des ingrédients non aimés */}
+        {dislikedIds.length > 0 ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            {dislikedIds.map((ingredientId) => {
+              // FIX 1 appliqué via findIngredient()
+              const ingr = findIngredient(ingredientId);
+              const name = ingr ? getIngredientName(ingr) : ingredientId;
               return (
                 <div
                   key={ingredientId}
                   className="flex items-center justify-between p-3 bg-red-50 border border-red-200 rounded-lg"
                 >
-                  <span className="font-body font-medium text-gray-900">
-                    {ingredient ? ingredient.name[i18n.language] || ingredient.name.en : ingredientId}
+                  <span className="font-body font-medium text-content-title truncate mr-2">
+                    {name}
                   </span>
                   <button
                     onClick={() => handleRemoveDislikedIngredient(ingredientId)}
-                    className="text-red-500 hover:text-red-700 transition-colors"
-                    aria-label={t('profile.removeIngredient', {
-                      name: ingredient ? ingredient.name[i18n.language] || ingredient.name.en : ingredientId,
-                    })}
+                    className="text-red-500 hover:text-red-700 transition-colors flex-shrink-0"
+                    // FIX 5 : clé profile.removeIngredient maintenant présente dans les JSON
+                    aria-label={t('profile.removeIngredient', { name })}
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -230,7 +266,7 @@ export default function ProfileView() {
             })}
           </div>
         ) : (
-          <p className="text-gray-500 font-body text-center py-8">
+          <p className="text-content-muted font-body text-center py-8">
             {t('profile.noDislikedIngredients')}
           </p>
         )}

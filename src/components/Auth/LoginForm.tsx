@@ -122,13 +122,13 @@ export default function LoginForm() {
           <LanguageSelector />
         </div>
 
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="bg-white rounded-2xl shadow-medium p-8">
           {/* Switch */}
-          <div className="flex mb-6 bg-gray-50 rounded-lg overflow-hidden">
+          <div className="flex mb-6 bg-neutral-50 rounded-lg overflow-hidden">
             <button
               onClick={() => setIsLogin(true)}
               className={`flex-1 py-3 font-medium ${
-                isLogin ? "bg-orange-500 text-white" : "text-gray-600"
+                isLogin ? "bg-orange-500 text-white" : "text-content-muted"
               }`}
             >
               {t("auth.login")}
@@ -136,7 +136,7 @@ export default function LoginForm() {
             <button
               onClick={() => setIsLogin(false)}
               className={`flex-1 py-3 font-medium ${
-                !isLogin ? "bg-orange-500 text-white" : "text-gray-600"
+                !isLogin ? "bg-orange-500 text-white" : "text-content-muted"
               }`}
             >
               {t("auth.signUp")}
@@ -159,7 +159,7 @@ export default function LoginForm() {
 
             <div className="relative">
               <Mail
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-content-hint"
                 size={18}
               />
               <input
@@ -175,7 +175,7 @@ export default function LoginForm() {
 
             <div className="relative">
               <Lock
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-content-hint"
                 size={18}
               />
               <input
@@ -190,7 +190,7 @@ export default function LoginForm() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-content-hint"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -219,14 +219,14 @@ export default function LoginForm() {
             </button>
           </form>
 
-          <div className="my-6 text-center text-gray-500">
+          <div className="my-6 text-center text-content-muted">
             {t("auth.orContinueWith")}
           </div>
 
           <button
             onClick={() => handleSocialLogin("google")}
             disabled={isLoading}
-            className="w-full border border-gray-300 py-3 rounded-lg font-medium flex items-center justify-center gap-2 hover:bg-gray-50"
+            className="w-full border border-gray-300 py-3 rounded-lg font-medium flex items-center justify-center gap-2 hover:bg-neutral-50"
           >
             <img
               src="https://www.google.com/favicon.ico"

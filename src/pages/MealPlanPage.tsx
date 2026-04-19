@@ -28,17 +28,17 @@ export default function MealPlanPage() {
     <>
       <div className="max-w-7xl mx-auto p-6 space-y-6">
         {/* Header */}
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-lg shadow-card p-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
             <div className="flex items-center space-x-4 mb-4 md:mb-0">
-              <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
-                <Calendar className="h-6 w-6 text-primary" />
+              <div className="w-12 h-12 bg-secondary-100 rounded-full flex items-center justify-center">
+                <Calendar className="h-6 w-6 text-primary-500" />
               </div>
               <div>
-                <h1 className="text-3xl font-heading font-bold text-gray-900">
+                <h1 className="text-3xl font-heading font-bold text-content-title">
                   {t('mealPlan.title')}
                 </h1>
-                <p className="text-gray-600 font-body">
+                <p className="text-content-muted font-body">
                   {t('mealPlan.description')}
                 </p>
               </div>
@@ -48,7 +48,7 @@ export default function MealPlanPage() {
             <button
               onClick={() => setShowPrintModal(true)}
               disabled={totalMeals === 0}
-              className="flex items-center space-x-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center space-x-2 px-4 py-2 bg-secondary-500 text-white rounded-lg hover:bg-secondary-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Printer className="h-4 w-4" />
               <span className="font-body font-medium">{t('mealPlan.print.printCalendar')}</span>
@@ -57,32 +57,32 @@ export default function MealPlanPage() {
 
           {/* Statistics */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="text-center p-4 bg-blue-50 rounded-lg">
-              <div className="text-2xl font-heading font-bold text-blue-600 mb-1">
+            <div className="text-center p-4 bg-primary-50 rounded-xl">
+              <div className="text-2xl font-bold text-primary-500-600 mb-1">
                 {totalMeals}
               </div>
-              <div className="text-sm text-gray-600 font-body">{t('mealPlan.totalMeals')}</div>
+              <div className="text-sm text-content-muted font-body">{t('mealPlan.totalMeals')}</div>
             </div>
             
-            <div className="text-center p-4 bg-green-50 rounded-lg">
-              <div className="text-2xl font-heading font-bold text-green-600 mb-1">
+            <div className="text-center p-4 bg-accent-50 rounded-xl">
+              <div className="text-2xl font-bold text-accent-600 mb-1">
                 {uniqueDishes}
               </div>
-              <div className="text-sm text-gray-600 font-body">{t('mealPlan.uniqueDishes')}</div>
+              <div className="text-sm text-content-muted font-body">{t('mealPlan.uniqueDishes')}</div>
             </div>
             
-            <div className="text-center p-4 bg-purple-50 rounded-lg">
-              <div className="text-2xl font-heading font-bold text-purple-600 mb-1">
+            <div className="text-center p-4 bg-primary-50 rounded-xl">
+              <div className="text-2xl font-bold text-primary-500-500 mb-1">
                 {totalCookingTime}m
               </div>
-              <div className="text-sm text-gray-600 font-body">{t('mealPlan.totalCookingTime')}</div>
+              <div className="text-sm text-content-muted font-body">{t('mealPlan.totalCookingTime')}</div>
             </div>
             
-            <div className="text-center p-4 bg-orange-50 rounded-lg">
-              <div className="text-2xl font-heading font-bold text-orange-600 mb-1">
+            <div className="text-center p-4 bg-secondary-50 rounded-xl">
+              <div className="text-2xl font-bold text-secondary-600 mb-1">
                 {totalServings}
               </div>
-              <div className="text-sm text-gray-600 font-body">{t('mealPlan.totalServings')}</div>
+              <div className="text-sm text-content-muted font-body">{t('mealPlan.totalServings')}</div>
             </div>
           </div>
         </div>
@@ -95,10 +95,10 @@ export default function MealPlanPage() {
 
           {/* Upcoming Meals Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="bg-white rounded-lg shadow-card p-6">
               <div className="flex items-center space-x-2 mb-4">
-                <TrendingUp className="h-5 w-5 text-primary" />
-                <h3 className="text-lg font-heading font-semibold text-gray-900">
+                <TrendingUp className="h-5 w-5 text-primary-500" />
+                <h3 className="text-lg font-heading font-semibold text-content-title">
                   {t('mealPlan.upcomingMeals')}
                 </h3>
               </div>
@@ -106,7 +106,7 @@ export default function MealPlanPage() {
               {upcomingMeals.length > 0 ? (
                 <div className="space-y-3 max-h-96 overflow-y-auto">
                   {upcomingMeals.slice(0, 10).map((meal) => (
-                    <div key={meal.id} className="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-all">
+                    <div key={meal.id} className="p-3 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-all">
                       <div className="flex items-start space-x-3">
                         <img
                           src={meal.dish.image}
@@ -114,15 +114,15 @@ export default function MealPlanPage() {
                           className="w-12 h-12 object-cover rounded-lg"
                         />
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-body font-medium text-gray-900 text-sm truncate">
+                          <h4 className="font-body font-medium text-content-title text-sm truncate">
                             {meal.dish.title}
                           </h4>
-                          <div className="flex items-center space-x-2 text-xs text-gray-500 mt-1">
+                          <div className="flex items-center space-x-2 text-xs text-content-muted mt-1">
                             <span>{new Date(meal.date).toLocaleDateString()}</span>
                             <span>•</span>
                             <span>{t(`mealPlan.${meal.mealType}`)}</span>
                           </div>
-                          <div className="flex items-center space-x-3 text-xs text-gray-500 mt-1">
+                          <div className="flex items-center space-x-3 text-xs text-content-muted mt-1">
                             <div className="flex items-center space-x-1">
                               <Clock className="h-3 w-3" />
                               <span>{meal.dish.cookingTime}m</span>
@@ -139,11 +139,11 @@ export default function MealPlanPage() {
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <ChefHat className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-                  <p className="text-gray-500 font-body text-sm">
+                  <ChefHat className="h-12 w-12 text-content-hint mx-auto mb-3" />
+                  <p className="text-content-muted font-body text-sm">
                     {t('mealPlan.noUpcomingMeals')}
                   </p>
-                  <p className="text-gray-400 font-body text-xs mt-1">
+                  <p className="text-content-hint font-body text-xs mt-1">
                     {t('mealPlan.startScheduling')}
                   </p>
                 </div>

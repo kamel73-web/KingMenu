@@ -186,9 +186,9 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
 
         {/* CONTENT BELOW — unchanged */}
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-12rem)]">
-          <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+          <div className="mb-6 p-4 bg-neutral-50 rounded-lg">
             <div className="flex items-center justify-between">
-              <span className="font-body font-medium text-gray-700">{t('recipeDetails.adjustServings')}</span>
+              <span className="font-body font-medium text-content-body">{t('recipeDetails.adjustServings')}</span>
               <div className="flex items-center space-x-3">
                 <button
                   onClick={() => setServings(Math.max(1, servings - 1))}
@@ -211,7 +211,7 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
 
             {/* INGREDIENTS */}
             <div>
-              <h3 className="text-xl font-heading font-semibold text-gray-900 mb-4">
+              <h3 className="text-xl font-heading font-semibold text-content-title mb-4">
                 {t('recipeDetails.ingredients')}
               </h3>
               <div className="space-y-3">
@@ -220,21 +220,21 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
                     key={index}
                     className={`p-3 rounded-lg border transition-all cursor-pointer ${
                       highlightedIngredients.has(ingredient.name.toLowerCase())
-                        ? 'border-orange-500 bg-orange-50'
-                        : 'border-gray-200 hover:border-gray-300'
+                        ? 'border-secondary-500 bg-orange-50'
+                        : 'border-neutral-200 hover:border-gray-300'
                     }`}
                     onMouseEnter={() => handleIngredientHover(ingredient.name)}
                     onMouseLeave={handleIngredientLeave}
                   >
                     <div className="flex justify-between items-center">
-                      <span className="font-body font-medium text-gray-900">
+                      <span className="font-body font-medium text-content-title">
                         {ingredient.name}
                       </span>
                       <span className="text-orange-500 font-body font-semibold">
                         {adjustQuantity(ingredient.amount)} {translateUnit(ingredient.unit)}
                       </span>
                     </div>
-                    <span className="text-xs text-gray-500 capitalize">
+                    <span className="text-xs text-content-muted capitalize">
                       {ingredient.category}
                     </span>
                   </div>
@@ -244,7 +244,7 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
 
             {/* INSTRUCTIONS */}
             <div>
-              <h3 className="text-xl font-heading font-semibold text-gray-900 mb-4">
+              <h3 className="text-xl font-heading font-semibold text-content-title mb-4">
                 {t('recipeDetails.instructions')}
               </h3>
               <div className="space-y-4">
@@ -253,8 +253,8 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
                     key={index}
                     className={`p-4 rounded-lg border transition-all ${
                       completedSteps.has(index)
-                        ? 'border-green-300 bg-green-50'
-                        : 'border-gray-200'
+                        ? 'border-accent-200 bg-accent-50'
+                        : 'border-neutral-200'
                     }`}
                   >
                     <div className="flex items-start space-x-3">
@@ -262,8 +262,8 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
                         onClick={() => handleStepToggle(index)}
                         className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
                           completedSteps.has(index)
-                            ? 'border-green-500 bg-green-500'
-                            : 'border-gray-300 hover:border-orange-500'
+                            ? 'border-accent-400 bg-accent-400'
+                            : 'border-gray-300 hover:border-secondary-500'
                         }`}
                       >
                         {completedSteps.has(index) && (
@@ -276,7 +276,7 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
                             {t('recipe.step')} {index + 1}
                           </span>
                         </div>
-                        <p className={`font-body text-gray-700 ${
+                        <p className={`font-body text-content-body ${
                           completedSteps.has(index) ? 'line-through opacity-60' : ''
                         }`}>
                           {String(instruction)}

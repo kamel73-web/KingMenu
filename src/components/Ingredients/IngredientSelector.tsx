@@ -89,27 +89,27 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
   return (
     <div className="max-w-4xl mx-auto p-4">
       {/* Header */}
-      <h2 className="text-2xl font-bold text-gray-900 mb-2">
+      <h2 className="text-2xl font-bold text-content-title mb-2">
         {t('ingredientsSection.whatsInKitchen')}
       </h2>
-      <p className="text-gray-600 mb-6">
+      <p className="text-content-muted mb-6">
         {t('ingredientsSection.whatsInKitchenDesc')}
       </p>
 
       {/* Barre de recherche */}
       <div className="relative mb-6">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-content-hint pointer-events-none" />
         <input
           type="text"
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
           placeholder={t('ingredientsSection.searchIngredients', 'Rechercher un ingrédient...')}
-          className="w-full pl-12 pr-10 py-3 border-2 border-gray-200 rounded-full focus:border-orange-400 focus:ring-2 focus:ring-orange-100 outline-none transition-all text-gray-800"
+          className="w-full pl-12 pr-10 py-3 border-2 border-neutral-200 rounded-full focus:border-orange-400 focus:ring-2 focus:ring-orange-100 outline-none transition-all text-content-title"
         />
         {searchTerm && (
           <button
             onClick={() => setSearchTerm('')}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-content-hint hover:text-content-muted"
           >
             <X className="h-5 w-5" />
           </button>
@@ -152,11 +152,11 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
       {/* Résultats */}
       {loading ? (
         <div className="flex items-center justify-center py-16">
-          <div className="animate-spin h-10 w-10 rounded-full border-4 border-orange-500 border-t-transparent" />
+          <div className="animate-spin h-10 w-10 rounded-full border-4 border-secondary-500 border-t-transparent" />
         </div>
       ) : filteredIngredients.length === 0 ? (
-        <div className="text-center py-12 text-gray-500">
-          <Search className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+        <div className="text-center py-12 text-content-muted">
+          <Search className="h-12 w-12 mx-auto mb-3 text-content-hint" />
           <p>Aucun ingrédient trouvé pour <strong>"{searchTerm}"</strong></p>
           <button onClick={() => setSearchTerm('')} className="mt-2 text-orange-500 underline text-sm">
             Effacer la recherche
@@ -166,7 +166,7 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
         <>
           {/* Compteur */}
           {searchTerm && (
-            <p className="text-sm text-gray-500 mb-4">
+            <p className="text-sm text-content-muted mb-4">
               {totalFiltered} résultat{totalFiltered > 1 ? 's' : ''} pour "<strong>{searchTerm}</strong>"
             </p>
           )}
@@ -174,9 +174,9 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
           {/* Grille par catégorie */}
           {(Object.entries(groupedIngredients) as [string, any[]][]).map(([category, items]) => (
             <div key={category} className="mb-6">
-              <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3 px-1">
+              <h3 className="text-sm font-bold text-content-muted uppercase tracking-wider mb-3 px-1">
                 {getCategoryName(category.toLowerCase())}
-                <span className="ml-2 text-xs font-normal text-gray-400">({items.length})</span>
+                <span className="ml-2 text-xs font-normal text-content-hint">({items.length})</span>
               </h3>
               <div className="flex flex-wrap gap-2">
                 {items.map((ingredient: any) => {
@@ -187,8 +187,8 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
                       onClick={() => dispatch({ type: 'TOGGLE_SELECTED_INGREDIENT', payload: ingredient })}
                       className={`px-4 py-2 rounded-full text-sm font-medium transition-all border-2 ${
                         isSelected
-                          ? 'bg-orange-500 border-orange-500 text-white shadow-sm'
-                          : 'bg-white border-gray-200 text-gray-700 hover:border-orange-300 hover:bg-orange-50'
+                          ? 'bg-orange-500 border-secondary-500 text-white shadow-sm'
+                          : 'bg-white border-neutral-200 text-content-body hover:border-orange-300 hover:bg-orange-50'
                       }`}
                     >
                       {resolveName(ingredient.name)}
@@ -205,7 +205,7 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
             <button
               onClick={handleFindDishes}
               disabled={selectedIngredients.length === 0}
-              className="w-full py-4 bg-orange-500 text-white rounded-2xl font-bold text-lg hover:bg-orange-600 transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-lg"
+              className="w-full py-4 bg-orange-500 text-white rounded-2xl font-bold text-lg hover:bg-orange-600 transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-soft"
             >
               {selectedIngredients.length === 0
                 ? t('ingredientsSection.selectAtLeastOne', 'Sélectionnez au moins un ingrédient')

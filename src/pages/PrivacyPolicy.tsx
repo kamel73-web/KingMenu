@@ -2,7 +2,7 @@
 
 export default function PrivacyPolicy() {
   return (
-    <div className="max-w-4xl mx-auto p-6 text-gray-800">
+    <div className="max-w-4xl mx-auto p-6 text-content-title">
       <h1 className="text-3xl font-bold mb-4">Privacy Policy</h1>
       <p className="mb-6">Last updated: October 2, 2025</p>
 
@@ -60,7 +60,7 @@ export default function PrivacyPolicy() {
         If you have questions about this Privacy Policy, contact us at:{" "}
         <a
           href="mailto:allogusto@gmail.com"
-          className="text-blue-600 underline"
+          className="text-primary-500 underline"
         >
           allogusto@gmail.com
         </a>

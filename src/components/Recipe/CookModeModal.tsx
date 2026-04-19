@@ -1,5 +1,9 @@
-import { useState, useEffect } from 'react';
-import { X, Play, Pause, RotateCcw, ChevronLeft, ChevronRight, Volume2, VolumeX } from 'lucide-react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import {
+  X, Play, Pause, RotateCcw,
+  ChevronLeft, ChevronRight, Volume2, VolumeX,
+} from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Dish } from '../../types';
 
 interface CookModeModalProps {
@@ -9,256 +13,329 @@ interface CookModeModalProps {
 }
 
 export default function CookModeModal({ dish, isOpen, onClose }: CookModeModalProps) {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [timer, setTimer] = useState(0);
-  const [isTimerRunning, setIsTimerRunning] = useState(false);
-  const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
-  const [voiceEnabled, setVoiceEnabled] = useState(false);
+  const { t, i18n } = useTranslation(['cookMode', 'translation']);
+  const tc = (key: string, opts?: Record<string, unknown>) =>
+    t(`cookMode.${key}`, { ns: 'cookMode', ...opts });
 
+  const [currentStep, setCurrentStep]         = useState(0);
+  const [timer, setTimer]                     = useState(0);
+  const [isTimerRunning, setIsTimerRunning]   = useState(false);
+  const [completedSteps, setCompletedSteps]   = useState<Set<number>>(new Set());
+  const [voiceEnabled, setVoiceEnabled]       = useState(false);
+  const [voices, setVoices]                   = useState<SpeechSynthesisVoice[]>([]);
+  const [selectedVoice, setSelectedVoice]     = useState<string>('');
+  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+
+  /* ── Timer ── */
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isTimerRunning) {
-      interval = setInterval(() => {
-        setTimer(prev => prev + 1);
-      }, 1000);
-    }
-    return () => clearInterval(interval);
+    if (!isTimerRunning) return;
+    const id = setInterval(() => setTimer(p => p + 1), 1000);
+    return () => clearInterval(id);
   }, [isTimerRunning]);
 
+  /* ── Load voices ── */
   useEffect(() => {
-    if (voiceEnabled && 'speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(dish.instructions[currentStep]);
-      utterance.rate = 0.8;
-      speechSynthesis.speak(utterance);
+    if (!('speechSynthesis' in window)) return;
+    const load = () => {
+      const v = speechSynthesis.getVoices();
+      setVoices(v);
+      const lang = i18n.language.split('-')[0];
+      const match = v.find(x => x.lang.startsWith(lang));
+      if (match) setSelectedVoice(match.voiceURI);
+    };
+    load();
+    speechSynthesis.addEventListener('voiceschanged', load);
+    return () => speechSynthesis.removeEventListener('voiceschanged', load);
+  }, [i18n.language]);
+
+  /* ── Speak current step ── */
+  const speak = useCallback((text: string) => {
+    if (!('speechSynthesis' in window)) return;
+    speechSynthesis.cancel();
+    const utt = new SpeechSynthesisUtterance(text);
+    utt.rate = 0.85;
+    const voice = voices.find(v => v.voiceURI === selectedVoice);
+    if (voice) utt.voice = voice;
+    else {
+      const lang = i18n.language.split('-')[0];
+      const fallback = voices.find(v => v.lang.startsWith(lang));
+      if (fallback) utt.voice = fallback;
     }
-  }, [currentStep, voiceEnabled, dish.instructions]);
+    utteranceRef.current = utt;
+    speechSynthesis.speak(utt);
+  }, [voices, selectedVoice, i18n.language]);
+
+  useEffect(() => {
+    if (!isOpen) { speechSynthesis.cancel?.(); return; }
+    if (voiceEnabled && dish.instructions[currentStep]) {
+      speak(String(dish.instructions[currentStep]));
+    }
+  }, [currentStep, voiceEnabled, isOpen, speak, dish.instructions]);
+
+  /* ── Reset on open ── */
+  useEffect(() => {
+    if (isOpen) {
+      setCurrentStep(0);
+      setTimer(0);
+      setIsTimerRunning(false);
+      setCompletedSteps(new Set());
+    } else {
+      speechSynthesis.cancel?.();
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
+  const instructions = dish.instructions ?? [];
+  const total        = instructions.length;
+
+  const formatTime = (s: number) =>
+    `${Math.floor(s / 60).toString().padStart(2, '0')}:${(s % 60).toString().padStart(2, '0')}`;
 
   const handleStepComplete = () => {
-    const newCompleted = new Set(completedSteps);
-    newCompleted.add(currentStep);
-    setCompletedSteps(newCompleted);
-    
-    if (currentStep < dish.instructions.length - 1) {
-      setCurrentStep(currentStep + 1);
-    }
+    setCompletedSteps(prev => new Set(prev).add(currentStep));
+    if (currentStep < total - 1) setCurrentStep(p => p + 1);
   };
 
-  const handlePrevStep = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
-    }
+  const go = (delta: number) => {
+    const next = Math.max(0, Math.min(total - 1, currentStep + delta));
+    setCurrentStep(next);
   };
 
-  const handleNextStep = () => {
-    if (currentStep < dish.instructions.length - 1) {
-      setCurrentStep(currentStep + 1);
+  const progress = total > 0 ? Math.round(((currentStep + 1) / total) * 100) : 0;
+
+  const toggleVoice = () => {
+    if (voiceEnabled) {
+      speechSynthesis.cancel();
+      setVoiceEnabled(false);
+    } else {
+      setVoiceEnabled(true);
+      if (instructions[currentStep]) speak(String(instructions[currentStep]));
     }
   };
-
-  const progress = ((currentStep + 1) / dish.instructions.length) * 100;
 
   return (
-    <div className="fixed inset-0 bg-black z-50 flex flex-col">
-      {/* Header */}
-      <div className="bg-gray-900 text-white p-3 sm:p-4 flex items-center justify-between">
-        <div className="flex items-center space-x-4">
+    <div className="fixed inset-0 bg-gray-950 z-50 flex flex-col">
+
+      {/* ── Header ── */}
+      <div className="bg-neutral-900 border-b border-gray-800 text-white px-3 sm:px-4 py-3 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0">
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-800 rounded-lg transition-all"
+            className="p-2 hover:bg-neutral-800 rounded-lg transition-all flex-shrink-0"
+            aria-label={t('common.close', { ns: 'translation' })}
           >
-            <X className="h-6 w-6" />
+            <X className="h-5 w-5 text-content-hint" />
           </button>
-          <div>
-            <h2 className="text-lg sm:text-xl font-heading font-bold">{dish.title}</h2>
-            <p className="text-xs sm:text-sm text-gray-300">Cook Mode</p>
+          <div className="min-w-0">
+            <h2 className="text-base sm:text-lg font-bold text-white truncate">{dish.title}</h2>
+            <p className="text-xs text-content-hint">{tc('title')}</p>
           </div>
         </div>
-        
-        <div className="flex items-center space-x-2 sm:space-x-4">
-          {/* Timer */}
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={() => setIsTimerRunning(!isTimerRunning)}
-              className="p-1.5 sm:p-2 bg-primary hover:bg-primary-dark rounded-lg transition-all"
-            >
-              {isTimerRunning ? <Pause className="h-4 w-4 sm:h-5 sm:w-5" /> : <Play className="h-4 w-4 sm:h-5 sm:w-5" />}
-            </button>
-            <span className="font-mono text-sm sm:text-lg">{formatTime(timer)}</span>
-            <button
-              onClick={() => {
-                setTimer(0);
-                setIsTimerRunning(false);
-              }}
-              className="p-1.5 sm:p-2 hover:bg-gray-800 rounded-lg transition-all"
-            >
-              <RotateCcw className="h-4 w-4 sm:h-5 sm:w-5" />
-            </button>
-          </div>
 
-          {/* Voice Toggle */}
+        {/* Timer + Voice */}
+        <div className="flex items-center gap-2 flex-shrink-0">
           <button
-            onClick={() => setVoiceEnabled(!voiceEnabled)}
-            className={`p-1.5 sm:p-2 rounded-lg transition-all ${
-              voiceEnabled ? 'bg-accent text-white' : 'hover:bg-gray-800'
+            onClick={() => setIsTimerRunning(p => !p)}
+            className="p-1.5 bg-violet-600 hover:bg-violet-500 rounded-lg transition-all"
+          >
+            {isTimerRunning
+              ? <Pause className="h-4 w-4 text-white" />
+              : <Play  className="h-4 w-4 text-white" />}
+          </button>
+          <span className="font-mono text-sm text-white tabular-nums w-14 text-center">
+            {formatTime(timer)}
+          </span>
+          <button
+            onClick={() => { setTimer(0); setIsTimerRunning(false); }}
+            className="p-1.5 hover:bg-neutral-800 rounded-lg transition-all"
+          >
+            <RotateCcw className="h-4 w-4 text-content-hint" />
+          </button>
+
+          <div className="w-px h-6 bg-gray-700 mx-1" />
+
+          <button
+            onClick={toggleVoice}
+            title={voiceEnabled ? tc('mute') : tc('unmute')}
+            className={`p-1.5 rounded-lg transition-all ${
+              voiceEnabled ? 'bg-violet-600 text-white' : 'hover:bg-neutral-800 text-content-hint'
             }`}
           >
-            {voiceEnabled ? <Volume2 className="h-4 w-4 sm:h-5 sm:w-5" /> : <VolumeX className="h-4 w-4 sm:h-5 sm:w-5" />}
+            {voiceEnabled
+              ? <Volume2  className="h-4 w-4" />
+              : <VolumeX  className="h-4 w-4" />}
           </button>
+
+          {/* Voice selector (only when enabled and voices available) */}
+          {voiceEnabled && voices.length > 0 && (
+            <select
+              value={selectedVoice}
+              onChange={e => setSelectedVoice(e.target.value)}
+              className="text-xs bg-neutral-800 text-gray-200 border border-gray-700 rounded px-1 py-1 max-w-[120px]"
+            >
+              {voices.map(v => (
+                <option key={v.voiceURI} value={v.voiceURI}>
+                  {v.name.length > 16 ? v.name.slice(0, 16) + '…' : v.name}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
       </div>
 
-      {/* Progress Bar */}
-      <div className="bg-gray-800 px-3 sm:px-4 py-2">
-        <div className="flex items-center justify-between text-white text-xs sm:text-sm mb-2">
-          <span>Step {currentStep + 1} of {dish.instructions.length}</span>
-          <span>{Math.round(progress)}% Complete</span>
+      {/* ── Progress bar ── */}
+      <div className="bg-neutral-900 px-4 pt-3 pb-3 border-b border-gray-800">
+        <div className="flex items-center justify-between text-xs text-content-hint mb-2">
+          <span className="font-medium text-gray-200">
+            {tc('stepCount', { current: currentStep + 1, total })}
+          </span>
+          <span>{tc('percentComplete', { percent: progress })}</span>
         </div>
-        <div className="w-full bg-gray-700 rounded-full h-2">
+        <div className="w-full bg-neutral-800 rounded-full h-1.5">
           <div
-            className="bg-primary h-2 rounded-full transition-all duration-300"
+            className="bg-violet-500 h-1.5 rounded-full transition-all duration-300"
             style={{ width: `${progress}%` }}
           />
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 flex">
-        {/* Ingredients Sidebar */}
-        <div className="hidden lg:block w-80 bg-gray-100 p-6 overflow-y-auto">
-          <h3 className="text-lg font-heading font-semibold text-gray-900 mb-4">
-            Ingredients
-          </h3>
-          <div className="space-y-3">
-            {dish.ingredients.map((ingredient, index) => (
+      {/* ── Body ── */}
+      <div className="flex-1 flex overflow-hidden">
+
+        {/* Sidebar ingredients (lg+) */}
+        <div className="hidden lg:flex flex-col w-72 xl:w-80 bg-neutral-900 border-r border-gray-800 overflow-y-auto">
+          <div className="px-5 pt-5 pb-3">
+            <h3 className="text-sm font-semibold text-content-hint uppercase tracking-wider">
+              {tc('ingredients')}
+            </h3>
+          </div>
+          <div className="px-4 pb-4 space-y-2">
+            {dish.ingredients.map((ing, i) => (
               <div
-                key={index}
-                className="p-3 bg-white rounded-lg border border-gray-200"
+                key={i}
+                className="flex items-center justify-between px-3 py-2.5 bg-neutral-800 rounded-xl border border-gray-700"
               >
-                <div className="flex justify-between items-center">
-                  <span className="font-body font-medium text-gray-900">
-                    {ingredient.name}
-                  </span>
-                  <span className="text-primary font-body font-semibold">
-                    {ingredient.amount} {ingredient.unit}
-                  </span>
-                </div>
+                <span className="text-sm text-gray-200 font-medium">{ing.name}</span>
+                <span className="text-sm text-violet-400 font-semibold ml-3 flex-shrink-0">
+                  {ing.amount} {ing.unit}
+                </span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Instructions */}
-        <div className="flex-1 flex flex-col">
-          <div className="flex-1 flex items-center justify-center p-4 sm:p-8">
-            <div className="max-w-2xl text-center w-full">
-              <div className="mb-8">
-                <span className="inline-block px-3 sm:px-4 py-1.5 sm:py-2 bg-primary text-white rounded-full text-xs sm:text-sm font-body font-medium mb-4">
-                  Step {currentStep + 1}
+        {/* Instructions area */}
+        <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+
+          {/* Scrollable content */}
+          <div className="flex-1 overflow-y-auto flex flex-col items-center justify-center px-4 sm:px-8 py-6">
+            <div className="w-full max-w-2xl">
+
+              {/* Step badge */}
+              <div className="flex justify-center mb-6">
+                <span className="px-4 py-1.5 bg-violet-600 text-white text-sm font-semibold rounded-full">
+                  {t('recipe.step', { ns: 'translation' })} {currentStep + 1}
                 </span>
-                <p className="text-lg sm:text-xl lg:text-2xl font-body text-gray-800 leading-relaxed px-4">
-                  {String(dish.instructions[currentStep])}
-                </p>
               </div>
 
-              {/* Mobile Ingredients Panel */}
-              <div className="lg:hidden mb-6 p-4 bg-gray-100 rounded-lg">
-                <h4 className="text-sm font-heading font-semibold text-gray-900 mb-3">
-                  Ingredients for this step
+              {/* Instruction text */}
+              <p className="text-lg sm:text-xl lg:text-2xl text-white leading-relaxed text-center font-medium">
+                {String(instructions[currentStep] ?? '')}
+              </p>
+
+              {/* Completed badge */}
+              {completedSteps.has(currentStep) && (
+                <div className="mt-6 p-4 bg-accent-600/30 border border-accent-400 rounded-xl text-center">
+                  <p className="text-accent-300 font-medium">{tc('stepCompletedBadge')}</p>
+                </div>
+              )}
+
+              {/* Mobile ingredients */}
+              <div className="lg:hidden mt-8 p-4 bg-neutral-800 rounded-xl border border-gray-700">
+                <h4 className="text-xs font-semibold text-content-hint uppercase tracking-wider mb-3">
+                  {tc('ingredientsStep')}
                 </h4>
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  {dish.ingredients.slice(0, 4).map((ingredient, index) => (
-                    <div
-                      key={index}
-                      className="p-2 bg-white rounded border border-gray-200"
-                    >
-                      <div className="font-medium text-gray-900 truncate">
-                        {ingredient.name}
-                      </div>
-                      <div className="text-primary font-semibold">
-                        {ingredient.amount} {ingredient.unit}
+                <div className="grid grid-cols-2 gap-2">
+                  {dish.ingredients.slice(0, 4).map((ing, i) => (
+                    <div key={i} className="p-2.5 bg-gray-700 rounded-lg border border-gray-600">
+                      <div className="text-xs font-medium text-gray-200 truncate">{ing.name}</div>
+                      <div className="text-xs text-violet-400 font-semibold mt-0.5">
+                        {ing.amount} {ing.unit}
                       </div>
                     </div>
                   ))}
                 </div>
                 {dish.ingredients.length > 4 && (
-                  <p className="text-xs text-gray-500 mt-2">
-                    +{dish.ingredients.length - 4} more ingredients
+                  <p className="text-xs text-content-muted mt-2 text-center">
+                    {tc('moreIngredients', { count: dish.ingredients.length - 4 })}
                   </p>
                 )}
               </div>
 
-              {completedSteps.has(currentStep) && (
-                <div className="mb-6 p-4 bg-green-100 border border-green-300 rounded-lg">
-                  <p className="text-green-800 font-body text-sm sm:text-base">✓ Step completed!</p>
-                </div>
-              )}
             </div>
           </div>
 
-          {/* Navigation Controls */}
-          <div className="bg-white border-t border-gray-200 p-3 sm:p-6">
-            <div className="flex flex-col items-center justify-center max-w-2xl mx-auto space-y-3">
-              {/* Mobile: Stack buttons vertically */}
-              <div className="flex sm:hidden w-full justify-center space-x-4 px-4">
+          {/* ── Navigation controls ── */}
+          <div className="bg-neutral-900 border-t border-gray-800 px-4 py-4">
+            <div className="max-w-2xl mx-auto">
+
+              {/* Mobile */}
+              <div className="flex sm:hidden items-center justify-center gap-4">
                 <button
-                  onClick={handlePrevStep}
+                  onClick={() => go(-1)}
                   disabled={currentStep === 0}
-                  className="w-12 h-12 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                  className="w-12 h-12 bg-neutral-800 text-content-hint rounded-full hover:bg-gray-700 transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center"
                 >
                   <ChevronLeft className="h-6 w-6" />
                 </button>
-                
+
                 <button
                   onClick={handleStepComplete}
-                  className="w-16 h-16 bg-primary text-white rounded-full hover:bg-primary-dark transition-all font-body font-bold text-lg flex items-center justify-center shadow-lg"
+                  className="w-16 h-16 bg-violet-600 hover:bg-violet-500 text-white rounded-full transition-all shadow-soft flex items-center justify-center text-lg font-bold"
                 >
-                  {currentStep === dish.instructions.length - 1 ? '✓' : currentStep + 1}
+                  {currentStep === total - 1 ? '✓' : currentStep + 2}
                 </button>
-                
+
                 <button
-                  onClick={handleNextStep}
-                  disabled={currentStep === dish.instructions.length - 1}
-                  className="w-12 h-12 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                  onClick={() => go(1)}
+                  disabled={currentStep === total - 1}
+                  className="w-12 h-12 bg-neutral-800 text-content-hint rounded-full hover:bg-gray-700 transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center"
                 >
                   <ChevronRight className="h-6 w-6" />
                 </button>
               </div>
-              
-              {/* Desktop: Show buttons horizontally */}
-              <div className="hidden sm:flex items-center justify-center space-x-6">
+
+              {/* Desktop */}
+              <div className="hidden sm:flex items-center justify-center gap-4">
                 <button
-                  onClick={handlePrevStep}
+                  onClick={() => go(-1)}
                   disabled={currentStep === 0}
-                  className="flex items-center space-x-2 px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-2 px-6 py-3 bg-neutral-800 text-gray-200 rounded-xl hover:bg-gray-700 transition-all disabled:opacity-30 disabled:cursor-not-allowed font-medium"
                 >
                   <ChevronLeft className="h-5 w-5" />
-                  <span className="font-body font-medium">Previous</span>
+                  {t('recipeDetails.previous', { ns: 'translation' })}
                 </button>
-                
+
                 <button
                   onClick={handleStepComplete}
-                  className="px-8 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-all font-body font-medium"
+                  className="px-8 py-3 bg-violet-600 hover:bg-violet-500 text-white rounded-xl transition-all font-semibold shadow-card"
                 >
-                  {currentStep === dish.instructions.length - 1 ? 'Finish Cooking' : 'Complete Step'}
+                  {currentStep === total - 1
+                    ? t('recipeDetails.finishCooking',  { ns: 'translation' })
+                    : t('recipeDetails.completeStep',   { ns: 'translation' })}
                 </button>
-                
+
                 <button
-                  onClick={handleNextStep}
-                  disabled={currentStep === dish.instructions.length - 1}
-                  className="flex items-center space-x-2 px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={() => go(1)}
+                  disabled={currentStep === total - 1}
+                  className="flex items-center gap-2 px-6 py-3 bg-neutral-800 text-gray-200 rounded-xl hover:bg-gray-700 transition-all disabled:opacity-30 disabled:cursor-not-allowed font-medium"
                 >
-                  <span className="font-body font-medium">Next</span>
+                  {t('recipeDetails.next', { ns: 'translation' })}
                   <ChevronRight className="h-5 w-5" />
                 </button>
               </div>
+
             </div>
           </div>
         </div>

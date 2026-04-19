@@ -90,7 +90,7 @@ export default function RecipeViewer({
   }, [dishes, i18n.language]);
 
   if (!selectedDish) {
-    return <div className="p-4 text-gray-500">{t('common.loading', 'Chargement...')}</div>;
+    return <div className="p-4 text-content-muted">{t('common.loading', 'Chargement...')}</div>;
   }
 
   const baseServings = selectedDish.servings ?? 4;
@@ -105,17 +105,17 @@ export default function RecipeViewer({
     <div className="p-4 space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900">{selectedDish.title}</h2>
+        <h2 className="text-2xl font-bold text-content-title">{selectedDish.title}</h2>
         <div className="flex gap-2">
           {onPrint && (
-            <button onClick={onPrint} className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-all" title={t('print', 'Imprimer')}>
+            <button onClick={onPrint} className="p-2 text-content-muted hover:bg-neutral-100 rounded-lg transition-all" title={t('print', 'Imprimer')}>
               <Printer className="w-4 h-4" />
             </button>
           )}
-          <button onClick={handleDownload} className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-all" title={t('download', 'Télécharger')}>
+          <button onClick={handleDownload} className="p-2 text-content-muted hover:bg-neutral-100 rounded-lg transition-all" title={t('download', 'Télécharger')}>
             <Download className="w-4 h-4" />
           </button>
-          <button onClick={handleShare} className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-all" title={t('share', 'Partager')}>
+          <button onClick={handleShare} className="p-2 text-content-muted hover:bg-neutral-100 rounded-lg transition-all" title={t('share', 'Partager')}>
             <Share2 className="w-4 h-4" />
           </button>
           {onEnterCookMode && (
@@ -127,7 +127,7 @@ export default function RecipeViewer({
       </div>
 
       {/* Metadata */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm text-gray-600">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm text-content-muted">
         <div className="flex items-center gap-2">
           <Clock className="w-4 h-4 text-primary-500" />
           <span>{selectedDish.cookingTime} {t('dish.minutes', 'min')}</span>
@@ -145,7 +145,7 @@ export default function RecipeViewer({
       {/* Dish selector (when multiple dishes) */}
       {dishes.length > 1 && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-content-body mb-1">
             {t('select_recipe', 'Choisir une recette')}
           </label>
           <select
@@ -165,7 +165,7 @@ export default function RecipeViewer({
 
       {/* Servings adjuster */}
       <div className="flex items-center gap-3">
-        <label htmlFor="servings" className="text-sm font-medium text-gray-700">
+        <label htmlFor="servings" className="text-sm font-medium text-content-body">
           {t('adjust_servings', 'Ajuster les portions')} :
         </label>
         <input
@@ -181,13 +181,13 @@ export default function RecipeViewer({
 
       {/* Ingredients */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('recipe.ingredients', 'Ingrédients')}</h3>
+        <h3 className="text-lg font-semibold text-content-title mb-2">{t('recipe.ingredients', 'Ingrédients')}</h3>
         {loadingIngredients ? (
-          <p className="text-gray-500 text-sm">{t('common.loading', 'Chargement...')}</p>
+          <p className="text-content-muted text-sm">{t('common.loading', 'Chargement...')}</p>
         ) : (
           <ul className="space-y-1">
             {adjustedIngredients.map(ingredient => (
-              <li key={ingredient.id} className="flex items-center gap-2 text-sm text-gray-700">
+              <li key={ingredient.id} className="flex items-center gap-2 text-sm text-content-body">
                 <span className="w-1.5 h-1.5 bg-primary-400 rounded-full flex-shrink-0" />
                 <span className="font-medium">{ingredient.amount} {ingredient.unit}</span>
                 <span>{ingredient.name}</span>
@@ -199,11 +199,11 @@ export default function RecipeViewer({
 
       {/* Instructions */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('recipe.instructions', 'Instructions')}</h3>
+        <h3 className="text-lg font-semibold text-content-title mb-2">{t('recipe.instructions', 'Instructions')}</h3>
         {selectedDish.instructions?.length > 0 ? (
           <ol className="space-y-2">
             {selectedDish.instructions.map((step, index) => (
-              <li key={index} className="flex gap-3 text-sm text-gray-700">
+              <li key={index} className="flex gap-3 text-sm text-content-body">
                 <span className="w-6 h-6 bg-primary-100 text-primary-700 rounded-full flex items-center justify-center font-bold flex-shrink-0 text-xs">
                   {index + 1}
                 </span>
@@ -212,7 +212,7 @@ export default function RecipeViewer({
             ))}
           </ol>
         ) : (
-          <p className="text-gray-500 text-sm">{t('no_steps', 'Aucune instruction disponible.')}</p>
+          <p className="text-content-muted text-sm">{t('no_steps', 'Aucune instruction disponible.')}</p>
         )}
       </div>
     </div>

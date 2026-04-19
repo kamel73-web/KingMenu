@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>King Menu</title>
+    <script>
+      var path = location.pathname;
+      // Ne pas rediriger les fichiers statiques HTML
+      if (path.endsWith('.html') || path.endsWith('.pdf') || path.endsWith('.txt')) {
+        // Laisser GitHub Pages gérer le 404 normal
+      } else {
+        sessionStorage.redirect = path;
+        window.location.replace('/KingMenu/');
+      }
+    </script>
+  </head>
+</html>

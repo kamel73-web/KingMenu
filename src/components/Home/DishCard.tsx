@@ -44,20 +44,23 @@ export default function DishCard({ dish, favorites = [], toggleFavorite }: DishC
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty?.toLowerCase()) {
-      case 'easy': return 'bg-green-100 text-green-700';
-      case 'medium': return 'bg-yellow-100 text-yellow-700';
-      case 'hard': return 'bg-red-100 text-red-700';
-      default: return 'bg-gray-100 text-gray-700';
+      case 'easy':   return 'bg-success-50 text-success-600';
+      case 'medium': return 'bg-warning-50 text-warning-600';
+      case 'hard':   return 'bg-error-50 text-error-600';
+      default:       return 'bg-neutral-100 text-content-muted';
     }
   };
 
   return (
     <>
-      <div className="bg-white rounded-3xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group flex flex-col w-full font-sans">
+      <div className="bg-white rounded-3xl shadow-card border border-neutral-100 overflow-hidden hover:shadow-medium transition-all duration-300 hover:-translate-y-1 group flex flex-col w-full font-sans">
         <div className="relative">
+          {/* ── MODIFICATION : lazy loading natif du navigateur ── */}
           <img
             src={translatedDish.image}
             alt={translatedDish.title}
+            loading="lazy"
+            decoding="async"
             className="w-full h-72 object-cover group-hover:scale-105 transition-transform duration-500 rounded-t-3xl"
           />
 
@@ -70,7 +73,7 @@ export default function DishCard({ dish, favorites = [], toggleFavorite }: DishC
           </div>
 
           <div className="absolute top-4 right-4 flex items-center gap-2">
-            <span className="bg-white/90 px-3 py-1.5 rounded-full text-xs font-semibold text-gray-700 shadow">
+            <span className="bg-white/90 px-3 py-1.5 rounded-full text-xs font-semibold text-content-body shadow-soft">
               {translatedDish.cuisine}
             </span>
           </div>
@@ -78,7 +81,7 @@ export default function DishCard({ dish, favorites = [], toggleFavorite }: DishC
           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center backdrop-blur-sm">
             <button
               onClick={() => setShowRecipeModal(true)}
-              className="flex items-center space-x-2 px-6 py-3 bg-[#5E2EED] text-white rounded-full hover:bg-[#4d24d0] transition-all transform scale-95 hover:scale-100 shadow-lg font-semibold"
+              className="flex items-center space-x-2 px-6 py-3 bg-primary-500 text-white rounded-full hover:bg-primary-600 transition-all transform scale-95 hover:scale-100 shadow-medium font-semibold"
             >
               <Eye className="h-5 w-5" />
               <span>{t('dish.previewRecipe')}</span>
@@ -89,19 +92,19 @@ export default function DishCard({ dish, favorites = [], toggleFavorite }: DishC
         <div className="p-6 flex flex-col flex-1 justify-between">
           <div>
             <div className="flex items-start justify-between gap-2 mb-3">
-              <h3 className="font-bold text-2xl text-gray-900 leading-snug">{translatedDish.title}</h3>
+              <h3 className="font-bold text-2xl text-content-title leading-snug">{translatedDish.title}</h3>
               <Link
                 to={`/dish/${dish.id}`}
-                className="flex-shrink-0 p-1.5 text-gray-400 hover:text-primary-500 transition-colors"
+                className="flex-shrink-0 p-1.5 text-content-hint hover:text-primary-500 transition-colors"
                 title={t('dish.viewDetails', 'Voir le détail')}
               >
                 <ExternalLink className="h-4 w-4" />
               </Link>
             </div>
 
-            <div className="flex items-center space-x-5 text-sm text-gray-600 mb-4">
+            <div className="flex items-center space-x-5 text-sm text-content-muted mb-4">
               <div className="flex items-center space-x-1.5">
-                <Clock className="h-5 w-5 text-[#5E2EED]" />
+                <Clock className="h-5 w-5 text-primary-500" />
                 <span className="font-semibold">{dish.cookingTime}{t('dish.minutes')}</span>
               </div>
 
@@ -115,7 +118,7 @@ export default function DishCard({ dish, favorites = [], toggleFavorite }: DishC
 
             <div className="flex flex-wrap gap-2 mb-5">
               {dish.tags?.slice(0, 3).map(tag => (
-                <span key={tag} className="px-4 py-1.5 bg-gray-100 text-gray-700 text-xs rounded-full font-medium">
+                <span key={tag} className="px-3 py-1 bg-primary-50 text-primary-700 text-xs rounded-full font-medium">
                   {translateTag(tag)}
                 </span>
               ))}
@@ -128,16 +131,14 @@ export default function DishCard({ dish, favorites = [], toggleFavorite }: DishC
             {/* MOBILE */}
             <div className="flex sm:hidden justify-between items-center w-full gap-2">
 
-              {/* Recette */}
               <button
                 onClick={() => setShowRecipeModal(true)}
-                className="w-12 h-12 border-2 border-primary-200 text-primary-500 rounded-full hover:bg-primary-50 transition-all flex items-center justify-center"
+                className="w-12 h-12 border border-primary-200 text-primary-500 rounded-full hover:bg-primary-50 hover:border-primary-500 transition-all flex items-center justify-center"
                 title={t('dish.recipe')}
               >
                 <Eye className="h-4 w-4" />
               </button>
 
-              {/* Calendrier */}
               <button
                 onClick={handleScheduleDish}
                 className="w-12 h-12 bg-secondary-500 text-white rounded-full hover:bg-secondary-600 transition-all flex items-center justify-center"
@@ -146,18 +147,16 @@ export default function DishCard({ dish, favorites = [], toggleFavorite }: DishC
                 <Calendar className="h-4 w-4" />
               </button>
 
-              {/* Ajouter */}
               <button
                 onClick={handleAddDish}
                 className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${
-                  isSelected ? 'bg-accent-500 text-white' : 'bg-primary-500 text-white'
+                  isSelected ? 'bg-accent-400 text-white hover:bg-accent-500' : 'bg-primary-500 text-white hover:bg-primary-600'
                 }`}
                 title={isSelected ? t('dish.added') : t('dish.add')}
               >
                 {isSelected ? <Check className="h-5 w-5" /> : <Plus className="h-5 w-5" />}
               </button>
 
-              {/* ❤️ Favoris */}
               <div className="w-12 h-12 flex items-center justify-center">
                 <AddToFavoritesButton dishId={dish.id} favorites={favorites} toggleFavorite={toggleFavorite} />
               </div>
@@ -167,7 +166,7 @@ export default function DishCard({ dish, favorites = [], toggleFavorite }: DishC
             <div className="hidden sm:grid sm:grid-cols-4 w-full gap-2">
               <button
                 onClick={() => setShowRecipeModal(true)}
-                className="flex items-center justify-center py-3 border-2 border-primary-500 text-primary-500 rounded-full hover:bg-primary-50 transition-all"
+                className="flex items-center justify-center py-3 border border-primary-200 text-primary-500 rounded-full hover:bg-primary-50 hover:border-primary-500 transition-all"
                 title={t('dish.recipe')}
               >
                 <Eye className="h-4 w-4" />
@@ -175,7 +174,7 @@ export default function DishCard({ dish, favorites = [], toggleFavorite }: DishC
 
               <button
                 onClick={handleScheduleDish}
-                className="flex items-center justify-center py-3 border-2 border-secondary-500 text-secondary-500 rounded-full hover:bg-secondary-50 transition-all"
+                className="flex items-center justify-center py-3 border border-secondary-200 text-secondary-500 rounded-full hover:bg-secondary-50 hover:border-secondary-500 transition-all"
                 title={t('mealPlan.scheduleDish')}
               >
                 <Calendar className="h-4 w-4" />
@@ -184,14 +183,14 @@ export default function DishCard({ dish, favorites = [], toggleFavorite }: DishC
               <button
                 onClick={handleAddDish}
                 className={`flex items-center justify-center py-3 rounded-full transition-all ${
-                  isSelected ? 'bg-accent-500 text-white' : 'bg-primary-500 text-white'
+                  isSelected ? 'bg-accent-400 text-white hover:bg-accent-500' : 'bg-primary-500 text-white hover:bg-primary-600'
                 }`}
                 title={isSelected ? t('dish.added') : t('dish.add')}
               >
                 {isSelected ? <Check className="h-5 w-5" /> : <Plus className="h-5 w-5" />}
               </button>
 
-              <div className="flex items-center justify-center py-3 border-2 border-warm-gray-200 rounded-full hover:bg-warm-gray-50 transition-all">
+              <div className="flex items-center justify-center py-3 border border-neutral-200 rounded-full hover:bg-neutral-50 transition-all">
                 <AddToFavoritesButton dishId={dish.id} size={20} favorites={favorites} toggleFavorite={toggleFavorite} />
               </div>
             </div>

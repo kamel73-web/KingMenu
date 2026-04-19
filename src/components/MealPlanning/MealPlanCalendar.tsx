@@ -120,10 +120,10 @@ export default function MealPlanCalendar() {
   const getMealTypeColor = (mealType: string) => {
     switch (mealType) {
       case 'breakfast': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'lunch': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'dinner': return 'bg-purple-100 text-purple-800 border-purple-200';
-      case 'snack': return 'bg-green-100 text-green-800 border-green-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'lunch':   return 'bg-primary-100 text-primary-800 border-primary-200';
+      case 'dinner':  return 'bg-primary-50 text-primary-700 border-primary-200';
+      case 'snack':   return 'bg-accent-50 text-accent-700 border-accent-100';
+      default: return 'bg-neutral-100 text-content-title border-neutral-200';
     }
   };
 
@@ -154,7 +154,7 @@ export default function MealPlanCalendar() {
 
   return (
     <>
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
+      <div className="bg-white rounded-lg shadow-card overflow-hidden">
         {/* Calendar Header */}
         <div className="bg-primary text-white p-6">
           <div className="flex items-center justify-between">
@@ -191,7 +191,7 @@ export default function MealPlanCalendar() {
           {/* Week Days Header */}
           <div className="grid grid-cols-7 gap-1 mb-4">
             {weekDays.map((day) => (
-              <div key={day} className="p-3 text-center font-body font-semibold text-gray-600 bg-gray-50 rounded-lg">
+              <div key={day} className="p-3 text-center font-body font-semibold text-content-muted bg-neutral-50 rounded-lg">
                 {day}
               </div>
             ))}
@@ -202,21 +202,21 @@ export default function MealPlanCalendar() {
             {calendarDays.map((day, index) => (
               <div
                 key={index}
-                className={`min-h-[120px] p-2 border rounded-lg transition-all hover:bg-gray-50 ${
-                  day.isCurrentMonth ? 'bg-white border-gray-200' : 'bg-gray-50 border-gray-100'
+                className={`min-h-[120px] p-2 border rounded-lg transition-all hover:bg-neutral-50 ${
+                  day.isCurrentMonth ? 'bg-white border-neutral-200' : 'bg-neutral-50 border-neutral-100'
                 } ${day.isToday ? 'ring-2 ring-primary bg-primary/5' : ''}`}
               >
                 {/* Day Number */}
                 <div className="flex items-center justify-between mb-2">
                   <span className={`text-sm font-body font-medium ${
-                    day.isCurrentMonth ? 'text-gray-900' : 'text-gray-400'
+                    day.isCurrentMonth ? 'text-content-title' : 'text-content-hint'
                   } ${day.isToday ? 'text-primary font-bold' : ''}`}>
                     {new Date(day.date).getDate()}
                   </span>
                   {day.isCurrentMonth && (
                     <button
                       onClick={() => handleQuickSchedule(day.date)}
-                      className="p-1 text-gray-400 hover:text-primary hover:bg-primary/10 rounded transition-all"
+                      className="p-1 text-content-hint hover:text-primary hover:bg-primary/10 rounded transition-all"
                       title={t('mealPlan.addMeal')}
                     >
                       <Plus className="h-3 w-3" />
@@ -253,7 +253,7 @@ export default function MealPlanCalendar() {
                   ))}
                   
                   {day.meals.length > 2 && (
-                    <div className="text-xs text-gray-500 text-center py-1">
+                    <div className="text-xs text-content-muted text-center py-1">
                       +{day.meals.length - 2} {t('common.more')}
                     </div>
                   )}
@@ -264,7 +264,7 @@ export default function MealPlanCalendar() {
         </div>
 
         {/* Calendar Legend */}
-        <div className="border-t border-gray-200 p-4 bg-gray-50">
+        <div className="border-t border-neutral-200 p-4 bg-neutral-50">
           <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
             <div className="flex items-center space-x-2">
               <span>🌅</span>
