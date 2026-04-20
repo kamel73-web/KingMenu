@@ -235,7 +235,7 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
                         {ingredient.name}
                       </span>
                       <span className="text-orange-500 font-body font-semibold">
-                        {adjustQuantity(ingredient.amount)} {translateUnit(ingredient.unit)}
+                        {ingredient.noMeasure ? "" : `${adjustQuantity(ingredient.amount)} ${translateUnit(ingredient.unit)}`}
                       </span>
                     </div>
                     <span className="text-xs text-gray-500 capitalize">
