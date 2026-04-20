@@ -1,9 +1,6 @@
 // src/lib/supabase.ts
 import { createClient } from '@supabase/supabase-js';
 
-// ────────────────────────────────────────────────
-// Configuration (variables d'environnement uniquement)
-// ────────────────────────────────────────────────
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
@@ -13,21 +10,15 @@ if (!supabaseUrl || !supabaseAnonKey) {
   );
 }
 
-// ────────────────────────────────────────────────
-// Création du client Supabase
-// ────────────────────────────────────────────────
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
-    persistSession: true,           // Stocke la session dans localStorage
-    autoRefreshToken: true,         // Rafraîchit automatiquement le token
-    detectSessionInUrl: false,       // Essentiel pour GitHub Pages + HashRouter + OAuth
-    storageKey: 'kingmenu.auth.token', // Préfixe custom pour éviter conflits
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: false,
+    storageKey: 'kingmenu.auth.token',
   },
 });
 
-// ────────────────────────────────────────────────
-// Helpers Authentification
-// ────────────────────────────────────────────────
 export const getCurrentUser = async () => {
   const { data: { user }, error } = await supabase.auth.getUser();
   if (error) console.error('getCurrentUser error:', error);
@@ -74,7 +65,8 @@ export const getDishes = async (language: string = 'en') => {
         ingredient:ingredient_id (
           id,
           name,
-          category
+          category,
+          no_measure
         )
       )
     `)
@@ -92,7 +84,7 @@ export const getDishes = async (language: string = 'en') => {
 
     return {
       ...dish,
-      id: String(dish.id), // Toujours string pour cohérence avec React keys
+      id: String(dish.id),
       title: dish.name?.[language] || dish.name?.en || 'Plat sans titre',
       description: dish.description?.[language] || dish.description?.en || '',
       instructions: dish.steps?.[language] || dish.steps?.en || [],
@@ -106,9 +98,10 @@ export const getDishes = async (language: string = 'en') => {
         id: String(item.ingredient.id),
         name: item.ingredient.name?.[language] || item.ingredient.name?.en || 'Inconnu',
         category: item.ingredient.category?.[language] || '',
-        amount: String(item.quantity || '1'),
-        unit: item.unit?.[language] || item.unit?.en || 'pièce',
+        amount: item.ingredient?.no_measure ? '' : String(item.quantity || '1'),
+        unit: item.ingredient?.no_measure ? '' : (item.unit?.[language] || item.unit?.en || ''),
         isOptional: false,
+        noMeasure: item.ingredient?.no_measure || false,
       })),
     };
   });
@@ -135,7 +128,7 @@ export const getIngredientsForDish = async (dishId: number | string, language: s
     .select(`
       quantity,
       unit,
-      ingredient:ingredient_id (id, name, category)
+      ingredient:ingredient_id (id, name, category, no_measure)
     `)
     .eq('dish_id', dishId);
 
@@ -148,8 +141,9 @@ export const getIngredientsForDish = async (dishId: number | string, language: s
     id: String(item.ingredient.id),
     name: item.ingredient.name?.[language] || item.ingredient.name?.en || 'Inconnu',
     category: item.ingredient.category?.[language] || '',
-    amount: String(item.quantity || '1'),
-    unit: item.unit?.[language] || item.unit?.en || '',
+    amount: item.ingredient?.no_measure ? '' : String(item.quantity || '1'),
+    unit: item.ingredient?.no_measure ? '' : (item.unit?.[language] || item.unit?.en || ''),
+    noMeasure: item.ingredient?.no_measure || false,
   }));
 };
 
@@ -209,7 +203,7 @@ export const getSavedDishes = async (userId: string, language: string = 'en') =>
 export const saveDish = async (userId: string, dishId: number | string) => {
   return supabase.from('saved_dishes').insert({
     user_id: userId,
-    dish_id: Number(dishId), // Assure conversion
+    dish_id: Number(dishId),
   });
 };
 
