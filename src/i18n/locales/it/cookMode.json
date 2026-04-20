@@ -10,6 +10,9 @@
     "noVoices": "Nessuna voce disponibile nel tuo browser",
     "voiceError": "Guida vocale fallita. Per favore riprova.",
     "voiceUnsupported": "Sintesi vocale non supportata dal tuo browser",
-    "selectVoice": "Seleziona voce"
+    "selectVoice": "Seleziona voce",
+    "ingredientsStep": "Ingredienti",
+    "moreIngredients": "Servono altri ingredienti",
+    "percentComplete": "{{percent}}% completato"
   }
 }

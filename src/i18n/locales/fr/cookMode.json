@@ -10,6 +10,9 @@
     "noVoices": "Aucune voix disponible dans votre navigateur",
     "voiceError": "Échec du guidage vocal. Veuillez réessayer.",
     "voiceUnsupported": "La synthèse vocale n'est pas supportée par votre navigateur",
-    "selectVoice": "Choisir une voix"
+    "selectVoice": "Choisir une voix",
+    "ingredientsStep": "Ingrédients",
+    "moreIngredients": "Ingrédients supplémentaires nécessaires",
+    "percentComplete": "{{percent}}% complété"
   }
 }
