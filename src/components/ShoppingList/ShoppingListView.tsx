@@ -251,7 +251,7 @@ export default function ShoppingListView() {
                           </span>
                           <div className="flex items-center space-x-2">
                             <span className="text-sm text-gray-600">
-                              {ingredient.amount} {ingredient.unit}
+                              {ingredient.unit ? `${ingredient.amount} ${ingredient.unit}` : ""}
                             </span>
                             {sourceDish && (
                               <button
@@ -314,7 +314,7 @@ export default function ShoppingListView() {
                           </span>
                           <div className="flex items-center space-x-2">
                             <span className="text-sm text-gray-600">
-                              {ingredient.amount} {ingredient.unit}
+                              {ingredient.unit ? `${ingredient.amount} ${ingredient.unit}` : ""}
                             </span>
                             {sourceDish && (
                               <button
