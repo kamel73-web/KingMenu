@@ -232,7 +232,7 @@ export default function ShoppingListView() {
             </h2>
 
             {unownedIngredients.length > 0 ? (
-              <div className="space-y-3 max-h-96 overflow-y-auto">
+              <div className="space-y-3">
                 {unownedIngredients.map(ingredient => {
                   const sourceDish = findDishByIngredient(ingredient.name);
                   return (
@@ -293,7 +293,7 @@ export default function ShoppingListView() {
             </h2>
 
             {ownedIngredients.length > 0 ? (
-              <div className="space-y-3 max-h-96 overflow-y-auto">
+              <div className="space-y-3">
                 {ownedIngredients.map(ingredient => {
                   const sourceDish = findDishByIngredient(ingredient.name);
                   return (
