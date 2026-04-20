@@ -54,11 +54,13 @@ export default function CookModeModal({ dish, isOpen, onClose }: CookModeModalPr
     speechSynthesis.cancel();
     const utt = new SpeechSynthesisUtterance(text);
     utt.rate = 0.85;
+    const lang = i18n.language.split('-')[0];
+    const langMap: Record<string,string> = { en:'en-US', fr:'fr-FR', ar:'ar-SA', es:'es-ES', it:'it-IT' };
+    utt.lang = langMap[lang] || lang;
     const voice = voices.find(v => v.voiceURI === selectedVoice);
     if (voice) utt.voice = voice;
     else {
-      const lang = i18n.language.split('-')[0];
-      const fallback = voices.find(v => v.lang.startsWith(lang));
+          const fallback = voices.find(v => v.lang.startsWith(lang));
       if (fallback) utt.voice = fallback;
     }
     utteranceRef.current = utt;
