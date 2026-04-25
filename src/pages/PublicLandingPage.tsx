@@ -73,13 +73,17 @@ const PublicLandingPage: React.FC = () => {
 
       {/* Navbar : logo ligne 1, langues ligne 2 — plus de chevauchement */}
       <nav className="relative z-10 w-full px-4 py-3 max-w-6xl mx-auto">
-        <div className="flex items-center gap-2 mb-2">
+        <div className="flex items-center gap-3 mb-3">
           <img
             src="https://vehqvqlbtotljstixklz.supabase.co/storage/v1/object/public/Brand/logo%20KM.jpg"
             alt="KingMenu"
-            style={{ width: '120px', height: '120px', minWidth: '120px', borderRadius: '16px', objectFit: 'contain', border: '3px solid #f59e0b', flexShrink: 0, boxShadow: '0 0 20px rgba(245,158,11,0.4)', background: 'white' }}
+            className="w-14 h-14 sm:w-20 sm:h-20 md:w-24 md:h-24 flex-shrink-0 rounded-xl sm:rounded-2xl object-contain border-2 border-amber-400 bg-white"
+            style={{ boxShadow: '0 0 16px rgba(245,158,11,0.4)' }}
           />
-          <span className="font-black text-5xl tracking-tight text-white" style={{ fontFamily: "'Archivo Black', sans-serif" }}>
+          <span
+            className="font-black text-3xl sm:text-4xl md:text-5xl tracking-tight text-white leading-none"
+            style={{ fontFamily: "'Archivo Black', sans-serif" }}
+          >
             KingMenu
           </span>
         </div>
