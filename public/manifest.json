@@ -12,15 +12,15 @@
   "lang": "en",
   "icons": [
     {
-      "src": "https://vehqvqlbtotljstixklz.supabase.co/storage/v1/object/public/Brand/logo%20KM.jpg",
+      "src": "https://vehqvqlbtotljstixklz.supabase.co/storage/v1/object/public/Brand/icon_192_pwa.png",
       "sizes": "192x192",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "https://vehqvqlbtotljstixklz.supabase.co/storage/v1/object/public/Brand/logo%20KM.jpg",
+      "src": "https://vehqvqlbtotljstixklz.supabase.co/storage/v1/object/public/Brand/icon_512_playstore.png",
       "sizes": "512x512",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ],
@@ -30,14 +30,14 @@
       "short_name": "Planner",
       "description": "Plan your weekly meals",
       "url": "/KingMenu/#/meal-plan",
-      "icons": [{ "src": "https://vehqvqlbtotljstixklz.supabase.co/storage/v1/object/public/Brand/logo%20KM.jpg", "sizes": "96x96" }]
+      "icons": [{ "src": "https://vehqvqlbtotljstixklz.supabase.co/storage/v1/object/public/Brand/icon_192_pwa.png", "sizes": "192x192" }]
     },
     {
       "name": "Discover Recipes",
       "short_name": "Recipes",
       "description": "Browse our recipe collection",
       "url": "/KingMenu/#/home",
-      "icons": [{ "src": "https://vehqvqlbtotljstixklz.supabase.co/storage/v1/object/public/Brand/logo%20KM.jpg", "sizes": "96x96" }]
+      "icons": [{ "src": "https://vehqvqlbtotljstixklz.supabase.co/storage/v1/object/public/Brand/icon_192_pwa.png", "sizes": "192x192" }]
     }
   ],
   "prefer_related_applications": false
