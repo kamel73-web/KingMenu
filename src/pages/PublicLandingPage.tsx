@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from "react";
+import { BookOpen, CalendarDays, ShoppingCart, Carrot } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 const FEATURES = [
-  { emoji: "🍲", titleKey: "landing.featureRecipesTitle",      descKey: "landing.featureRecipesDesc" },
-  { emoji: "📅", titleKey: "landing.featurePlannerTitle",      descKey: "landing.featurePlannerDesc" },
-  { emoji: "🛒", titleKey: "landing.featureShoppingListTitle", descKey: "landing.featureShoppingListDesc" },
-  { emoji: "🥕", titleKey: "landing.featureIngredientsTitle",  descKey: "landing.featureIngredientsDesc" },
+  { Icon: BookOpen,    color: "text-amber-400",    bg: "bg-amber-400/15",    titleKey: "landing.featureRecipesTitle",      descKey: "landing.featureRecipesDesc" },
+  { Icon: CalendarDays,color: "text-violet-400",   bg: "bg-violet-400/15",   titleKey: "landing.featurePlannerTitle",      descKey: "landing.featurePlannerDesc" },
+  { Icon: ShoppingCart,color: "text-emerald-400",  bg: "bg-emerald-400/15",  titleKey: "landing.featureShoppingListTitle", descKey: "landing.featureShoppingListDesc" },
+  { Icon: Carrot,      color: "text-orange-400",   bg: "bg-orange-400/15",   titleKey: "landing.featureIngredientsTitle",  descKey: "landing.featureIngredientsDesc" },
 ];
 
 const LANGUAGES = [
-  { code: "en", flag: "🇬🇧", label: "EN" },
-  { code: "fr", flag: "🇫🇷", label: "FR" },
-  { code: "es", flag: "🇪🇸", label: "ES" },
-  { code: "it", flag: "🇮🇹", label: "IT" },
-  { code: "ar", flag: "🇸🇦", label: "AR" },
+  { code: "en", flagCode: "gb", label: "EN" },
+  { code: "fr", flagCode: "fr", label: "FR" },
+  { code: "es", flagCode: "es", label: "ES" },
+  { code: "it", flagCode: "it", label: "IT" },
+  { code: "ar", flagCode: "sa", label: "AR" },
 ];
 
 const PublicLandingPage: React.FC = () => {
@@ -88,13 +89,21 @@ const PublicLandingPage: React.FC = () => {
           </span>
         </div>
         <div className="flex gap-1.5 flex-wrap">
-          {LANGUAGES.map(({ code, flag, label }) => (
+          {LANGUAGES.map(({ code, flagCode, label }) => (
             <button
               key={code}
               onClick={() => handleLanguageChange(code)}
-              className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold transition-all ${i18n.language === code ? "bg-amber-500 text-gray-950 shadow-md" : "bg-white/10 text-gray-300 hover:bg-white/25"}`}
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold transition-all ${i18n.language === code ? "bg-amber-500 text-gray-950 shadow-md" : "bg-white/10 text-gray-300 hover:bg-white/25"}`}
             >
-              <span>{flag}</span><span>{label}</span>
+              <img
+                src={`https://flagcdn.com/20x15/${flagCode}.png`}
+                srcSet={`https://flagcdn.com/40x30/${flagCode}.png 2x`}
+                width="20" height="15"
+                alt={label}
+                className="rounded-sm object-cover"
+                style={{ display: 'inline-block' }}
+              />
+              <span>{label}</span>
             </button>
           ))}
         </div>
@@ -149,9 +158,11 @@ const PublicLandingPage: React.FC = () => {
           </h2>
           <p className="text-gray-400 text-center text-lg mb-14 max-w-xl mx-auto">{t("landing.featuresSubtitle")}</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {FEATURES.map(({ emoji, titleKey, descKey }) => (
+            {FEATURES.map(({ Icon, color, bg, titleKey, descKey }) => (
               <div key={titleKey} className="flex items-start gap-4 bg-gray-900 border border-white/8 rounded-2xl p-6 hover:border-amber-500/30 transition-all duration-200 group">
-                <span className="text-3xl flex-shrink-0 mt-0.5">{emoji}</span>
+                <div className={`w-12 h-12 ${bg} rounded-xl flex items-center justify-center flex-shrink-0`}>
+                  <Icon className={`h-6 w-6 ${color}`} />
+                </div>
                 <div>
                   <h3 className="font-bold text-white text-lg mb-1 group-hover:text-amber-400 transition-colors">{t(titleKey)}</h3>
                   <p className="text-gray-400 text-sm leading-relaxed">{t(descKey)}</p>
