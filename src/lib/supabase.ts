@@ -19,6 +19,37 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   },
 });
 
+// ────────────────────────────────────────────────
+// Helper interne : résout un champ JSONB multilingue
+// Gère 3 cas que Supabase peut retourner :
+//   1. Objet JS  : { en: "Dairy", fr: "Produits laitiers", ... }
+//   2. String JSON sérialisée : '{"en":"Dairy","fr":"Produits laitiers"}'
+//   3. String brute / null / undefined
+// ────────────────────────────────────────────────
+function resolveJsonb(field: any, language: string, fallback = ''): string {
+  if (!field) return fallback;
+
+  if (typeof field === 'string') {
+    try {
+      const parsed = JSON.parse(field);
+      if (typeof parsed === 'object' && parsed !== null) {
+        return parsed[language] || parsed['en'] || fallback;
+      }
+    } catch {
+      return field || fallback;
+    }
+  }
+
+  if (typeof field === 'object') {
+    return field[language] || field['en'] || fallback;
+  }
+
+  return fallback;
+}
+
+// ────────────────────────────────────────────────
+// Auth
+// ────────────────────────────────────────────────
 export const getCurrentUser = async () => {
   const { data: { user }, error } = await supabase.auth.getUser();
   if (error) console.error('getCurrentUser error:', error);
@@ -85,8 +116,8 @@ export const getDishes = async (language: string = 'en') => {
     return {
       ...dish,
       id: String(dish.id),
-      title: dish.name?.[language] || dish.name?.en || 'Plat sans titre',
-      description: dish.description?.[language] || dish.description?.en || '',
+      title: resolveJsonb(dish.name, language, 'Plat sans titre'),
+      description: resolveJsonb(dish.description, language, ''),
       instructions: dish.steps?.[language] || dish.steps?.en || [],
       cuisineId: cuisineId ? String(cuisineId) : null,
       cuisine:
@@ -96,10 +127,15 @@ export const getDishes = async (language: string = 'en') => {
         'Cuisine inconnue',
       ingredients: (dish.dish_ingredients || []).map((item: any) => ({
         id: String(item.ingredient.id),
-        name: item.ingredient.name?.[language] || item.ingredient.name?.en || 'Inconnu',
-        category: item.ingredient.category?.[language] || '',
+        name: resolveJsonb(item.ingredient.name, language, 'Inconnu'),
+        // ── CORRECTION BUG CATÉGORIE ──────────────────────────────
+        // Avant : item.ingredient.category?.[language] || ''
+        // → échouait si Supabase sérialisait le JSONB en string
+        // Après : resolveJsonb gère les 3 cas possibles
+        category: resolveJsonb(item.ingredient.category, language, ''),
+        // ─────────────────────────────────────────────────────────
         amount: item.ingredient?.no_measure ? '' : String(item.quantity || '1'),
-        unit: item.ingredient?.no_measure ? '' : (item.unit?.[language] || item.unit?.en || ''),
+        unit: item.ingredient?.no_measure ? '' : resolveJsonb(item.unit, language, ''),
         isOptional: false,
         noMeasure: item.ingredient?.no_measure || false,
       })),
@@ -118,7 +154,8 @@ export const getIngredients = async (language: string = 'en') => {
   }
   return (data || []).map((ing: any) => ({
     ...ing,
-    name: ing.name?.[language] || ing.name?.en || 'Ingrédient inconnu',
+    name: resolveJsonb(ing.name, language, 'Ingrédient inconnu'),
+    category: resolveJsonb(ing.category, language, ''),
   }));
 };
 
@@ -139,10 +176,12 @@ export const getIngredientsForDish = async (dishId: number | string, language: s
 
   return (data || []).map((item: any) => ({
     id: String(item.ingredient.id),
-    name: item.ingredient.name?.[language] || item.ingredient.name?.en || 'Inconnu',
-    category: item.ingredient.category?.[language] || '',
+    name: resolveJsonb(item.ingredient.name, language, 'Inconnu'),
+    // ── CORRECTION BUG CATÉGORIE ──────────────────────────────
+    category: resolveJsonb(item.ingredient.category, language, ''),
+    // ─────────────────────────────────────────────────────────
     amount: item.ingredient?.no_measure ? '' : String(item.quantity || '1'),
-    unit: item.ingredient?.no_measure ? '' : (item.unit?.[language] || item.unit?.en || ''),
+    unit: item.ingredient?.no_measure ? '' : resolveJsonb(item.unit, language, ''),
     noMeasure: item.ingredient?.no_measure || false,
   }));
 };
@@ -189,13 +228,13 @@ export const getSavedDishes = async (userId: string, language: string = 'en') =>
     dish: {
       ...saved.dishes,
       id: String(saved.dishes.id),
-      title: saved.dishes.name?.[language] || saved.dishes.name?.en || 'Sans titre',
-      description: saved.dishes.description?.[language] || saved.dishes.description?.en || '',
+      title: resolveJsonb(saved.dishes.name, language, 'Sans titre'),
+      description: resolveJsonb(saved.dishes.description, language, ''),
       instructions: saved.dishes.steps?.[language] || saved.dishes.steps?.en || [],
       cuisineId: saved.dishes.cuisine_type_id
         ? String(saved.dishes.cuisine_type_id)
         : null,
-      cuisine: saved.dishes.cuisine_type?.[language] || saved.dishes.cuisine_type?.en || 'Inconnue',
+      cuisine: resolveJsonb(saved.dishes.cuisine_type, language, 'Inconnue'),
     },
   }));
 };

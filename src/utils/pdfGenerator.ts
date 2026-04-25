@@ -3,8 +3,15 @@ import { MealPlan } from '../types';
 
 // Arabic text processing utilities
 export const reverseArabicText = (text: string): string => {
+  // Simple Arabic text reversal for RTL display
+  // This is a basic implementation - for production, consider using a proper Arabic shaping library
   const arabicRegex = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
-  if (!arabicRegex.test(text)) return text;
+  
+  if (!arabicRegex.test(text)) {
+    return text; // Not Arabic text, return as-is
+  }
+  
+  // Split by spaces and reverse word order for RTL
   const words = text.split(' ');
   return words.reverse().join(' ');
 };
@@ -14,11 +21,13 @@ export const isRTLLanguage = (language: string): boolean => {
 };
 
 export const formatTextForPDF = (text: string, language: string): string => {
-  if (isRTLLanguage(language)) return reverseArabicText(text);
+  if (isRTLLanguage(language)) {
+    return reverseArabicText(text);
+  }
   return text;
 };
 
-// Shopping list PDF — mise en page moderne 2 colonnes avec multipage
+// Shopping list PDF — mise en page moderne 2 colonnes
 export const generateShoppingListPDF = (
   title: string,
   items: Array<{ name: string; amount: string; unit: string; category: string }>,
@@ -27,8 +36,6 @@ export const generateShoppingListPDF = (
     generatedOn: string;
     totalItems: string;
     itemsToBuyTitle: string;
-    tagline?: string;
-    uncategorized?: string;
   }
 ) => {
   const doc = new jsPDF();
@@ -51,46 +58,33 @@ export const generateShoppingListPDF = (
   const colW     = (pageWidth - MARGIN * 2 - COL_GAP) / 2;
   const ROW_H    = 10;
   const HEADER_H = 26;
-  const FOOTER_H = 14;
 
-  // ── Dessine l'en-tête (réutilisé sur chaque page) ──
-  const drawPageHeader = () => {
-    doc.setFillColor(...COLOR_PRIMARY);
-    doc.rect(0, 0, pageWidth, HEADER_H, "F");
-    doc.setFillColor(...COLOR_ACCENT);
-    doc.rect(0, HEADER_H - 3, pageWidth, 3, "F");
-    doc.setTextColor(255, 255, 255);
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(22);
-    const titleX = isRTL ? pageWidth - MARGIN : MARGIN;
-    const titleAlign = isRTL ? "right" : "left";
-    doc.text(formatTextForPDF(title, language), titleX, 12, { align: titleAlign });
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    doc.setTextColor(210, 200, 255);
-    const dateStr = new Date().toLocaleDateString();
-    const subtitle = formatTextForPDF(
-      `${translations.generatedOn}: ${dateStr}   •   ${translations.totalItems}: ${items.length}`,
-      language
-    );
-    doc.text(subtitle, titleX, 21, { align: titleAlign });
-  };
+  doc.setFillColor(...COLOR_PRIMARY);
+  doc.rect(0, 0, pageWidth, HEADER_H, "F");
+  doc.setFillColor(...COLOR_ACCENT);
+  doc.rect(0, HEADER_H - 3, pageWidth, 3, "F");
 
-  // ── Dessine le pied de page ──
-  const drawPageFooter = () => {
-    const footerY = pageHeight - 8;
-    doc.setDrawColor(...COLOR_PRIMARY);
-    doc.setLineWidth(0.5);
-    doc.line(MARGIN, footerY - 4, pageWidth - MARGIN, footerY - 4);
-    doc.setFont("helvetica", "italic");
-    doc.setFontSize(8);
-    doc.setTextColor(...COLOR_MUTED);
-    doc.text(`KingMenu — ${translations.tagline || 'Plan. Cook. Enjoy.'}`, pageWidth / 2, footerY, { align: "center" });
-  };
+  doc.setTextColor(255, 255, 255);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(22);
+  const titleX = isRTL ? pageWidth - MARGIN : MARGIN;
+  const titleAlign = isRTL ? "right" : "left";
+  doc.text(formatTextForPDF(title, language), titleX, 12, { align: titleAlign });
 
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  doc.setTextColor(210, 200, 255);
+  const dateStr = new Date().toLocaleDateString();
+  const subtitle = formatTextForPDF(
+    `${translations.generatedOn}: ${dateStr}   •   ${translations.totalItems}: ${items.length}`,
+    language
+  );
+  doc.text(subtitle, titleX, 21, { align: titleAlign });
+
+  // ── Grouper et aplatir en liste de rows ──────────────────────────────────
   const grouped: Record<string, typeof items> = {};
   items.forEach(item => {
-    const cat = item.category || translations.uncategorized || 'Other';
+    const cat = item.category || "Autre";
     if (!grouped[cat]) grouped[cat] = [];
     grouped[cat].push(item);
   });
@@ -102,85 +96,192 @@ export const generateShoppingListPDF = (
     catItems.forEach(item => rows.push({ type: "item", item }));
   });
 
-  // ── Dessine une colonne avec gestion multipage ──
-  const drawColumn = (colRows: Row[], xStart: number) => {
-    let y = HEADER_H + 14;
-    const maxY = pageHeight - FOOTER_H - 4;
-
-    colRows.forEach((row, idx) => {
-      // Nouvelle page si nécessaire
-      if (y + ROW_H > maxY) {
-        drawPageFooter();
-        doc.addPage();
-        drawPageHeader();
-        y = HEADER_H + 14;
-      }
-
-      if (row.type === "header") {
-        doc.setFillColor(...COLOR_BG_HEADER);
-        doc.roundedRect(xStart, y - 6, colW, 9, 1.5, 1.5, "F");
-        doc.setDrawColor(...COLOR_BORDER);
-        doc.setLineWidth(0.3);
-        doc.roundedRect(xStart, y - 6, colW, 9, 1.5, 1.5, "S");
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(8);
-        doc.setTextColor(...COLOR_PRIMARY);
-        const catX = isRTL ? xStart + colW - 4 : xStart + 4;
-        doc.text(formatTextForPDF(row.label.toUpperCase(), language), catX, y, { align: isRTL ? "right" : "left" });
-        y += 11;
-      } else {
-        const rowColor = idx % 2 === 0 ? COLOR_ROW_ODD : COLOR_ROW_EVEN;
-        doc.setFillColor(...rowColor);
-        doc.rect(xStart, y - 5.5, colW, ROW_H, "F");
-        const cbX = isRTL ? xStart + colW - 5 : xStart + 3;
-        doc.setFillColor(...COLOR_CHECK_BG);
-        doc.roundedRect(cbX, y - 4, 5, 5, 1, 1, "F");
-        doc.setDrawColor(...COLOR_BORDER);
-        doc.setLineWidth(0.4);
-        doc.roundedRect(cbX, y - 4, 5, 5, 1, 1, "S");
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(9);
-        doc.setTextColor(...COLOR_TEXT);
-        const nameX = isRTL ? xStart + colW - 12 : xStart + 11;
-        const nameText = formatTextForPDF(row.item.name, language);
-        const nameLines = doc.splitTextToSize(nameText, colW - 40);
-        doc.text(nameLines[0], nameX, y, { align: isRTL ? "right" : "left" });
-
-        // ── Quantité : ne pas afficher si vide ou 0 ──
-        const rawAmount = parseFloat(row.item.amount);
-        const hasQty = row.item.amount && !isNaN(rawAmount) && rawAmount > 0 && row.item.unit;
-        if (hasQty) {
-          doc.setFont("helvetica", "bold");
-          doc.setFontSize(8);
-          doc.setTextColor(...COLOR_ACCENT);
-          const qty = `${row.item.amount} ${row.item.unit}`.trim();
-          const qtyX = isRTL ? xStart + 3 : xStart + colW - 3;
-          doc.text(formatTextForPDF(qty, language), qtyX, y, { align: isRTL ? "left" : "right" });
-        }
-
-        doc.setDrawColor(...COLOR_BORDER);
-        doc.setLineWidth(0.2);
-        doc.line(xStart, y + 4.5, xStart + colW, y + 4.5);
-        y += ROW_H + 1;
-      }
-    });
-  };
-
-  // ── Première page ──
-  drawPageHeader();
-
-  const half = Math.ceil(rows.length / 2);
-  const leftRows  = rows.slice(0, half);
-  const rightRows = rows.slice(half);
-
+  // ── Constantes de mise en page ────────────────────────────────────────────
   const leftX  = isRTL ? MARGIN + colW + COL_GAP : MARGIN;
   const rightX = isRTL ? MARGIN : MARGIN + colW + COL_GAP;
-  drawColumn(leftRows, leftX);
-  drawColumn(rightRows, rightX);
+  const CONTENT_TOP    = HEADER_H + 10; // Y de départ sur page 1
+  const CONTENT_TOP_NP = HEADER_H + 10; // Y de départ sur pages suivantes
+  const CONTENT_BOTTOM = pageHeight - 18;
+  const HEADER_ROW_H   = 13; // hauteur d'un titre de catégorie
+  const ITEM_ROW_H     = ROW_H + 1; // hauteur d'un item
 
-  drawPageFooter();
+  // ── Helper : dessiner le bandeau en tête de chaque page ──────────────────
+  const drawPageBanner = () => {
+    doc.setFillColor(...COLOR_PRIMARY);
+    doc.rect(0, 0, pageWidth, HEADER_H, "F");
+    doc.setFillColor(...COLOR_ACCENT);
+    doc.rect(0, HEADER_H - 3, pageWidth, 3, "F");
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    const tx = isRTL ? pageWidth - MARGIN : MARGIN;
+    doc.text(formatTextForPDF(title, language), tx, 11, { align: isRTL ? "right" : "left" });
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
+    doc.setTextColor(210, 200, 255);
+    const dateStr = new Date().toLocaleDateString();
+    const sub = formatTextForPDF(
+      `${translations.generatedOn}: ${dateStr}   •   ${translations.totalItems}: ${items.length}`,
+      language
+    );
+    doc.text(sub, tx, 20, { align: isRTL ? "right" : "left" });
+  };
+
+  // ── Helper : dessiner un titre de catégorie ───────────────────────────────
+  const drawCategoryHeader = (label: string, x: number, y: number) => {
+    doc.setFillColor(...COLOR_BG_HEADER);
+    doc.roundedRect(x, y - 6, colW, 9, 1.5, 1.5, "F");
+    doc.setDrawColor(...COLOR_BORDER);
+    doc.setLineWidth(0.3);
+    doc.roundedRect(x, y - 6, colW, 9, 1.5, 1.5, "S");
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8);
+    doc.setTextColor(...COLOR_PRIMARY);
+    const catX = isRTL ? x + colW - 4 : x + 4;
+    doc.text(formatTextForPDF(label.toUpperCase(), language), catX, y, { align: isRTL ? "right" : "left" });
+  };
+
+  // ── Helper : dessiner un item ─────────────────────────────────────────────
+  const drawItem = (item: typeof items[0], x: number, y: number, idx: number) => {
+    const rowColor = idx % 2 === 0 ? COLOR_ROW_ODD : COLOR_ROW_EVEN;
+    doc.setFillColor(...rowColor);
+    doc.rect(x, y - 5.5, colW, ROW_H, "F");
+
+    const cbX = isRTL ? x + colW - 5 : x + 3;
+    doc.setFillColor(...COLOR_CHECK_BG);
+    doc.roundedRect(cbX, y - 4, 5, 5, 1, 1, "F");
+    doc.setDrawColor(...COLOR_BORDER);
+    doc.setLineWidth(0.4);
+    doc.roundedRect(cbX, y - 4, 5, 5, 1, 1, "S");
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(...COLOR_TEXT);
+    const nameX = isRTL ? x + colW - 12 : x + 11;
+    const nameText = formatTextForPDF(item.name, language);
+    const nameLines = doc.splitTextToSize(nameText, colW - 40);
+    doc.text(nameLines[0], nameX, y, { align: isRTL ? "right" : "left" });
+
+    // Quantité : n'afficher que si > 0
+    const rawAmount = item.amount;
+    const numAmount = parseFloat(String(rawAmount));
+    const hasAmount = !isNaN(numAmount) && numAmount > 0;
+    const hasUnit   = item.unit && item.unit.trim() !== "";
+    const qty = hasAmount
+      ? `${numAmount % 1 === 0 ? String(Math.round(numAmount)) : String(numAmount)} ${hasUnit ? item.unit : ""}`.trim()
+      : (hasUnit ? item.unit.trim() : "");
+
+    if (qty) {
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(8);
+      doc.setTextColor(...COLOR_ACCENT);
+      const qtyX = isRTL ? x + 3 : x + colW - 3;
+      doc.text(formatTextForPDF(qty, language), qtyX, y, { align: isRTL ? "left" : "right" });
+    }
+
+    doc.setDrawColor(...COLOR_BORDER);
+    doc.setLineWidth(0.2);
+    doc.line(x, y + 4.5, x + colW, y + 4.5);
+  };
+
+  // ── Moteur de rendu : 2 colonnes, multi-page synchronisé ─────────────────
+  // On alterne : colonne gauche → colonne droite → nouvelle page → recommencer.
+  // Les deux colonnes progressent ensemble sur la même page.
+  // Quand une colonne est pleine, on passe à la droite ; quand les deux sont
+  // pleines, on crée une nouvelle page et on repart depuis la gauche.
+
+  drawPageBanner(); // page 1 déjà créée par jsPDF
+
+  let col: 0 | 1 = 0;          // 0 = gauche, 1 = droite
+  let yL = CONTENT_TOP;         // curseur colonne gauche
+  let yR = CONTENT_TOP;         // curseur colonne droite
+  let itemIdxL = 0;             // alternance couleur colonne gauche
+  let itemIdxR = 0;             // alternance couleur colonne droite
+  let currentCategoryLabel = ""; // pour répéter le titre si on change de colonne/page
+
+  const currentX   = () => col === 0 ? leftX  : rightX;
+  const currentY   = () => col === 0 ? yL : yR;
+  const setCurrentY = (v: number) => { if (col === 0) yL = v; else yR = v; };
+  const currentIdx  = () => col === 0 ? itemIdxL : itemIdxR;
+  const incrIdx     = () => { if (col === 0) itemIdxL++; else itemIdxR++; };
+  const resetIdx    = () => { if (col === 0) itemIdxL = 0; else itemIdxR = 0; };
+
+  const advanceColumn = (currentCat: string) => {
+    // Passer de gauche à droite
+    if (col === 0) {
+      col = 1;
+      // Si la colonne droite a besoin du titre de catégorie courant, l'ajouter
+      if (currentCat && yR <= CONTENT_TOP) {
+        drawCategoryHeader(currentCat, rightX, yR);
+        yR += HEADER_ROW_H;
+        itemIdxR = 0;
+      }
+    } else {
+      // Les deux colonnes sont pleines → nouvelle page
+      doc.addPage();
+      drawPageBanner();
+      col = 0;
+      yL = CONTENT_TOP_NP;
+      yR = CONTENT_TOP_NP;
+      itemIdxL = 0;
+      itemIdxR = 0;
+      // Reprendre le titre de catégorie courant en haut de la nouvelle page
+      if (currentCat) {
+        drawCategoryHeader(currentCat, leftX, yL);
+        yL += HEADER_ROW_H;
+        itemIdxL = 0;
+      }
+    }
+  };
+
+  const rowHeight = (r: Row) => r.type === "header" ? HEADER_ROW_H : ITEM_ROW_H;
+
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    const rh  = rowHeight(row);
+    const x   = currentX();
+    let   y   = currentY();
+
+    // Si la prochaine row + un éventuel item suivant déborderait → changer colonne/page
+    // On regarde aussi si on est sur un header : éviter qu'un header soit le dernier
+    // élément d'une colonne (sans aucun item dessous).
+    const nextIsItem = rows[i + 1]?.type === "item";
+    const spaceNeeded = (row.type === "header" && nextIsItem)
+      ? rh + ITEM_ROW_H  // header + au moins un item
+      : rh;
+
+    if (y + spaceNeeded > CONTENT_BOTTOM) {
+      advanceColumn(currentCategoryLabel);
+      y = currentY();
+    }
+
+    if (row.type === "header") {
+      if (y > CONTENT_TOP && y > CONTENT_TOP_NP) y += 2;
+      setCurrentY(y);
+      drawCategoryHeader(row.label, currentX(), y);
+      currentCategoryLabel = row.label;
+      resetIdx();
+      setCurrentY(y + HEADER_ROW_H);
+    } else {
+      drawItem(row.item, currentX(), y, currentIdx());
+      incrIdx();
+      setCurrentY(y + ITEM_ROW_H);
+    }
+  }
+
+    const footerY = pageHeight - 8;
+  doc.setDrawColor(...COLOR_PRIMARY);
+  doc.setLineWidth(0.5);
+  doc.line(MARGIN, footerY - 4, pageWidth - MARGIN, footerY - 4);
+  doc.setFont("helvetica", "italic");
+  doc.setFontSize(8);
+  doc.setTextColor(...COLOR_MUTED);
+  doc.text("KingMenu — Planifiez. Cuisinez. Savourez.", pageWidth / 2, footerY, { align: "center" });
+
   doc.save(`${title.replace(/\s+/g, "-").toLowerCase()}.pdf`);
 };
+
+// Enhanced recipe PDF generation
 
 // Enhanced recipe PDF generation with RTL support
 export const generateRecipePDF = (
@@ -203,6 +304,7 @@ export const generateRecipePDF = (
   
   let yPosition = 30;
   
+  // Title
   doc.setFontSize(20);
   const formattedTitle = formatTextForPDF(dish.title, language);
   if (isRTL) {
@@ -213,6 +315,7 @@ export const generateRecipePDF = (
   
   yPosition += 20;
   
+  // Recipe metadata
   doc.setFontSize(12);
   const metaData = [
     `${translations.cookingTime}: ${dish.cookingTime} min`,
@@ -232,7 +335,11 @@ export const generateRecipePDF = (
   
   yPosition += 15;
   
-  if (yPosition > pageHeight - 50) { doc.addPage(); yPosition = 30; }
+  // Ingredients section
+  if (yPosition > pageHeight - 50) {
+    doc.addPage();
+    yPosition = 30;
+  }
   
   doc.setFontSize(16);
   const ingredientsTitle = formatTextForPDF(translations.ingredients, language);
@@ -248,23 +355,33 @@ export const generateRecipePDF = (
   const servingMultiplier = servings / dish.servings;
   
   dish.ingredients.forEach((ingredient: any) => {
-    if (yPosition > pageHeight - 20) { doc.addPage(); yPosition = 30; }
-    const rawAmount = parseFloat(ingredient.amount);
-    const hasQty = ingredient.amount && !isNaN(rawAmount) && rawAmount > 0 && ingredient.unit;
-    const qtyStr = hasQty
-      ? ` - ${(rawAmount * servingMultiplier).toFixed(1).replace(/\.0$/, '')} ${ingredient.unit}`
-      : '';
-    const ingredientText = formatTextForPDF(`• ${ingredient.name}${qtyStr}`, language);
+    if (yPosition > pageHeight - 20) {
+      doc.addPage();
+      yPosition = 30;
+    }
+    
+    const adjustedAmount = (parseFloat(ingredient.amount) * servingMultiplier).toFixed(1).replace(/\.0$/, '');
+    const ingredientText = formatTextForPDF(
+      `• ${ingredient.name} - ${adjustedAmount} ${ingredient.unit}`,
+      language
+    );
+    
     if (isRTL) {
       doc.text(ingredientText, pageWidth - 25, yPosition, { align: 'right' });
     } else {
       doc.text(ingredientText, 25, yPosition);
     }
+    
     yPosition += 12;
   });
   
   yPosition += 15;
-  if (yPosition > pageHeight - 50) { doc.addPage(); yPosition = 30; }
+  
+  // Instructions section
+  if (yPosition > pageHeight - 50) {
+    doc.addPage();
+    yPosition = 30;
+  }
   
   doc.setFontSize(16);
   const instructionsTitle = formatTextForPDF(translations.instructions, language);
@@ -278,23 +395,40 @@ export const generateRecipePDF = (
   doc.setFontSize(11);
   
   dish.instructions.forEach((instruction: string, index: number) => {
-    if (yPosition > pageHeight - 30) { doc.addPage(); yPosition = 30; }
-    const stepText = formatTextForPDF(`${index + 1}. ${instruction}`, language);
+    if (yPosition > pageHeight - 30) {
+      doc.addPage();
+      yPosition = 30;
+    }
+    
+    const stepText = formatTextForPDF(
+      `${index + 1}. ${instruction}`,
+      language
+    );
+    
     const maxWidth = pageWidth - 50;
     const lines = doc.splitTextToSize(stepText, maxWidth);
+    
     lines.forEach((line: string) => {
-      if (yPosition > pageHeight - 20) { doc.addPage(); yPosition = 30; }
+      if (yPosition > pageHeight - 20) {
+        doc.addPage();
+        yPosition = 30;
+      }
+      
       if (isRTL) {
         doc.text(line, pageWidth - 25, yPosition, { align: 'right' });
       } else {
         doc.text(line, 25, yPosition);
       }
+      
       yPosition += 12;
     });
+    
     yPosition += 5;
   });
   
-  doc.save(`${dish.title.replace(/\s+/g, '-').toLowerCase()}-recipe.pdf`);
+  // Generate filename
+  const filename = `${dish.title.replace(/\s+/g, '-').toLowerCase()}-recipe.pdf`;
+  doc.save(filename);
 };
 
 // Meal calendar PDF — 1 semaine par page, grille 7 colonnes
@@ -306,8 +440,7 @@ export const generateMealCalendarPDF = (
   translations: {
     title: string; dateRange: string; generatedOn: string; totalMeals: string;
     breakfast: string; lunch: string; dinner: string; snack: string;
-    servings: string; cookingTime: string; noMeals: string; tagline?: string;
-    mealPlanFilename?: string;
+    servings: string; cookingTime: string; noMeals: string;
   }
 ) => {
   const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
@@ -414,9 +547,9 @@ export const generateMealCalendarPDF = (
     doc.setDrawColor(...BORDER); doc.setLineWidth(0.3);
     doc.line(M,pageH-6,pageW-M,pageH-6);
     doc.setFont('helvetica','italic'); doc.setFontSize(6.5); doc.setTextColor(...GRAY_TXT);
-    doc.text(`KingMenu — ${translations.tagline || 'Plan. Cook. Enjoy.'}`,pageW/2,pageH-2,{align:'center'});
+    doc.text('KingMenu — Planifiez. Cuisinez. Savourez.',pageW/2,pageH-2,{align:'center'});
   };
 
   weeks.forEach((wd,wi) => { if(wi>0) doc.addPage(); drawWeek(wd); });
-  doc.save(`${translations.mealPlanFilename || 'meal-plan'}-${startDate}-${endDate}.pdf`);
+  doc.save(`planning-repas-${startDate}-${endDate}.pdf`);
 };

@@ -77,9 +77,9 @@ const PublicLandingPage: React.FC = () => {
           <img
             src="https://vehqvqlbtotljstixklz.supabase.co/storage/v1/object/public/Brand/logo%20KM.jpg"
             alt="KingMenu"
-            style={{ width: '36px', height: '36px', minWidth: '36px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #f59e0b', flexShrink: 0 }}
+            style={{ width: '52px', height: '52px', minWidth: '52px', borderRadius: '50%', objectFit: 'cover', border: '3px solid #f59e0b', flexShrink: 0, boxShadow: '0 0 20px rgba(245,158,11,0.4)' }}
           />
-          <span className="font-bold text-lg tracking-tight text-white" style={{ fontFamily: "'Archivo Black', sans-serif" }}>
+          <span className="font-black text-2xl tracking-tight text-white" style={{ fontFamily: "'Archivo Black', sans-serif" }}>
             KingMenu
           </span>
         </div>
