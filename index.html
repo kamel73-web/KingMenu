@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- ── PWA ─────────────────────────────────────────────── -->
-    <link rel="manifest" href="/KingMenu/manifest.json" />
+    <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#D97706" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -25,7 +25,7 @@
 
     <!-- ── Favicons ──────────────────────────────────────────── -->
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <link rel="icon" type="image/svg+xml" href="/KingMenu/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
 
     <!-- ── Google Fonts ──────────────────────────────────────── -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -43,7 +43,7 @@
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker
-            .register('/KingMenu/sw.js', { scope: '/KingMenu/' })
+            .register('/sw.js', { scope: '/' })
             .then((reg) => {
               console.log('[KingMenu] SW registered. Scope:', reg.scope);
               reg.addEventListener('updatefound', () => {
