@@ -75,7 +75,7 @@ export default function LoginForm() {
 
       if (isNative) {
         // Mobile (Capacitor)
-        redirectTo = "com.kingmenu.app://";
+        redirectTo = "app.kingmenu://";
       } else {
         // ✅ IMPORTANT : route hash valide pour HashRouter
         redirectTo =
