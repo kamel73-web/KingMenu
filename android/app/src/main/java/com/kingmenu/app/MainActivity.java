@@ -1,4 +1,4 @@
-package com.kingmenu.app;
+package app.kingmenu;
 
 import com.getcapacitor.BridgeActivity;
 
