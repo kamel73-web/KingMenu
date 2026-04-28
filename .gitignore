@@ -6,3 +6,9 @@ keystore_b64.txt
 *.jks
 keystore_b64.txt
 dist/
+
+# Android SDK (ne pas commiter)
+android-sdk/
+cmdtools.zip
+build-android.sh
+keystore.jks
