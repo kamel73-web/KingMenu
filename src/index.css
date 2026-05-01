@@ -224,3 +224,16 @@ select {
 .toast-warning {
   @apply bg-amber-500 text-white rounded-xl shadow-lg;
 }
+/* Safe area pour Android/iOS */
+body {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Safe area Android/iOS */
+body {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}

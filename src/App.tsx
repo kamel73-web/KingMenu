@@ -22,6 +22,7 @@ import ShoppingListView from "./components/ShoppingList/ShoppingListView";
 import MyRecipesPage from "./pages/MyRecipesPage";
 import MealPlanPage from "./pages/MealPlanPage";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import DeleteAccount from "./pages/DeleteAccount";
 import TermsOfUse from "./pages/TermsOfUse";
 import DishPage from "./pages/DishPage";
 import "./i18n";
@@ -113,6 +114,7 @@ function AppRoutes() {
           <Route path="/login" element={<LoginForm />} />
           <Route path="/dish/:id" element={state.user ? <DishPage /> : <Navigate to="/welcome" replace />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/delete-account" element={<DeleteAccount />} />
           <Route path="/terms-of-use" element={<TermsOfUse />} />
           <Route path="*" element={<Navigate to={state.user ? "/meal-plan" : "/welcome"} replace />} />
         </Routes>
