@@ -116,6 +116,7 @@ export const getDishes = async (language: string = 'en') => {
     return {
       ...dish,
       id: String(dish.id),
+      isPremium: dish.is_premium ?? false,
       title: resolveJsonb(dish.name, language, 'Plat sans titre'),
       description: resolveJsonb(dish.description, language, ''),
       instructions: dish.steps?.[language] || dish.steps?.en || [],

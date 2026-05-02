@@ -2,9 +2,11 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
-import { Loader2, ArrowLeft, Heart } from "lucide-react";
+import { Loader2, ArrowLeft, Heart, Crown, Lock } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
+import { useSubscription } from "@/hooks/useSubscription";
+import { PricingModal } from "@/components/PricingModal";
 
 export default function DishPage() {
   const { id } = useParams();
@@ -16,6 +18,9 @@ export default function DishPage() {
   const [loading, setLoading] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [showPricing, setShowPricing] = useState(false);
+
+  const { isPremium } = useSubscription();
 
   // Fetch user
   useEffect(() => {
@@ -101,6 +106,8 @@ export default function DishPage() {
     return <div className="p-6 text-center">{t("dish.notFound", "Plat introuvable.")}</div>;
   }
 
+  const isLocked = dish.is_premium && !isPremium;
+
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       {/* Back button */}
@@ -116,16 +123,26 @@ export default function DishPage() {
       <div className="relative">
         <img
           src={dish.image_url}
-          className="w-full rounded-xl shadow-md object-cover max-h-96"
+          className={`w-full rounded-xl shadow-md object-cover max-h-96 ${isLocked ? 'blur-sm' : ''}`}
         />
 
+        {/* Badge Premium sur l'image */}
+        {dish.is_premium && (
+          <span className="absolute top-4 left-4 flex items-center gap-1 bg-amber-500 text-white px-3 py-1.5 rounded-full text-xs font-semibold shadow">
+            <Crown className="h-3 w-3" />
+            Premium
+          </span>
+        )}
+
         {/* Favorite button */}
-        <button
-          onClick={toggleFavorite}
-          className="absolute top-4 right-4 bg-white p-2 rounded-full shadow"
-        >
-          <Heart className={isFavorite ? "text-red-600 fill-red-600" : "text-gray-400"} />
-        </button>
+        {!isLocked && (
+          <button
+            onClick={toggleFavorite}
+            className="absolute top-4 right-4 bg-white p-2 rounded-full shadow"
+          >
+            <Heart className={isFavorite ? "text-red-600 fill-red-600" : "text-gray-400"} />
+          </button>
+        )}
       </div>
 
       {/* Title */}
@@ -139,25 +156,53 @@ export default function DishPage() {
         {dish.calories && <span>🔥 {dish.calories} kcal</span>}
       </div>
 
-      {/* Description */}
-      {dish.description && (
-        <p className="text-gray-700 leading-relaxed">
-          {dish.description?.[lang] || dish.description?.en || dish.description?.fr}
-        </p>
-      )}
-
-      {/* Steps */}
-      {dish.steps && (
-        <div className="space-y-2">
-          <h2 className="text-2xl font-bold mt-4">{t("dish.steps", "Étapes")}</h2>
-          {(dish.steps?.[lang] || dish.steps?.en || dish.steps?.fr || []).map((s: string, i: number) => (
-            <div key={i} className="p-3 bg-gray-50 rounded-lg">
-              {i + 1}. {s}
+      {/* ── PREMIUM GATE ─────────────────────────────────────── */}
+      {isLocked ? (
+        <div className="rounded-2xl border-2 border-amber-200 bg-amber-50 p-8 text-center space-y-4">
+          <div className="flex justify-center">
+            <div className="bg-amber-500 rounded-full p-4">
+              <Lock className="h-8 w-8 text-white" />
             </div>
-          ))}
+          </div>
+          <h2 className="text-xl font-bold text-gray-900">
+            {t("premium.lockedRecipe", "Recette Premium")}
+          </h2>
+          <p className="text-gray-500 text-sm max-w-sm mx-auto">
+            {t("premium.lockedRecipeDesc", "Cette recette est réservée aux abonnés Premium. Débloquez-la ainsi que toutes les recettes exclusives.")}
+          </p>
+          <button
+            onClick={() => setShowPricing(true)}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-semibold transition-all"
+          >
+            <Crown className="h-4 w-4" />
+            {t("premium.unlockFor", "Débloquer pour €1,99/mois")}
+          </button>
         </div>
+      ) : (
+        <>
+          {/* Description */}
+          {dish.description && (
+            <p className="text-gray-700 leading-relaxed">
+              {dish.description?.[lang] || dish.description?.en || dish.description?.fr}
+            </p>
+          )}
+
+          {/* Steps */}
+          {dish.steps && (
+            <div className="space-y-2">
+              <h2 className="text-2xl font-bold mt-4">{t("dish.steps", "Étapes")}</h2>
+              {(dish.steps?.[lang] || dish.steps?.en || dish.steps?.fr || []).map((s: string, i: number) => (
+                <div key={i} className="p-3 bg-gray-50 rounded-lg">
+                  {i + 1}. {s}
+                </div>
+              ))}
+            </div>
+          )}
+        </>
       )}
+      {/* ─────────────────────────────────────────────────────── */}
+
+      <PricingModal open={showPricing} onClose={() => setShowPricing(false)} />
     </div>
   );
 }
-

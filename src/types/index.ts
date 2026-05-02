@@ -14,6 +14,7 @@ export interface Dish {
   image: string;
   cuisine: string;               // nom traduit / affichage
   cuisineId?: string | null;     // <-- ajouté : identifiant stable (pour logique / filtres)
+  isPremium?: boolean;           // true = recette complète réservée aux abonnés
   cookingTime: number;
   rating: number;
   difficulty: 'Easy' | 'Medium' | 'Hard';

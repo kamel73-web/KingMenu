@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
-import { X, Clock, Users, ChefHat, Maximize2, Heart } from 'lucide-react';
+import { X, Clock, Users, ChefHat, Maximize2, Heart, Crown, Lock } from 'lucide-react';
 import { Dish } from '../../types';
 import { useApp } from '../../context/AppContext';
 import { useTranslation } from 'react-i18next';
 import { useTranslatedContent } from '../../hooks/useTranslatedContent';
 import toast from 'react-hot-toast';
 import { supabase } from '@/lib/supabase';
+import { useSubscription } from '@/hooks/useSubscription';
+import { PricingModal } from '@/components/PricingModal';
 
 interface RecipeModalProps {
   dish: Dish;
@@ -19,12 +21,14 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
   const [highlightedIngredients, setHighlightedIngredients] = useState<Set<string>>(new Set());
   const [isFavorite, setIsFavorite] = useState(false);
+  const [showPricing, setShowPricing] = useState(false);
 
   const { state, dispatch } = useApp();
   const { t } = useTranslation();
   const { translateDifficulty, translateUnit } = useTranslatedContent();
+  const { isPremium } = useSubscription();
 
-
+  const isLocked = dish.isPremium && !isPremium;
   const servingMultiplier = servings / dish.servings;
 
   // --------------------------
@@ -120,6 +124,70 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
 
 
   if (!isOpen) return null;
+
+  // ── PREMIUM GATE ─────────────────────────────────────────────────────────
+  if (isLocked) {
+    return (
+      <>
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden">
+            {/* Image floue */}
+            <div className="relative h-48 overflow-hidden">
+              <img
+                src={dish.image}
+                alt={dish.title}
+                className="w-full h-full object-cover blur-sm scale-105"
+                onError={(e) => {
+                  const t = e.currentTarget;
+                  if (!t.dataset.fallback) { t.dataset.fallback = '1'; t.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80'; }
+                }}
+              />
+              <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center gap-3">
+                <div className="bg-amber-500 rounded-full p-4">
+                  <Crown className="h-8 w-8 text-white" />
+                </div>
+                <span className="text-white font-bold text-lg">{dish.title}</span>
+              </div>
+              <button
+                onClick={onClose}
+                className="absolute top-4 right-4 p-2 bg-white/20 backdrop-blur-sm text-white rounded-full hover:bg-white/30 transition-all"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Message */}
+            <div className="p-6 text-center">
+              <div className="flex items-center justify-center gap-2 mb-3">
+                <Lock className="h-5 w-5 text-amber-500" />
+                <h3 className="text-xl font-bold text-gray-900">
+                  {t('premium.lockedRecipe', 'Recette Premium')}
+                </h3>
+              </div>
+              <p className="text-gray-500 text-sm mb-6">
+                {t('premium.lockedRecipeDesc', 'Cette recette est réservée aux abonnés Premium. Débloquez-la ainsi que toutes les recettes exclusives.')}
+              </p>
+              <button
+                onClick={() => setShowPricing(true)}
+                className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-semibold transition-all flex items-center justify-center gap-2"
+              >
+                <Crown className="h-4 w-4" />
+                {t('premium.unlockFor', 'Débloquer pour €1,99/mois')}
+              </button>
+              <button
+                onClick={onClose}
+                className="mt-3 w-full py-2 text-gray-400 text-sm hover:text-gray-600 transition-colors"
+              >
+                {t('common.cancel', 'Annuler')}
+              </button>
+            </div>
+          </div>
+        </div>
+        <PricingModal open={showPricing} onClose={() => setShowPricing(false)} />
+      </>
+    );
+  }
+  // ─────────────────────────────────────────────────────────────────────────
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">

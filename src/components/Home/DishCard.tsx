@@ -1,7 +1,6 @@
-// Integrated DishCard with favorites button placed among action buttons for both mobile and desktop
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Clock, Star, Plus, Check, Eye, Calendar, ExternalLink } from 'lucide-react';
+import { Clock, Star, Plus, Check, Eye, Calendar, ExternalLink, Crown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Dish } from '../../types';
 import { useApp } from '../../context/AppContext';
@@ -80,6 +79,12 @@ export default function DishCard({ dish, favorites = [], toggleFavorite }: DishC
           </div>
 
           <div className="absolute top-4 right-4 flex items-center gap-2">
+            {dish.isPremium && (
+              <span className="flex items-center gap-1 bg-amber-500 px-3 py-1.5 rounded-full text-xs font-semibold text-white shadow-soft">
+                <Crown className="h-3 w-3" />
+                Premium
+              </span>
+            )}
             <span className="bg-white/90 px-3 py-1.5 rounded-full text-xs font-semibold text-content-body shadow-soft">
               {translatedDish.cuisine}
             </span>
