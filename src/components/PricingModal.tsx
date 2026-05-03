@@ -9,17 +9,17 @@ type Period = "monthly" | "yearly";
 const PLANS = [
   {
     id: "premium", name: "Premium", icon: Zap,
-    monthlyEur: 1.99, yearlyEur: 14.99, color: "blue",
+    monthlyEur: 1.99, yearlyEur: 15.99, color: "blue",
     features: [
       "Recettes illimitées", "Planning multi-semaines",
-      "Chef IA personnalisé", "Scan de frigo (vision IA)",
+      "Recettes exclusives Premium", "Scan de frigo (bientôt)",
       "Profil nutritionnel", "Sync multi-appareils",
       "Export PDF · sans publicité",
     ],
   },
   {
     id: "family", name: "Famille", icon: Crown,
-    monthlyEur: 3.99, yearlyEur: 29.99, color: "amber",
+    monthlyEur: 3.99, yearlyEur: 31.99, color: "amber",
     features: [
       "Tout ce qu'inclut Premium", "6 profils indépendants",
       "Planning familial partagé", "Vote collectif sur les repas",
@@ -75,7 +75,7 @@ export function PricingModal({ open, onClose }: Props) {
                     : "text-gray-500"}`}>
                 {p === "monthly" ? "Mensuel" : "Annuel"}
                 {p === "yearly" && (
-                  <span className="ml-1.5 text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full">−37%</span>
+                  <span className="ml-1.5 text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full">−33%</span>
                 )}
               </button>
             ))}
