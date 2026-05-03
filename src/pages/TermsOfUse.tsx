@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { FileText, Mail, ExternalLink } from "lucide-react";
 
 const LAST_UPDATED = "April 25, 2026";
-const CONTACT_EMAIL = "allogusto@gmail.com";
+const CONTACT_EMAIL = "kingmenu.app@gmail.com";
 const APP_URL = "https://kamel73-web.github.io/KingMenu/";
 
 function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
