@@ -25,6 +25,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import DeleteAccount from "./pages/DeleteAccount";
 import TermsOfUse from "./pages/TermsOfUse";
 import DishPage from "./pages/DishPage";
+import PaymentSuccess from "./pages/PaymentSuccess";
 import RefundPolicy from "./pages/RefundPolicy";
 import "./i18n";
 import { Capacitor } from '@capacitor/core';
@@ -118,6 +119,7 @@ function AppRoutes() {
           <Route path="/delete-account" element={<DeleteAccount />} />
           <Route path="/terms-of-use" element={<TermsOfUse />} />
           <Route path="/refund-policy" element={<RefundPolicy />} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="*" element={<Navigate to={state.user ? "/meal-plan" : "/welcome"} replace />} />
         </Routes>
       </ErrorBoundary>
