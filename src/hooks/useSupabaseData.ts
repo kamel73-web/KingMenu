@@ -66,6 +66,7 @@ export const useSupabaseData = () => {
           servings: Number(dish.servings) || 4,
           calories: Number(dish.calories) || 400,
           tags: Array.isArray(dish.tags) ? dish.tags : [],
+          isPremium: dish.isPremium ?? false,
           ingredients: Array.isArray(dish.ingredients) ? dish.ingredients : [],
           instructions: Array.isArray(dish.instructions) ? dish.instructions : [],
           translations: dish.translations || {},
