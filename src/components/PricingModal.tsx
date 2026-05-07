@@ -37,16 +37,9 @@ export function PricingModal({ open, onClose }: Props) {
   if (!open) return null;
 
   const handleSubscribe = async (planId: string) => {
-    setLoading(planId); setError(null);
-    try {
-      const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: { plan: planId, period },
-      });
-      if (error) throw error;
-      if (data?.url) window.location.href = data.url;
-    } catch {
-      setError("Une erreur est survenue. Veuillez réessayer.");
-    } finally { setLoading(null); }
+    // Ouvre le navigateur externe — légal Google Play (achat hors app)
+    const pricingUrl = "https://kamel73-web.github.io/KingMenu/#/pricing";
+    window.open(pricingUrl, "_blank");
   };
 
   return (

@@ -41,21 +41,9 @@ export default function PricingPage() {
   const yearlyMonthly = (yearlyPrice / 12).toFixed(2);
 
   const handleSubscribe = async () => {
-    if (!state.user) { navigate("/login"); return; }
-    setLoading(true); setError(null);
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: { plan: "premium", period },
-        headers: { Authorization: `Bearer ${session?.access_token}` },
-      });
-      if (error) throw error;
-      if (data?.url) window.location.href = data.url;
-    } catch {
-      setError("Une erreur est survenue. Veuillez réessayer.");
-    } finally {
-      setLoading(false);
-    }
+    // Ouvre le navigateur externe — légal Google Play (achat hors app)
+    const pricingUrl = "https://kamel73-web.github.io/KingMenu/#/pricing";
+    window.open(pricingUrl, "_blank");
   };
 
   return (
