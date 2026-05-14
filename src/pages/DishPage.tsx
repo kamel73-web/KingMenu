@@ -6,7 +6,6 @@ import { Loader2, ArrowLeft, Heart, Crown, Lock } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import { useSubscription } from "@/hooks/useSubscription";
-import { PricingModal } from "@/components/PricingModal";
 
 export default function DishPage() {
   const { id } = useParams();
@@ -18,7 +17,6 @@ export default function DishPage() {
   const [loading, setLoading] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
   const [user, setUser] = useState<any>(null);
-  const [showPricing, setShowPricing] = useState(false);
 
   const { isPremium } = useSubscription();
 
@@ -170,13 +168,9 @@ export default function DishPage() {
           <p className="text-gray-500 text-sm max-w-sm mx-auto">
             {t("premium.lockedRecipeDesc", "Cette recette est réservée aux abonnés Premium. Débloquez-la ainsi que toutes les recettes exclusives.")}
           </p>
-          <button
-            onClick={() => setShowPricing(true)}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-semibold transition-all"
-          >
-            <Crown className="h-4 w-4" />
-            {t("premium.unlockFor", "Débloquer pour €1,99/mois")}
-          </button>
+            <p className="text-sm text-amber-700 font-medium text-center">
+              {t("premium.visitWebsite", "Abonnez-vous sur kingmenu.app pour accéder à cette recette.")}
+            </p>
         </div>
       ) : (
         <>
@@ -202,7 +196,6 @@ export default function DishPage() {
       )}
       {/* ─────────────────────────────────────────────────────── */}
 
-      <PricingModal open={showPricing} onClose={() => setShowPricing(false)} />
     </div>
   );
 }

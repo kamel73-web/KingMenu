@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import TodayMenuModal from '../MealPlanning/TodayMenuModal';
 import {
   Home, User, Heart, ShoppingCart, LogOut, Utensils,
-  ChefHat, Sparkles, Calendar, UtensilsCrossed, MoreHorizontal, Crown,
+  ChefHat, Sparkles, Calendar, UtensilsCrossed, MoreHorizontal,
   X, Globe,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -129,12 +129,6 @@ export default function Navbar() {
       path: '/favorites',
       icon: Heart,
       label: t('navigation.favorites'),
-      badge: 0,
-    },
-    {
-      path: '/pricing',
-      icon: Crown,
-      label: 'Premium 👑',
       badge: 0,
     },
     {

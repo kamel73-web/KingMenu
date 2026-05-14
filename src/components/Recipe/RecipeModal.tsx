@@ -7,7 +7,6 @@ import { useTranslatedContent } from '../../hooks/useTranslatedContent';
 import toast from 'react-hot-toast';
 import { supabase } from '@/lib/supabase';
 import { useSubscription } from '@/hooks/useSubscription';
-import { PricingModal } from '@/components/PricingModal';
 
 interface RecipeModalProps {
   dish: Dish;
@@ -21,7 +20,6 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
   const [highlightedIngredients, setHighlightedIngredients] = useState<Set<string>>(new Set());
   const [isFavorite, setIsFavorite] = useState(false);
-  const [showPricing, setShowPricing] = useState(false);
 
   const { state, dispatch } = useApp();
   const { t } = useTranslation();
@@ -167,13 +165,9 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
               <p className="text-gray-500 text-sm mb-6">
                 {t('premium.lockedRecipeDesc', 'Cette recette est réservée aux abonnés Premium. Débloquez-la ainsi que toutes les recettes exclusives.')}
               </p>
-              <button
-                onClick={() => setShowPricing(true)}
-                className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-semibold transition-all flex items-center justify-center gap-2"
-              >
-                <Crown className="h-4 w-4" />
-                {t('premium.unlockFor', 'Débloquer pour €1,99/mois')}
-              </button>
+                <p className="text-sm text-amber-700 font-medium text-center px-2">
+                  {t('premium.visitWebsite', 'Abonnez-vous sur kingmenu.app pour accéder à cette recette.')}
+                </p>
               <button
                 onClick={onClose}
                 className="mt-3 w-full py-2 text-gray-400 text-sm hover:text-gray-600 transition-colors"
@@ -183,7 +177,6 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
             </div>
           </div>
         </div>
-        <PricingModal open={showPricing} onClose={() => setShowPricing(false)} />
       </>
     );
   }
