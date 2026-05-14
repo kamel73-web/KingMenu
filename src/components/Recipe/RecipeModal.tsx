@@ -166,7 +166,7 @@ export default function RecipeModal({ dish, isOpen, onClose, onEnterCookMode }: 
                 {t('premium.lockedRecipeDesc', 'Cette recette est réservée aux abonnés Premium. Débloquez-la ainsi que toutes les recettes exclusives.')}
               </p>
                 <p className="text-sm text-amber-700 font-medium text-center px-2">
-                  {t('premium.visitWebsite', 'Abonnez-vous sur kingmenu.app pour accéder à cette recette.')}
+                  {t('premium.visitWebsite', 'Cette recette est réservée aux abonnés Premium.')}
                 </p>
               <button
                 onClick={onClose}
