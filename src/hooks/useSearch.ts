@@ -24,7 +24,7 @@ const MIN_QUERY_LENGTH = 2;
 const MAX_RESULTS = 30;
 
 export function useSearch(): UseSearchReturn {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const [query, setQueryState] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -66,6 +66,7 @@ export function useSearch(): UseSearchReturn {
       setError(null);
 
       try {
+        // ── Étape 1 : appel RPC full-text search ──────────────────────────
         const { data, error: rpcError } = await supabase.rpc('search_dishes', {
           query: debouncedQuery,
           lang: i18n.language,
@@ -75,36 +76,82 @@ export function useSearch(): UseSearchReturn {
         if (controller.signal.aborted) return;
 
         if (rpcError) {
-          console.warn('[useSearch] RPC error:', rpcError.message);
-          setError('Search temporarily unavailable.');
-          setResults([]);
+          // RPC indisponible (migration non appliquée) →
+          // fallback : recherche locale simple sur getDishes
+          console.warn('[useSearch] RPC indisponible, fallback local:', rpcError.message);
+          await runLocalFallback(debouncedQuery, controller);
           return;
         }
 
-        // Étape 1 — extraire les IDs et les scores de pertinence du RPC
-        const ids = (data || []).map((row: any) => String(row.id));
+        // ── Étape 2 : si aucun résultat RPC → vider et sortir ────────────
+        const rpcRows = data || [];
+        if (rpcRows.length === 0) {
+          setResults([]);
+          setLoading(false);
+          return;
+        }
+
+        // ── Étape 3 : récupérer les plats complets ────────────────────────
+        const ids = rpcRows.map((row: any) => String(row.id));
         const rankMap: Record<string, number> = {};
-        (data || []).forEach((row: any) => { rankMap[String(row.id)] = row.rank ?? 0; });
+        rpcRows.forEach((row: any) => { rankMap[String(row.id)] = row.rank ?? 0; });
 
-        // Étape 2 — récupérer les plats complets avec ingrédients et étapes
         const fullDishes = await getDishesByIds(ids, i18n.language);
-
         if (controller.signal.aborted) return;
 
-        // Étape 3 — fusionner : données complètes + rank du RPC
+        // ── Étape 4 : fusionner avec le rang ─────────────────────────────
         const normalized: SearchResult[] = fullDishes.map((dish: any) => ({
           ...dish,
           rank: rankMap[dish.id] ?? 0,
         }));
-
-        // Trier par pertinence décroissante
         normalized.sort((a, b) => (b.rank ?? 0) - (a.rank ?? 0));
-
         setResults(normalized);
+
       } catch (err: any) {
         if (err.name === 'AbortError') return;
-        console.error('[useSearch] Unexpected error:', err);
-        setError('Search failed. Please try again.');
+        console.error('[useSearch] Erreur inattendue:', err);
+        // Ne pas propager l'erreur à l'ErrorBoundary —
+        // on affiche juste un message non-fatal dans l'UI
+        setError(t('home.searchError', { defaultValue: 'Recherche indisponible momentanément.' }));
+        setResults([]);
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    };
+
+    // ── Fallback local si RPC non disponible ─────────────────────────────
+    const runLocalFallback = async (q: string, controller: AbortController) => {
+      try {
+        const { data: allDishes } = await supabase
+          .from('dishes')
+          .select('id, name, description, image_url, cooking_time, rating, calories, servings, difficulty, cuisine_type, tags')
+          .limit(200);
+
+        if (controller.signal.aborted) return;
+
+        const lower = q.toLowerCase();
+        const filtered = (allDishes || []).filter((d: any) => {
+          const name = typeof d.name === 'object'
+            ? Object.values(d.name).join(' ')
+            : String(d.name || '');
+          const desc = typeof d.description === 'object'
+            ? Object.values(d.description).join(' ')
+            : String(d.description || '');
+          return (name + ' ' + desc).toLowerCase().includes(lower);
+        });
+
+        const ids = filtered.map((d: any) => String(d.id));
+        if (ids.length === 0) { setResults([]); return; }
+
+        const fullDishes = await getDishesByIds(ids, i18n.language);
+        if (controller.signal.aborted) return;
+
+        setResults(fullDishes.map((d: any) => ({ ...d, rank: 0 })));
+      } catch (err: any) {
+        if (err.name === 'AbortError') return;
+        console.error('[useSearch] Fallback échoué:', err);
+        setError(t('home.searchError', { defaultValue: 'Recherche indisponible momentanément.' }));
+        setResults([]);
       } finally {
         if (!controller.signal.aborted) setLoading(false);
       }
@@ -121,7 +168,19 @@ export function useSearch(): UseSearchReturn {
     };
   }, []);
 
-  const isSearching = loading || (query.trim().length >= MIN_QUERY_LENGTH && query.trim() !== debouncedQuery);
+  const isSearching = loading || (
+    query.trim().length >= MIN_QUERY_LENGTH &&
+    query.trim() !== debouncedQuery
+  );
 
-  return { query, setQuery, results, loading, error, hasResults: results.length > 0, isSearching, clear };
+  return {
+    query,
+    setQuery,
+    results,
+    loading,
+    error,
+    hasResults: results.length > 0,
+    isSearching,
+    clear,
+  };
 }
