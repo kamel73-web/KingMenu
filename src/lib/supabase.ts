@@ -107,16 +107,7 @@ export const getDishes = async (language: string = 'en') => {
       description: resolveJsonb(dish.description, language, ''),
       instructions: resolveJsonbArray(dish.steps, language),
       cuisineId: cuisineId ? String(cuisineId) : null,
-<<<<<<< HEAD
-      cuisine:
-        dish.cuisine_type?.[language] ||
-        dish.cuisine_type?.en ||
-        dish.cuisine ||
-        'Cuisine inconnue',
-      difficulty: resolveJsonb(dish.difficulty, language, 'medium'),
-=======
       cuisine: dish.cuisine_type?.[language] || dish.cuisine_type?.en || dish.cuisine || 'Cuisine inconnue',
->>>>>>> c4984fe07e011ddb2b75433ebf036a08f89e7ce0
       ingredients: (dish.dish_ingredients || []).map((item: any) => ({
         id: String(item.ingredient.id),
         name: resolveJsonb(item.ingredient.name, language, 'Inconnu'),
@@ -188,7 +179,6 @@ export const getIngredients = async (language: string = 'en') => {
   }));
 };
 
-// Récupère les plats complets (ingrédients + étapes) par liste d'IDs
 export const getIngredientsForDish = async (dishId: number | string, language: string = 'en') => {
   const { data, error } = await supabase
     .from('dish_ingredients')
