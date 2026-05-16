@@ -73,7 +73,7 @@ export default function DishCard({ dish, favorites = [], toggleFavorite }: DishC
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-3xl" />
 
           <div className="absolute top-4 left-4">
-            <span className={`px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-sm bg-white/90 shadow ${getDifficultyColor(dish.difficulty as string)}`}>
+            <span className={`px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-sm bg-white/90 shadow ${getDifficultyColor(translatedDifficulty)}`}>
               {translatedDifficulty}
             </span>
           </div>
