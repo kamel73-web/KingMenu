@@ -25,7 +25,7 @@
 
     <!-- ── Favicons ──────────────────────────────────────────── -->
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <link rel="icon" type="image/svg+xml" href="/KingMenu/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
 
     <!-- ── Google Fonts ──────────────────────────────────────── -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -33,8 +33,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script type="module" crossorigin src="/KingMenu/assets/index-CPkPJFz9.js"></script>
-    <link rel="stylesheet" crossorigin href="/KingMenu/assets/index-DbUhUtJe.css">
+    <script type="module" crossorigin src="/KingMenu/assets/index-C7Ywj9bz.js"></script>
+    <link rel="stylesheet" crossorigin href="/KingMenu/assets/index-BVve0pqI.css">
   </head>
   <body>
     <div id="root"></div>
@@ -44,7 +44,7 @@
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker
-            .register('/KingMenu/sw.js', { scope: '/KingMenu/' })
+            .register('/sw.js', { scope: '/' })
             .then((reg) => {
               console.log('[KingMenu] SW registered. Scope:', reg.scope);
               reg.addEventListener('updatefound', () => {
