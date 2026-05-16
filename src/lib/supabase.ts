@@ -129,6 +129,7 @@ export const getDishes = async (language: string = 'en') => {
         dish.cuisine_type?.en ||
         dish.cuisine ||
         'Cuisine inconnue',
+      difficulty: resolveJsonb(dish.difficulty, language, 'medium'),
       ingredients: (dish.dish_ingredients || []).map((item: any) => ({
         id: String(item.ingredient.id),
         name: resolveJsonb(item.ingredient.name, language, 'Inconnu'),
@@ -210,6 +211,63 @@ export const getIngredients = async (language: string = 'en') => {
     name: resolveJsonb(ing.name, language, 'Ingrédient inconnu'),
     category: resolveJsonb(ing.category, language, ''),
   }));
+};
+
+// Récupère les plats complets (ingrédients + étapes) par liste d'IDs
+// Utilisé pour enrichir les résultats de recherche
+export const getDishesByIds = async (ids: string[], language: string = 'en') => {
+  if (!ids.length) return [];
+
+  const { data, error } = await supabase
+    .from('dishes')
+    .select(`
+      *,
+      dish_ingredients (
+        quantity,
+        unit,
+        ingredient:ingredient_id (
+          id,
+          name,
+          category,
+          no_measure
+        )
+      )
+    `)
+    .in('id', ids.map(Number));
+
+  if (error) {
+    console.error('Erreur getDishesByIds:', error);
+    return [];
+  }
+
+  if (!data) return [];
+
+  return data.map((dish: any) => {
+    const cuisineId = dish.cuisine_type_id ?? dish.cuisine_type?.id ?? null;
+    return {
+      ...dish,
+      id: String(dish.id),
+      isPremium: dish["is_premium"] ?? false,
+      title: resolveJsonb(dish.name, language, 'Plat sans titre'),
+      description: resolveJsonb(dish.description, language, ''),
+      instructions: resolveJsonbArray(dish.steps, language),
+      cuisineId: cuisineId ? String(cuisineId) : null,
+      cuisine:
+        dish.cuisine_type?.[language] ||
+        dish.cuisine_type?.en ||
+        dish.cuisine ||
+        'Cuisine inconnue',
+      ingredients: (dish.dish_ingredients || []).map((item: any) => ({
+        id: String(item.ingredient.id),
+        name: resolveJsonb(item.ingredient.name, language, 'Inconnu'),
+        category: resolveJsonb(item.ingredient.category, language, ''),
+        amount: item.ingredient?.no_measure ? '' : String(item.quantity || '1'),
+        unit: item.ingredient?.no_measure ? '' : resolveJsonb(item.unit, language, ''),
+        isOptional: false,
+        noMeasure: item.ingredient?.no_measure || false,
+      })),
+    };
+  });
 };
 
 export const getIngredientsForDish = async (dishId: number | string, language: string = 'en') => {
