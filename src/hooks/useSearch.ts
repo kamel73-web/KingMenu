@@ -1,6 +1,6 @@
 // src/hooks/useSearch.ts
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase, getDishesByIds } from '../lib/supabase';
 import { useTranslation } from 'react-i18next';
 import { Dish } from '../types';
 
@@ -75,31 +75,30 @@ export function useSearch(): UseSearchReturn {
         if (controller.signal.aborted) return;
 
         if (rpcError) {
-          console.warn('[useSearch] RPC error (migration appliquée ?):', rpcError.message);
+          console.warn('[useSearch] RPC error:', rpcError.message);
           setError('Search temporarily unavailable.');
           setResults([]);
           return;
         }
 
-        const normalized: SearchResult[] = (data || []).map((row: any) => ({
-          id: String(row.id),
-          title: row.name?.[i18n.language] || row.name?.en || 'Untitled Dish',
-          description: row.description?.[i18n.language] || row.description?.en || '',
-          image: row.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80',
-          cuisine: row.cuisine || '',
-          cuisineId: null,
-          cookingTime: Number(row.cooking_time) || 30,
-          rating: Number(row.rating) || 4.5,
-          difficulty: typeof row.difficulty === 'string' ? row.difficulty.toLowerCase() : 'medium',
-          servings: Number(row.servings) || 4,
-          calories: Number(row.calories) || 400,
-          tags: Array.isArray(row.tags) ? row.tags : [],
-          ingredients: [],
-          instructions: [],
-          translations: {},
-          instructionTranslations: {},
-          rank: row.rank,
+        // Étape 1 — extraire les IDs et les scores de pertinence du RPC
+        const ids = (data || []).map((row: any) => String(row.id));
+        const rankMap: Record<string, number> = {};
+        (data || []).forEach((row: any) => { rankMap[String(row.id)] = row.rank ?? 0; });
+
+        // Étape 2 — récupérer les plats complets avec ingrédients et étapes
+        const fullDishes = await getDishesByIds(ids, i18n.language);
+
+        if (controller.signal.aborted) return;
+
+        // Étape 3 — fusionner : données complètes + rank du RPC
+        const normalized: SearchResult[] = fullDishes.map((dish: any) => ({
+          ...dish,
+          rank: rankMap[dish.id] ?? 0,
         }));
+
+        // Trier par pertinence décroissante
+        normalized.sort((a, b) => (b.rank ?? 0) - (a.rank ?? 0));
 
         setResults(normalized);
       } catch (err: any) {
