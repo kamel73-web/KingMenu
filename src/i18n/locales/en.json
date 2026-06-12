@@ -19,14 +19,14 @@
     "language": "Language"
   },
   "landing": {
-    "title": "Welcome to King Menu",
+    "title": "Welcome to Kitchen Menu",
     "subtitle": "Discover a smarter way to plan your meals, explore recipes, and organize your kitchen.",
     "featuresTitle": "Everything you need to eat well.",
     "featureRecipes": "Explore carefully curated and regularly updated recipes.",
     "featureIngredients": "Find dishes based on ingredients you already have at home.",
     "featurePlanner": "Plan your weekly meals with just a few clicks.",
     "featureShoppingList": "Automatically generate your shopping list from your chosen menu.",
-    "loginButton": "Sign in to King Menu",
+    "loginButton": "Sign in to Kitchen Menu",
     "footer": "Plan. Cook. Enjoy.",
     "logoAlt": "Kitchen Menu logo",
     "badge": "Try it free — No commitment",
@@ -63,7 +63,7 @@
     "pwaInstall": "Install"
   },
   "auth": {
-    "welcomeTitle": "Welcome to King Menu!",
+    "welcomeTitle": "Welcome to Kitchen Menu!",
     "login": "Login",
     "signUp": "Sign Up",
     "email": "Email",

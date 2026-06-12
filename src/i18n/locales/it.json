@@ -19,14 +19,14 @@
     "language": "Lingua"
   },
   "landing": {
-    "title": "Benvenuto su King Menu",
+    "title": "Benvenuto su Kitchen Menu",
     "subtitle": "Scopri un nuovo modo per pianificare i pasti, esplorare ricette e organizzare la tua cucina.",
     "featuresTitle": "Tutto quello che ti serve per mangiare bene.",
     "featureRecipes": "Scoprire ricette selezionate e aggiornate regolarmente.",
     "featureIngredients": "Trovare piatti in base agli ingredienti che hai già a casa.",
     "featurePlanner": "Pianificare i tuoi pasti settimanali in pochi clic.",
     "featureShoppingList": "Generare automaticamente la lista della spesa dal menu scelto.",
-    "loginButton": "Accedi a King Menu",
+    "loginButton": "Accedi a Kitchen Menu",
     "footer": "Pianifica. Cucina. Gusta.",
     "logoAlt": "Logo Kitchen Menu",
     "badge": "Provalo gratis — Senza impegno",
@@ -63,7 +63,7 @@
     "pwaInstall": "Installa"
   },
   "auth": {
-    "welcomeTitle": "Benvenuto su King Menu!",
+    "welcomeTitle": "Benvenuto su Kitchen Menu!",
     "login": "Accedi",
     "signUp": "Registrati",
     "email": "Indirizzo Email",

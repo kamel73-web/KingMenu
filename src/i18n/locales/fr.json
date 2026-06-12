@@ -19,14 +19,14 @@
     "language": "Langue"
   },
   "landing": {
-    "title": "Bienvenue sur King Menu",
+    "title": "Bienvenue sur Kitchen Menu",
     "subtitle": "Découvrez une nouvelle façon de planifier vos repas, d'explorer des recettes et d'organiser votre cuisine.",
     "featuresTitle": "Tout ce qu'il vous faut pour bien manger.",
     "featureRecipes": "Découvrir des recettes variées et soigneusement sélectionnées, régulièrement mises à jour.",
     "featureIngredients": "Trouver des plats à partir des ingrédients que vous avez déjà à la maison.",
     "featurePlanner": "Planifier vos repas de la semaine en quelques clics.",
     "featureShoppingList": "Générer automatiquement votre liste de courses à partir du menu choisi.",
-    "loginButton": "Se connecter à King Menu",
+    "loginButton": "Se connecter à Kitchen Menu",
     "footer": "Planifiez. Cuisinez. Savourez.",
     "logoAlt": "Logo Kitchen Menu",
     "badge": "Essayez gratuitement — Sans engagement",
@@ -63,7 +63,7 @@
     "pwaInstall": "Installer"
   },
   "auth": {
-    "welcomeTitle": "Bienvenue sur King Menu!",
+    "welcomeTitle": "Bienvenue sur Kitchen Menu!",
     "login": "Connexion",
     "signUp": "Inscription",
     "email": "Adresse email",
