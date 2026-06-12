@@ -232,7 +232,7 @@ export default function PrintMealCalendarModal({ isOpen, onClose }: PrintMealCal
                     })
                   )}
                   <div className="text-center pt-2 text-xs text-gray-400 border-t border-gray-100">
-                    KingMenu — {t('common.generatedOn')} {new Date().toLocaleDateString()}
+                    Kitchen Menu — {t('common.generatedOn')} {new Date().toLocaleDateString()}
                   </div>
                 </div>
               </div>

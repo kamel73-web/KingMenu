@@ -1,6 +1,6 @@
 {
   "brand": {
-    "name": "KingMenu",
+    "name": "Kitchen Menu",
     "tagline": "Planifica. Cocina. Disfruta.",
     "description": "Plataforma de planificación de alimentos"
   },
@@ -28,11 +28,11 @@
     "featureShoppingList": "Generar automáticamente tu lista de compras a partir del menú elegido.",
     "loginButton": "Inicia sesión en King Menu",
     "footer": "Planifica. Cocina. Disfruta.",
-    "logoAlt": "Logo de KingMenu",
+    "logoAlt": "Logo de Kitchen Menu",
     "badge": "Pruébalo gratis — Sin compromiso",
     "heroTitle1": "Deja de preguntarte",
     "heroTitle2": "\"¿Qué comemos hoy?\"",
-    "heroDesc": "KingMenu planifica tu semana y encuentra recetas con lo que tienes en la nevera — en segundos.",
+    "heroDesc": "Kitchen Menu planifica tu semana y encuentra recetas con lo que tienes en la nevera — en segundos.",
     "ctaStart": "Empezar gratis",
     "ctaSignin": "Iniciar sesión",
     "joinLine": "Únete a miles de cocineros que planifican mejor y comen mejor.",
@@ -59,7 +59,7 @@
     "privacyPolicy": "Política de Privacidad",
     "termsOfUse": "Términos de Uso",
     "allRightsReserved": "Todos los derechos reservados.",
-    "pwaBanner": "Añade KingMenu a tu pantalla de inicio",
+    "pwaBanner": "Añade Kitchen Menu a tu pantalla de inicio",
     "pwaInstall": "Instalar"
   },
   "auth": {

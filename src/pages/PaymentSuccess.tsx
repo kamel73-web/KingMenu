@@ -84,7 +84,7 @@ export default function PaymentSuccess() {
               <CheckCircle className="h-8 w-8 text-green-500" />
             </div>
             <h1 className="text-3xl font-bold text-content-title">
-              Bienvenue dans KingMenu Premium ! 👑
+              Bienvenue dans Kitchen Menu Premium ! 👑
             </h1>
             <p className="text-content-muted">
               Votre abonnement est actif. Vous avez maintenant accès à toutes les recettes exclusives.

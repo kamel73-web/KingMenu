@@ -77,7 +77,7 @@ const PublicLandingPage: React.FC = () => {
         <div className="flex items-center gap-3 mb-3">
           <img
             src="https://vehqvqlbtotljstixklz.supabase.co/storage/v1/object/public/Brand/logo%20KM.jpg"
-            alt="KingMenu"
+            alt="Kitchen Menu"
             className="w-14 h-14 sm:w-20 sm:h-20 md:w-24 md:h-24 flex-shrink-0 rounded-xl sm:rounded-2xl object-contain border-2 border-amber-400 bg-white"
             style={{ boxShadow: '0 0 16px rgba(245,158,11,0.4)' }}
           />
@@ -85,7 +85,7 @@ const PublicLandingPage: React.FC = () => {
             className="font-black text-3xl sm:text-4xl md:text-5xl tracking-tight text-white leading-none"
             style={{ fontFamily: "'Archivo Black', sans-serif" }}
           >
-            KingMenu
+            Kitchen Menu
           </span>
         </div>
         <div className="flex gap-1.5 flex-wrap">
@@ -185,7 +185,7 @@ const PublicLandingPage: React.FC = () => {
 
       <footer className="relative z-10 bg-gray-950 border-t border-white/8 text-gray-500 text-sm py-8 px-6">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span>© {new Date().getFullYear()} KingMenu. {t("landing.allRightsReserved")}</span>
+          <span>© {new Date().getFullYear()} Kitchen Menu. {t("landing.allRightsReserved")}</span>
           <div className="flex gap-6">
             <a href="/KingMenu/privacy-policy.html" className="hover:text-white transition-colors underline underline-offset-2">{t("landing.privacyPolicy")}</a>
             <a href="/KingMenu/terms-of-use.html" className="hover:text-white transition-colors underline underline-offset-2">{t("landing.termsOfUse")}</a>

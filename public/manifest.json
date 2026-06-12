@@ -1,6 +1,6 @@
 {
-  "name": "KingMenu — Plan. Cook. Enjoy.",
-  "short_name": "KingMenu",
+"name": "Kitchen Menu — Plan. Cook. Enjoy.",
+"short_name": "Kitchen Menu",
   "description": "Your smart meal planner. Discover recipes, plan your week, and build your shopping list in seconds.",
   "start_url": "/KingMenu/",
   "scope": "/KingMenu/",

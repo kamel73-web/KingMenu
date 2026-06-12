@@ -276,7 +276,7 @@ export const generateShoppingListPDF = (
   doc.setFont("helvetica", "italic");
   doc.setFontSize(8);
   doc.setTextColor(...COLOR_MUTED);
-  doc.text("KingMenu — Planifiez. Cuisinez. Savourez.", pageWidth / 2, footerY, { align: "center" });
+  doc.text("Kitchen Menu — Planifiez. Cuisinez. Savourez.", pageWidth / 2, footerY, { align: "center" });
 
   doc.save(`${title.replace(/\s+/g, "-").toLowerCase()}.pdf`);
 };
@@ -547,7 +547,7 @@ export const generateMealCalendarPDF = (
     doc.setDrawColor(...BORDER); doc.setLineWidth(0.3);
     doc.line(M,pageH-6,pageW-M,pageH-6);
     doc.setFont('helvetica','italic'); doc.setFontSize(6.5); doc.setTextColor(...GRAY_TXT);
-    doc.text('KingMenu — Planifiez. Cuisinez. Savourez.',pageW/2,pageH-2,{align:'center'});
+    doc.text('Kitchen Menu — Planifiez. Cuisinez. Savourez.',pageW/2,pageH-2,{align:'center'});
   };
 
   weeks.forEach((wd,wi) => { if(wi>0) doc.addPage(); drawWeek(wd); });

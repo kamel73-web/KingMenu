@@ -29,7 +29,7 @@ export default function RefundPolicy() {
               <RefreshCw className="h-5 w-5 text-primary-500" />
             </div>
             <Link to="/" className="text-content-muted text-sm hover:text-primary-500 transition-colors">
-              ← KingMenu
+              ← Kitchen Menu
             </Link>
           </div>
           <h1 className="text-4xl font-bold text-content-title mb-2">Refund Policy</h1>
@@ -37,7 +37,7 @@ export default function RefundPolicy() {
             Last updated: <strong>{LAST_UPDATED}</strong>
           </p>
           <div className="mt-4 p-4 bg-primary-50 border border-primary-100 rounded-xl text-sm text-primary-700">
-            <strong>Summary:</strong> KingMenu subscriptions give immediate access to digital content
+            <strong>Summary:</strong> Kitchen Menu subscriptions give immediate access to digital content
             and are generally non-refundable. Exceptions apply as described below.
           </div>
         </div>
@@ -53,7 +53,7 @@ export default function RefundPolicy() {
             waived this right at checkout.
           </p>
           <p>
-            By subscribing to a KingMenu Premium or Family plan, you acknowledge that you
+            By subscribing to a Kitchen Menu Premium or Family plan, you acknowledge that you
             immediately receive access to premium digital content and expressly waive your
             right of withdrawal.
           </p>
@@ -69,7 +69,7 @@ export default function RefundPolicy() {
               },
               {
                 title: "Extended Service Outage",
-                desc: "The KingMenu service was inaccessible for more than 72 consecutive hours due to an issue on our end (not a third-party outage beyond our control).",
+                desc: "The Kitchen Menu service was inaccessible for more than 72 consecutive hours due to an issue on our end (not a third-party outage beyond our control).",
               },
               {
                 title: "First Purchase — Unused",
@@ -106,7 +106,7 @@ export default function RefundPolicy() {
           <p>To submit a refund request, please follow these steps:</p>
           <ol className="list-decimal list-inside space-y-2 text-sm pl-2">
             <li>Send an email to <a href={`mailto:${CONTACT_EMAIL}`} className="text-primary-500 hover:underline">{CONTACT_EMAIL}</a></li>
-            <li>Use the subject line: <strong>"Refund Request — KingMenu"</strong></li>
+            <li>Use the subject line: <strong>"Refund Request — Kitchen Menu"</strong></li>
             <li>Include your account email address and the reason for your request</li>
             <li>Attach your LemonSqueezy payment receipt if available</li>
           </ol>
@@ -134,7 +134,7 @@ export default function RefundPolicy() {
           <div className="flex items-center gap-3 p-4 bg-primary-50 border border-primary-100 rounded-xl mt-3">
             <Mail className="h-5 w-5 text-primary-500 flex-shrink-0" />
             <div>
-              <p className="font-semibold text-content-title text-sm">KingMenu Support</p>
+              <p className="font-semibold text-content-title text-sm">Kitchen Menu Support</p>
               <a href={`mailto:${CONTACT_EMAIL}`}
                 className="text-primary-500 hover:text-primary-700 hover:underline text-sm">
                 {CONTACT_EMAIL}
@@ -145,7 +145,7 @@ export default function RefundPolicy() {
 
         {/* Footer nav */}
         <div className="border-t border-neutral-200 pt-8 mt-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-content-muted">
-          <span>© {new Date().getFullYear()} KingMenu. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} Kitchen Menu. All rights reserved.</span>
           <div className="flex gap-4">
             <Link to="/privacy-policy" className="text-primary-500 hover:underline">Privacy Policy</Link>
             <Link to="/terms-of-use" className="text-primary-500 hover:underline">Terms of Use</Link>

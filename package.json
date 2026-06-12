@@ -1,9 +1,9 @@
 {
-  "name": "kingmenu-food-planner",
+  "name": "kitchen-menu",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "homepage": "https://kamel73-web.github.io/KingMenu",
+  "homepage": "https://kamel73-web.github.io/Kitchen Menu",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -12,7 +12,7 @@
     "clean": "rm -rf dist node_modules/.vite",
     "clean:build": "npm run clean && npm run build",
     "deploy": "npm run clean:build && npx gh-pages -d dist --dotfiles --nojekyll --add --remote origin --message \"Deploy: $(date '+%Y-%m-%d %H:%M:%S')\"",
-    "deploy:force": "rm -rf dist node_modules/.vite && npm run build && (cd dist && git init && git checkout -b gh-pages && git add -A && git commit -m \"Deploy: $(date '+%Y-%m-%d %H:%M:%S')\" && git remote add origin https://github.com/kamel73-web/KingMenu.git && git push origin gh-pages --force)"
+    "deploy:force": "rm -rf dist node_modules/.vite && npm run build && (cd dist && git init && git checkout -b gh-pages && git add -A && git commit -m \"Deploy: $(date '+%Y-%m-%d %H:%M:%S')\" && git remote add origin https://github.com/kamel73-web/Kitchen Menu.git && git push origin gh-pages --force)"
   },
   "dependencies": {
     "@capacitor/android": "^6.0.0",

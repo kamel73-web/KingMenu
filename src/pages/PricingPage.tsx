@@ -109,7 +109,7 @@ export default function PricingPage() {
                 <span className="text-4xl font-bold text-content-title">€0</span>
                 <span className="text-content-muted text-sm">/toujours</span>
               </div>
-              <p className="text-xs text-content-muted mt-1">Pour découvrir KingMenu</p>
+              <p className="text-xs text-content-muted mt-1">Pour découvrir Kitchen Menu</p>
             </div>
             <ul className="space-y-2">
               {FEATURES_FREE.map((f) => (

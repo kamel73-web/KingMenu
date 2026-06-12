@@ -1,0 +1,9 @@
+<string name="app_name">Kitchen Menu</string>
+<string name="title_activity_main">Kitchen Menu</string>^T^Z
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">King Menu</string>
+    <string name="title_activity_main">King Menu</string>
+    <string name="package_name">app.kingmenu</string>
+    <string name="custom_url_scheme">app.kingmenu</string>
+</resources>

@@ -46,11 +46,11 @@ const DeleteAccount: React.FC = () => {
         <div className="flex items-center gap-3 mb-8">
           <img
             src="https://vehqvqlbtotljstixklz.supabase.co/storage/v1/object/public/Brand/logo%20KM.jpg"
-            alt="KingMenu"
+            alt="Kitchen Menu"
             style={{ width: '48px', height: '48px', borderRadius: '10px', objectFit: 'contain', background: 'white', border: '2px solid #f59e0b' }}
           />
           <span className="font-black text-2xl text-white" style={{ fontFamily: "'Archivo Black', sans-serif" }}>
-            KingMenu
+            Kitchen Menu
           </span>
         </div>
 
@@ -208,7 +208,7 @@ const DeleteAccount: React.FC = () => {
       </div>
 
       <p className="text-gray-600 text-xs mt-8">
-        © {new Date().getFullYear()} KingMenu —{" "}
+        © {new Date().getFullYear()} Kitchen Menu —{" "}
         <a href="/KingMenu/privacy-policy.html" className="underline hover:text-gray-400">
           Politique de confidentialité
         </a>

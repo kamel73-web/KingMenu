@@ -44,7 +44,7 @@ export default function PrivacyPolicy() {
               <Shield className="h-5 w-5 text-primary-500" />
             </div>
             <Link to="/" className="text-content-muted text-sm hover:text-primary-500 transition-colors">
-              ← KingMenu
+              ← Kitchen Menu
             </Link>
           </div>
           <h1 className="text-4xl font-bold text-content-title mb-2">Privacy Policy</h1>
@@ -52,7 +52,7 @@ export default function PrivacyPolicy() {
             Last updated: <strong>{LAST_UPDATED}</strong> · Effective immediately upon publication
           </p>
           <div className="mt-4 p-4 bg-primary-50 border border-primary-100 rounded-xl text-sm text-primary-700">
-            <strong>Summary:</strong> KingMenu collects only the minimum data necessary to provide
+            <strong>Summary:</strong> Kitchen Menu collects only the minimum data necessary to provide
             its meal planning service. We do not sell your data. We use Google Sign-In for
             authentication only. Your data is stored securely via Supabase and the application
             is hosted on GitHub Pages.
@@ -95,7 +95,7 @@ export default function PrivacyPolicy() {
         {/* Sections */}
         <Section id="who-we-are" title="1. Who We Are">
           <p>
-            KingMenu ("<strong>we</strong>", "<strong>us</strong>", or "<strong>our</strong>") is a
+            Kitchen Menu ("<strong>we</strong>", "<strong>us</strong>", or "<strong>our</strong>") is a
             meal planning web application developed and maintained by an independent developer. The
             application is accessible at{" "}
             <a href={APP_URL} target="_blank" rel="noopener noreferrer"
@@ -150,7 +150,7 @@ export default function PrivacyPolicy() {
         <Section id="how-we-use" title="3. How We Use Your Data">
           <p>Your data is used exclusively for the following purposes:</p>
           <ul className="list-disc list-inside space-y-1 text-sm pl-2">
-            <li>To create and manage your KingMenu account</li>
+            <li>To create and manage your Kitchen Menu account</li>
             <li>To provide the meal planning, recipe browsing, and shopping list features</li>
             <li>To authenticate you securely via Google OAuth 2.0 or email/password</li>
             <li>To save and synchronize your preferences and meal plans across devices</li>
@@ -172,7 +172,7 @@ export default function PrivacyPolicy() {
           </p>
           <div className="space-y-2 mt-2">
             {[
-              { basis: "Contract (Art. 6(1)(b))", desc: "Processing necessary to provide the KingMenu service you requested (account creation, meal planning, shopping lists)." },
+              { basis: "Contract (Art. 6(1)(b))", desc: "Processing necessary to provide the Kitchen Menu service you requested (account creation, meal planning, shopping lists)." },
               { basis: "Legitimate Interests (Art. 6(1)(f))", desc: "Security monitoring, fraud prevention, and improving the service — balanced against your rights." },
               { basis: "Consent (Art. 6(1)(a))", desc: "Where you explicitly consent, such as optional location-based features. You may withdraw consent at any time." },
               { basis: "Legal Obligation (Art. 6(1)(c))", desc: "Where we are required by law to retain or disclose data." },
@@ -199,7 +199,7 @@ export default function PrivacyPolicy() {
             <Provider
               name="GitHub Pages (Microsoft)"
               url="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement"
-              role="Static file hosting for the KingMenu web application. GitHub Pages may collect visitor IP addresses and HTTP request logs as part of its standard hosting operations. KingMenu does not control this collection. See GitHub's Privacy Statement for details."
+              role="Static file hosting for the Kitchen Menu web application. GitHub Pages may collect visitor IP addresses and HTTP request logs as part of its standard hosting operations. Kitchen Menu does not control this collection. See GitHub's Privacy Statement for details."
             />
             <Provider
               name="Google LLC (Google Sign-In / OAuth 2.0)"
@@ -214,13 +214,13 @@ export default function PrivacyPolicy() {
           </div>
           <p className="text-sm text-content-muted mt-3">
             We may also disclose data if required by law, court order, or to protect the rights,
-            property, or safety of KingMenu, our users, or the public.
+            property, or safety of Kitchen Menu, our users, or the public.
           </p>
         </Section>
 
         <Section id="hosting" title="6. Hosting & Infrastructure">
           <p>
-            KingMenu is hosted as a static web application on{" "}
+            Kitchen Menu is hosted as a static web application on{" "}
             <strong>GitHub Pages</strong>, a service provided by GitHub, Inc. (a subsidiary of
             Microsoft Corporation). The application frontend (HTML, CSS, JavaScript) is served
             from GitHub's servers located in the United States.
@@ -232,18 +232,18 @@ export default function PrivacyPolicy() {
             by default, ensuring data remains within the EEA for EU users where possible.
           </p>
           <p>
-            The source code of KingMenu is publicly available on GitHub at{" "}
-            <a href="https://github.com/kamel73-web/KingMenu" target="_blank"
+            The source code of Kitchen Menu is publicly available on GitHub at{" "}
+            <a href="https://github.com/kamel73-web/Kitchen Menu" target="_blank"
               rel="noopener noreferrer"
               className="text-primary-500 hover:underline inline-flex items-center gap-1">
-              github.com/kamel73-web/KingMenu <ExternalLink className="h-3 w-3" />
+              github.com/kamel73-web/Kitchen Menu <ExternalLink className="h-3 w-3" />
             </a>.
             The public repository does not contain any personal user data.
           </p>
         </Section>
 
         <Section id="cookies" title="7. Cookies & Local Storage">
-          <p>KingMenu uses the following storage mechanisms:</p>
+          <p>Kitchen Menu uses the following storage mechanisms:</p>
           <div className="space-y-2 mt-2">
             {[
               {
@@ -327,7 +327,7 @@ export default function PrivacyPolicy() {
 
         <Section id="children" title="10. Children's Privacy">
           <p>
-            KingMenu is not directed to children under the age of <strong>13</strong> (or{" "}
+            Kitchen Menu is not directed to children under the age of <strong>13</strong> (or{" "}
             <strong>16</strong> in the European Union, per GDPR Article 8). We do not knowingly
             collect personal data from minors. If we become aware that we have inadvertently
             collected personal data from a child without verifiable parental consent, we will
@@ -365,7 +365,7 @@ export default function PrivacyPolicy() {
 
         <Section id="international" title="12. International Data Transfers">
           <p>
-            KingMenu is operated from Algeria and serves users internationally. Your data may be
+            Kitchen Menu is operated from Algeria and serves users internationally. Your data may be
             transferred to and processed in countries outside your country of residence, including
             the United States (GitHub — Microsoft) and the European Union (Supabase — AWS
             eu-central-1).
@@ -386,7 +386,7 @@ export default function PrivacyPolicy() {
             page. We encourage you to review this policy periodically.
           </p>
           <p>
-            Continued use of KingMenu after changes are posted constitutes your acceptance of
+            Continued use of Kitchen Menu after changes are posted constitutes your acceptance of
             the updated Privacy Policy. If changes are significant, we may provide additional
             notice (e.g. via email or an in-app notification).
           </p>
@@ -400,7 +400,7 @@ export default function PrivacyPolicy() {
           <div className="flex items-center gap-3 p-4 bg-primary-50 border border-primary-100 rounded-xl mt-3">
             <Mail className="h-5 w-5 text-primary-500 flex-shrink-0" />
             <div>
-              <p className="font-semibold text-content-title text-sm">KingMenu Privacy Team</p>
+              <p className="font-semibold text-content-title text-sm">Kitchen Menu Privacy Team</p>
               <a href={`mailto:${CONTACT_EMAIL}`}
                 className="text-primary-500 hover:text-primary-700 hover:underline text-sm">
                 {CONTACT_EMAIL}
@@ -416,7 +416,7 @@ export default function PrivacyPolicy() {
 
         {/* Footer nav */}
         <div className="border-t border-neutral-200 pt-8 mt-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-content-muted">
-          <span>© {new Date().getFullYear()} KingMenu. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} Kitchen Menu. All rights reserved.</span>
           <div className="flex gap-4">
             <Link to="/terms-of-use" className="text-primary-500 hover:underline">Terms of Use</Link>
             <Link to="/" className="text-primary-500 hover:underline">Back to App</Link>

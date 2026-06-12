@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'app.kingmenu',
-  appName: 'King Menu',
+  appName: 'Kitchen Menu',
   webDir: 'dist',
   ios: {
     contentInset: 'always',

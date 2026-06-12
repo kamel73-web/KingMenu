@@ -55,7 +55,7 @@ export const useSupabaseData = () => {
           image: dish.image_url
             ? dish.image_url
             : (() => {
-                console.warn(`[KingMenu] Plat sans image : id=${dish.id}, title=${dish.name?.fr || dish.name?.en || '?'}`);
+                console.warn(`[Kitchen Menu] Plat sans image : id=${dish.id}, title=${dish.name?.fr || dish.name?.en || '?'}`);
                 return 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80';
               })(),
           cuisine: dish.cuisine || 'Inconnue',

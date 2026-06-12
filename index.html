@@ -11,13 +11,13 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="KingMenu" />
+    <meta name="apple-mobile-web-app-title" content="Kitchen Menu" />
     <link rel="apple-touch-icon" href="https://vehqvqlbtotljstixklz.supabase.co/storage/v1/object/public/Brand/logo%20KM.jpg" />
 
     <!-- ── SEO & OG ──────────────────────────────────────────── -->
-    <title>KingMenu — Plan. Cook. Enjoy.</title>
+    <title>Kitchen Menu — Plan. Cook. Enjoy.</title>
     <meta name="description" content="Discover 500+ recipes, build your weekly meal plan, and generate your shopping list — all in one beautiful app." />
-    <meta property="og:title" content="KingMenu — Plan. Cook. Enjoy." />
+    <meta property="og:title" content="Kitchen Menu — Plan. Cook. Enjoy." />
     <meta property="og:description" content="Your smart meal planner. Discover recipes, plan your week, and shop smarter." />
     <meta property="og:image" content="https://vehqvqlbtotljstixklz.supabase.co/storage/v1/object/public/Brand/Background%20v2.jpg" />
     <meta property="og:type" content="website" />
@@ -45,7 +45,7 @@
           navigator.serviceWorker
             .register('/sw.js', { scope: '/' })
             .then((reg) => {
-              console.log('[KingMenu] SW registered. Scope:', reg.scope);
+              console.log('[Kitchen Menu] SW registered. Scope:', reg.scope);
               reg.addEventListener('updatefound', () => {
                 const newWorker = reg.installing;
                 newWorker?.addEventListener('statechange', () => {
@@ -55,7 +55,7 @@
                 });
               });
             })
-            .catch((err) => console.warn('[KingMenu] SW registration failed:', err));
+            .catch((err) => console.warn('[Kitchen Menu] SW registration failed:', err));
 
           let refreshing = false;
           navigator.serviceWorker.addEventListener('controllerchange', () => {

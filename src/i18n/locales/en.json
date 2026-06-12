@@ -1,6 +1,6 @@
 {
   "brand": {
-    "name": "KingMenu",
+    "name": "Kitchen Menu",
     "tagline": "Plan. Cook. Enjoy.",
     "description": "meal planning platform"
   },
@@ -28,11 +28,11 @@
     "featureShoppingList": "Automatically generate your shopping list from your chosen menu.",
     "loginButton": "Sign in to King Menu",
     "footer": "Plan. Cook. Enjoy.",
-    "logoAlt": "KingMenu logo",
+    "logoAlt": "Kitchen Menu logo",
     "badge": "Try it free — No commitment",
     "heroTitle1": "Stop asking",
     "heroTitle2": "\"What's for dinner?\"",
-    "heroDesc": "KingMenu plans your week, generates your shopping list, and finds recipes for whatever's in your fridge — in seconds.",
+    "heroDesc": "Kitchen Menu plans your week, generates your shopping list, and finds recipes for whatever's in your fridge — in seconds.",
     "ctaStart": "Start Planning for Free",
     "ctaSignin": "Sign in",
     "joinLine": "Join thousands of home cooks who plan smarter, waste less, and eat better.",
@@ -59,7 +59,7 @@
     "privacyPolicy": "Privacy Policy",
     "termsOfUse": "Terms of Use",
     "allRightsReserved": "All rights reserved.",
-    "pwaBanner": "Add KingMenu to your home screen",
+    "pwaBanner": "Add Kitchen Menu to your home screen",
     "pwaInstall": "Install"
   },
   "auth": {
