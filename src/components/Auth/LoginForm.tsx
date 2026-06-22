@@ -81,6 +81,7 @@ export default function LoginForm() {
       : `${window.location.origin}/KingMenu/#/login`;
 
     console.log("redirectTo =", redirectTo);
+    alert(`isNative: ${isNative}\nredirectTo: ${redirectTo}`);
 
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider,
