@@ -1,4 +1,5 @@
 // src/components/Auth/LoginForm.tsx
+import { Browser } from "@capacitor/browser";
 import React, { useState } from "react";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { useTranslation } from "react-i18next";
