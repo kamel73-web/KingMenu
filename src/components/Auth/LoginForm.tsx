@@ -67,60 +67,52 @@ export default function LoginForm() {
      GOOGLE OAUTH — VERSION CORRECTE
   ========================= */
   const handleSocialLogin = async (provider: "google") => {
-    try {
-      setError(null);
-      setIsLoading(true);
+  try {
+    setError(null);
+    setIsLoading(true);
 
-      const isNative = Capacitor.isNativePlatform();
-      let redirectTo: string;
+    const isNative = Capacitor.isNativePlatform();
 
-      if (isNative) {
-        // Mobile (Capacitor)
-        redirectTo = "app.kingmenu://";
-      } else {
-        // ✅ IMPORTANT : route hash valide pour HashRouter
-        redirectTo =
-          window.location.origin + "/KingMenu/#/login";
-      }
+    console.log("========== OAUTH DEBUG ==========");
+    console.log("isNative =", isNative);
 
-      console.log("[OAuth Debug] redirectTo:", redirectTo);
+    const redirectTo = isNative
+      ? "app.kingmenu://auth"
+      : `${window.location.origin}/KingMenu/#/login`;
 
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider,
-        options: {
-          redirectTo,
-          skipBrowserRedirect: isNative,
-          queryParams: {
-            access_type: "offline",
-            prompt: "consent",
-          },
+    console.log("redirectTo =", redirectTo);
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo,
+        skipBrowserRedirect: isNative,
+        queryParams: {
+          access_type: "offline",
+          prompt: "consent",
         },
+      },
+    });
+
+    console.log("OAuth URL =", data?.url);
+
+    if (error) throw error;
+
+    if (isNative && data?.url) {
+      await Browser.open({
+        url: data.url,
       });
-
-      if (error) {
-        setError(error.message);
-        toast.error(t("auth.googleError", { message: error.message }));
-        console.error("OAuth error:", error);
-        return;
-      }
-
-      if (isNative && data?.url) {
-        await Browser.open({ url: data.url });
-      }
-
-      // ⚠️ PAS de setSession manuel ici
-      // Supabase gère le hash automatiquement
-      // AppContext captera la session au reload
-
-    } catch (err: any) {
-      const msg = err?.message || t("auth.googleConnectionError");
-      setError(msg);
-      toast.error(msg);
-      console.error("OAuth fatal error:", err);
-    } finally {
-      setIsLoading(false);
     }
-  };
+  } catch (err: any) {
+    console.error("OAuth ERROR:", err);
+
+    const msg = err?.message || t("auth.googleConnectionError");
+    setError(msg);
+    toast.error(msg);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 via-white to-yellow-50 p-4">
