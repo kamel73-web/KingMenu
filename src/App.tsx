@@ -86,7 +86,7 @@ function AppRoutes() {
           await supabase.auth.setSession({ access_token, refresh_token });
           await Browser.close();
           toast.success("Connexion Google réussie");
-          navigate('/meal-plan', { replace: true });
+          navigate('/', { replace: true });
         }
       } catch (err) {
         console.error("Erreur deep-link OAuth:", err);
