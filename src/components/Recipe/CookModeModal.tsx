@@ -68,7 +68,7 @@ export default function CookModeModal({ dish, isOpen, onClose }: CookModeModalPr
   }, [voices, selectedVoice, i18n.language]);
 
   useEffect(() => {
-    if (!isOpen) { speechSynthesis.cancel?.(); return; }
+    if (!isOpen) { if ('speechSynthesis' in window) speechSynthesis.cancel?.(); return; }
     if (voiceEnabled && dish.instructions[currentStep]) {
       speak(String(dish.instructions[currentStep]));
     }
@@ -82,7 +82,7 @@ export default function CookModeModal({ dish, isOpen, onClose }: CookModeModalPr
       setIsTimerRunning(false);
       setCompletedSteps(new Set());
     } else {
-      speechSynthesis.cancel?.();
+      if ('speechSynthesis' in window) speechSynthesis.cancel?.();
     }
   }, [isOpen]);
 
@@ -108,7 +108,7 @@ export default function CookModeModal({ dish, isOpen, onClose }: CookModeModalPr
 
   const toggleVoice = () => {
     if (voiceEnabled) {
-      speechSynthesis.cancel();
+      if ('speechSynthesis' in window) speechSynthesis.cancel();
       setVoiceEnabled(false);
     } else {
       setVoiceEnabled(true);
