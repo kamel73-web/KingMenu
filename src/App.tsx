@@ -29,6 +29,7 @@ import RefundPolicy from "./pages/RefundPolicy";
 import "./i18n";
 import { Capacitor } from '@capacitor/core';
 import { App as CapacitorApp } from '@capacitor/app';
+import { Browser } from '@capacitor/browser';
 import { supabase } from "./lib/supabase";
 import toast from "react-hot-toast";
 
@@ -67,6 +68,7 @@ function AppRoutes() {
         const refresh_token = params.get('refresh_token');
         if (access_token && refresh_token) {
           await supabase.auth.setSession({ access_token, refresh_token });
+          await Browser.close();
           toast.success("Connexion Google réussie");
           navigate('/meal-plan', { replace: true });
         }
