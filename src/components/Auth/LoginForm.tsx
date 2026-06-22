@@ -85,10 +85,11 @@ export default function LoginForm() {
 
       console.log("[OAuth Debug] redirectTo:", redirectTo);
 
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
           redirectTo,
+          skipBrowserRedirect: isNative,
           queryParams: {
             access_type: "offline",
             prompt: "consent",
@@ -100,6 +101,11 @@ export default function LoginForm() {
         setError(error.message);
         toast.error(t("auth.googleError", { message: error.message }));
         console.error("OAuth error:", error);
+        return;
+      }
+
+      if (isNative && data?.url) {
+        await Browser.open({ url: data.url });
       }
 
       // ⚠️ PAS de setSession manuel ici
