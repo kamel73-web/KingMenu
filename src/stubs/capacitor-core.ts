@@ -1,13 +1,10 @@
 export class WebPlugin {
   constructor() {}
 
-  protected async handleRequest(
-    options: any
-  ): Promise<any> {
+  protected async handleRequest(options: any): Promise<any> {
     return options;
   }
 }
-
 
 export function registerPlugin(
   name: string,
@@ -15,7 +12,6 @@ export function registerPlugin(
 ) {
   return implementations?.web ?? {};
 }
-
 
 export const Capacitor = {
   isNativePlatform: () => false,

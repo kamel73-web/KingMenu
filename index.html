@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="google-site-verification" content="7ynJuGvXua-i9lrEILjPxPS2afoAZNh-jWO4LQOqKrc" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
     <!-- ── PWA ─────────────────────────────────────────────── -->
     <link rel="manifest" href="/manifest.json" />
@@ -43,7 +43,7 @@
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker
-            .register('/sw.js', { scope: '/' })
+            .register('./sw.js', { scope: './' })
             .then((reg) => {
               console.log('[Kitchen Menu] SW registered. Scope:', reg.scope);
               reg.addEventListener('updatefound', () => {

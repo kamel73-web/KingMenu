@@ -33,15 +33,31 @@ import { Browser } from '@capacitor/browser';
 import { supabase } from "./lib/supabase";
 import toast from "react-hot-toast";
 
+// Capture globale de toute erreur non gérée (diagnostic temporaire)
+if (typeof window !== 'undefined') {
+  window.addEventListener('error', (e) => {
+    alert(`ERREUR JS:\n${e.message}\n${e.error?.stack || ''}`);
+  });
+  window.addEventListener('unhandledrejection', (e: any) => {
+    alert(`PROMESSE REJETÉE:\n${e.reason?.message || e.reason}\n${e.reason?.stack || ''}`);
+  });
+}
+
 // Error Boundary
-class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
-  state = { hasError: false };
-  static getDerivedStateFromError() { return { hasError: true }; }
+class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; errorMsg?: string }> {
+  state: { hasError: boolean; errorMsg?: string } = { hasError: false };
+  static getDerivedStateFromError(error: any) {
+    return { hasError: true, errorMsg: error?.message || String(error) };
+  }
+  componentDidCatch(error: any, info: any) {
+    console.error("ErrorBoundary caught:", error, info);
+  }
   render() {
     if (this.state.hasError) {
       return (
         <div className="min-h-screen flex items-center justify-center text-red-600 p-4 text-center">
           Une erreur inattendue s'est produite.<br />
+          {this.state.errorMsg}<br />
           Veuillez recharger la page.
         </div>
       );
@@ -70,7 +86,7 @@ function AppRoutes() {
           await supabase.auth.setSession({ access_token, refresh_token });
           await Browser.close();
           toast.success("Connexion Google réussie");
-          navigate('/meal-plan', { replace: true });
+          navigate('/', { replace: true });
         }
       } catch (err) {
         console.error("Erreur deep-link OAuth:", err);

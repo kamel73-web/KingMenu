@@ -62,7 +62,7 @@ export default function Navbar() {
   const [profileOpen, setProfileOpen]       = useState(false);
   const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
 
-  const profileRef   = useRef<HTMLDivElement>(null!);
+  const profileRef    = useRef<HTMLDivElement>(null!);
   const mobileMoreRef = useRef<HTMLDivElement>(null!);
 
   useClickOutside(profileRef,    () => setProfileOpen(false));
@@ -296,7 +296,10 @@ export default function Navbar() {
       ══════════════════════════════════════════════════════════════════ */}
 
       {/* Top bar mobile */}
-      <header className="md:hidden bg-white/98 backdrop-blur-md shadow-soft border-b border-neutral-100 sticky top-0 z-50">
+      <header
+        className="md:hidden bg-white/98 backdrop-blur-md shadow-soft border-b border-neutral-100 sticky top-0 z-50"
+        style={{ paddingTop: 'env(safe-area-inset-top)' }}
+      >
         <div className="flex items-center justify-between h-14 px-4">
           <Link to="/" className="flex items-center space-x-2 group">
             <div className="relative">
@@ -330,8 +333,12 @@ export default function Navbar() {
       </header>
 
       {/* Bottom tab bar mobile */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-white/98 backdrop-blur-md border-t border-neutral-100 pb-safe">
-        <div className="grid grid-cols-5 h-16">
+      <nav
+        className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-white/98 backdrop-blur-md border-t border-neutral-100"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+      >
+        {/* FIX : div conteneur flex qui enveloppe tous les onglets */}
+        <div className="flex items-center justify-around h-16 px-2">
 
           {primaryLinks.map(({ path, icon: Icon, label, badge }) => (
             <Link
@@ -422,7 +429,8 @@ export default function Navbar() {
               </div>
             )}
           </div>
-        </div>
+
+        </div>{/* fin div conteneur flex tab bar */}
       </nav>
 
       {/* Spacer pour éviter que le contenu passe sous la bottom bar mobile */}
