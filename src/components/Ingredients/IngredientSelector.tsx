@@ -54,21 +54,11 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
     t(`ingredientsSection.categories.${category.toLowerCase()}`, category);
 
   // Filtrage par recherche
-  const filteredIngredients = useMemo(() => {
-    if (!searchTerm.trim()) return ingredients;
-    const q = searchTerm.toLowerCase().trim();
-    return ingredients.filter(ing =>
-      resolveName(ing.name).toLowerCase().includes(q)
-    );
-  }, [ingredients, searchTerm, i18n.language]);
-
-  // Groupement par catégorie des ingrédients filtrés
   // Normalise les ligatures françaises pour que la recherche fonctionne
   // peu importe que l'utilisateur tape "œuf" ou "oeuf"
   const normalizeFr = (str: string): string =>
     str.toLowerCase().replace(/œ/g, 'oe').replace(/æ/g, 'ae');
 
-  // Filtrage par recherche
   const filteredIngredients = useMemo(() => {
     if (!searchTerm.trim()) return ingredients;
     const q = normalizeFr(searchTerm.trim());
@@ -76,6 +66,17 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
       normalizeFr(resolveName(ing.name)).includes(q)
     );
   }, [ingredients, searchTerm, i18n.language]);
+
+  // Groupement par catégorie des ingrédients filtrés
+  const groupedIngredients = useMemo(() => {
+    const groups: Record<string, any[]> = {};
+    filteredIngredients.forEach((ing) => {
+      const cat = resolveCategory(ing.category) || 'Other';
+      if (!groups[cat]) groups[cat] = [];
+      groups[cat].push(ing);
+    });
+    return groups;
+  }, [filteredIngredients, i18n.language]);
 
   const handleFindDishes = () => {
     if (!onFindDishes) return;
