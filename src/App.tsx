@@ -1,11 +1,11 @@
 // src/App.tsx
-import React from "react";
 import {
   HashRouter as Router,
   Routes,
   Route,
   Navigate,
   useNavigate,
+  useLocation,
 } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
