@@ -293,8 +293,72 @@ const AppContext = createContext<AppContextValue | null>(null);
 export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  useEffect(() => {
+useEffect(() => {
     let isMounted = true;
+
+    // Charge les repas à venir depuis Supabase et met à jour le state.
+    // Appelée au démarrage de l'app ET à chaque nouvelle connexion
+    // pendant que l'app est déjà ouverte (sinon le planning ne réapparaît
+    // qu'après un redémarrage complet de l'app).
+    const loadFutureMeals = async (userId: string) => {
+      const today = new Date().toISOString().split('T')[0];
+      const { data: mealData } = await supabase
+        .from('meal_plans')
+        .select(`
+          id, date, meal_type, servings, notes, created_at,
+          dishes (
+            id, name, image_url, cooking_time, rating,
+            calories, servings, tags, difficulty, cuisine_type, cuisineId,
+            dish_ingredients (
+              quantity, unit,
+              ingredient:ingredient_id ( id, name, category )
+            )
+          )
+        `)
+        .eq('user_id', userId)
+        .gte('date', today)
+        .order('date', { ascending: true });
+
+      if (!isMounted) return;
+
+      if (mealData && mealData.length > 0) {
+        const lang = i18n.language || 'fr';
+        const meals: MealPlan[] = mealData.map((row: any) => {
+          const dish = row.dishes;
+          return {
+            id: row.id,
+            userId,
+            date: row.date,
+            mealType: row.meal_type,
+            servings: row.servings,
+            notes: row.notes ?? undefined,
+            createdAt: row.created_at,
+            dish: {
+              id: String(dish.id),
+              title: dish.name?.[lang] || dish.name?.en || dish.name?.fr || 'Untitled',
+              image: dish.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80',
+              cuisine: dish.cuisine_type?.[lang] || dish.cuisine_type?.en || '',
+              cuisineId: dish.cuisineId ? String(dish.cuisineId) : null,
+              cookingTime: dish.cooking_time || 30,
+              rating: Number(dish.rating) || 4.5,
+              difficulty: dish.difficulty?.[lang] || dish.difficulty?.en || 'medium',
+              servings: dish.servings || 4,
+              calories: dish.calories || 400,
+              tags: Array.isArray(dish.tags) ? dish.tags : [],
+              ingredients: (dish.dish_ingredients || []).map((di: any) => ({
+                id: String(di.ingredient.id),
+                name: di.ingredient.name?.[lang] || di.ingredient.name?.en || '',
+                category: di.ingredient.category?.[lang] || '',
+                amount: String(di.quantity || 1),
+                unit: di.unit?.[lang] || di.unit?.en || '',
+              })),
+              instructions: [],
+            },
+          };
+        });
+        dispatch({ type: 'SET_MEAL_PLAN', payload: meals });
+      }
+    };
 
     const initAuth = async () => {
       try {
@@ -336,61 +400,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
           dispatch({ type: "SET_USER", payload: userData });
 
           // Charger les repas futurs depuis Supabase
-          const today = new Date().toISOString().split('T')[0];
-          const { data: mealData } = await supabase
-            .from('meal_plans')
-            .select(`
-              id, date, meal_type, servings, notes, created_at,
-              dishes (
-                id, name, image_url, cooking_time, rating,
-                calories, servings, tags, difficulty, cuisine_type, cuisineId,
-                dish_ingredients (
-                  quantity, unit,
-                  ingredient:ingredient_id ( id, name, category )
-                )
-              )
-            `)
-            .eq('user_id', session.user.id)
-            .gte('date', today)
-            .order('date', { ascending: true });
-
-          if (mealData && mealData.length > 0) {
-            const lang = i18n.language || 'fr';
-            const meals: MealPlan[] = mealData.map((row: any) => {
-              const dish = row.dishes;
-              return {
-                id: row.id,
-                userId: session.user.id,
-                date: row.date,
-                mealType: row.meal_type,
-                servings: row.servings,
-                notes: row.notes ?? undefined,
-                createdAt: row.created_at,
-                dish: {
-                  id: String(dish.id),
-                  title: dish.name?.[lang] || dish.name?.en || dish.name?.fr || 'Untitled',
-                  image: dish.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80',
-                  cuisine: dish.cuisine_type?.[lang] || dish.cuisine_type?.en || '',
-                  cuisineId: dish.cuisineId ? String(dish.cuisineId) : null,
-                  cookingTime: dish.cooking_time || 30,
-                  rating: Number(dish.rating) || 4.5,
-                  difficulty: dish.difficulty?.[lang] || dish.difficulty?.en || 'medium',
-                  servings: dish.servings || 4,
-                  calories: dish.calories || 400,
-                  tags: Array.isArray(dish.tags) ? dish.tags : [],
-                  ingredients: (dish.dish_ingredients || []).map((di: any) => ({
-                    id: String(di.ingredient.id),
-                    name: di.ingredient.name?.[lang] || di.ingredient.name?.en || '',
-                    category: di.ingredient.category?.[lang] || '',
-                    amount: String(di.quantity || 1),
-                    unit: di.unit?.[lang] || di.unit?.en || '',
-                  })),
-                  instructions: [],
-                },
-              };
-            });
-            dispatch({ type: 'SET_MEAL_PLAN', payload: meals });
-          }
+          await loadFutureMeals(session.user.id);
         } else {
           dispatch({ type: "SET_LOADING", payload: false });
         }
@@ -420,6 +430,9 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
               "Utilisateur",
           },
         });
+        if (event === "SIGNED_IN") {
+          loadFutureMeals(session.user.id);
+        }
       } else if (event === "SIGNED_OUT") {
         dispatch({ type: "LOGOUT" });
       }
