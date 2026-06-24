@@ -69,14 +69,19 @@ const IngredientSelector = ({ onFindDishes }: IngredientSelectorProps) => {
   }, [ingredients, searchTerm, i18n.language]);
   
   // Groupement par catégorie des ingrédients filtrés
-  const groupedIngredients = useMemo(() => {
-    return filteredIngredients.reduce((acc: Record<string, any[]>, ingredient: any) => {
-      const cat = resolveCategory(ingredient.category);
-      if (!acc[cat]) acc[cat] = [];
-      acc[cat].push(ingredient);
-      return acc;
-    }, {} as Record<string, any[]>);
-  }, [filteredIngredients, i18n.language]);
+  // Normalise les ligatures françaises pour que la recherche fonctionne
+  // peu importe que l'utilisateur tape "œuf" ou "oeuf"
+  const normalizeFr = (str: string): string =>
+    str.toLowerCase().replace(/œ/g, 'oe').replace(/æ/g, 'ae');
+
+  // Filtrage par recherche
+  const filteredIngredients = useMemo(() => {
+    if (!searchTerm.trim()) return ingredients;
+    const q = normalizeFr(searchTerm.trim());
+    return ingredients.filter(ing =>
+      normalizeFr(resolveName(ing.name)).includes(q)
+    );
+  }, [ingredients, searchTerm, i18n.language]);
 
   const handleFindDishes = () => {
     if (!onFindDishes) return;

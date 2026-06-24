@@ -293,7 +293,7 @@ const AppContext = createContext<AppContextValue | null>(null);
 export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
- useEffect(() => {
+useEffect(() => {
     let isMounted = true;
 
     // Charge les repas à venir depuis Supabase et met à jour le state.

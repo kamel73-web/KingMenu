@@ -34,16 +34,6 @@ import { Browser } from '@capacitor/browser';
 import { supabase } from "./lib/supabase";
 import toast from "react-hot-toast";
 
-// Capture globale de toute erreur non gérée (diagnostic temporaire)
-if (typeof window !== 'undefined') {
-  window.addEventListener('error', (e) => {
-    alert(`ERREUR JS:\n${e.message}\n${e.error?.stack || ''}`);
-  });
-  window.addEventListener('unhandledrejection', (e: any) => {
-    alert(`PROMESSE REJETÉE:\n${e.reason?.message || e.reason}\n${e.reason?.stack || ''}`);
-  });
-}
-
 // Error Boundary
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; errorMsg?: string }> {
   state: { hasError: boolean; errorMsg?: string } = { hasError: false };

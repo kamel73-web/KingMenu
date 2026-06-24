@@ -69,7 +69,7 @@ export const useMealPlan = () => {
     dispatch({ type: 'SET_MEAL_PLAN', payload: mealPlans });
   }, [userId, dispatch, i18n.language]);
 
-  const saveMealPlan = useCallback(async (meal: MealPlan) => {
+const saveMealPlan = useCallback(async (meal: MealPlan) => {
     if (!userId) return { error: null };
     const { error } = await supabase.from('meal_plans').upsert({
       id: meal.id,
