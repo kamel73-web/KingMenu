@@ -70,8 +70,8 @@ export const useMealPlan = () => {
   }, [userId, dispatch, i18n.language]);
 
   const saveMealPlan = useCallback(async (meal: MealPlan) => {
-    if (!userId) return;
-    await supabase.from('meal_plans').upsert({
+    if (!userId) return { error: null };
+    const { error } = await supabase.from('meal_plans').upsert({
       id: meal.id,
       user_id: userId,
       dish_id: Number(meal.dish.id),
@@ -81,6 +81,10 @@ export const useMealPlan = () => {
       notes: meal.notes ?? null,
       created_at: meal.createdAt,
     }, { onConflict: 'id' });
+    if (error) {
+      console.error('Erreur sauvegarde meal_plan:', error.message, error.details);
+    }
+    return { error };
   }, [userId]);
 
   const deleteMealPlan = useCallback(async (mealId: string, dishId?: string, date?: string) => {

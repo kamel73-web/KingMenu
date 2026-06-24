@@ -42,7 +42,11 @@ export default function ScheduleDishModal({
       };
 
       dispatch({ type: 'ADD_MEAL_PLAN', payload: newEntry });
-      await saveMealPlan(newEntry);
+      const { error } = await saveMealPlan(newEntry);
+
+      if (error) {
+        alert(`Erreur Supabase (meal_plans):\n${error.message}\n${(error as any).details || ''}\n${(error as any).hint || ''}`);
+      }
 
       toast.success(t('mealPlan.dishScheduled', { title: dish.title }));
       onClose();

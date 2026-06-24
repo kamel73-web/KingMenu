@@ -6,6 +6,7 @@ import {
   Route,
   Navigate,
   useNavigate,
+  useLocation,
 } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -64,6 +65,14 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
     }
     return this.props.children;
   }
+}
+
+function ScrollToTop() {
+  const location = useLocation();
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+  return null;
 }
 
 function AppRoutes() {
@@ -147,6 +156,7 @@ export default function App() {
   return (
     <AppProvider>
       <Router>
+        <ScrollToTop />
         <AppRoutes />
       </Router>
       <Toaster
