@@ -66,6 +66,14 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
   }
 }
 
+function ScrollToTop() {
+  const location = useLocation();
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+  return null;
+}
+
 function AppRoutes() {
   const { state } = useApp();
   const { isRTL } = useRTL();
@@ -147,6 +155,7 @@ export default function App() {
   return (
     <AppProvider>
       <Router>
+        <ScrollToTop />
         <AppRoutes />
       </Router>
       <Toaster
