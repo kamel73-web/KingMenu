@@ -248,7 +248,11 @@ export default function DishGrid() {
         cuisineId = match?.id;
       }
       if (!difficultyId && dishAny.difficulty) {
-        const match = difficultyTypes.find(d => d.label[i18n.language] === dishAny.difficulty || d.label['en'] === dishAny.difficulty);
+        const dishDiff = String(dishAny.difficulty).toLowerCase();
+        const match = difficultyTypes.find(d =>
+          String(d.label[i18n.language] ?? '').toLowerCase() === dishDiff ||
+          String(d.label['en'] ?? '').toLowerCase() === dishDiff
+        );
         difficultyId = match?.id;
       }
       return { ...translated, cuisineId, difficultyId } as any;
