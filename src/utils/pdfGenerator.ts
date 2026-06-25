@@ -61,7 +61,7 @@ export const formatTextForPDF = (text: string, language: string): string => {
 };
 
 // Shopping list PDF — mise en page moderne 2 colonnes
-export const generateShoppingListPDF = (
+export const generateShoppingListPDF = async (
   title: string,
   items: Array<{ name: string; amount: string; unit: string; category: string }>,
   language: string,
