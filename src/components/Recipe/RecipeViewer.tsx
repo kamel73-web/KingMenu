@@ -47,10 +47,10 @@ export default function RecipeViewer({
     }
   };
 
-  const handleDownload = () => {
+const handleDownload = async () => {
     if (!selectedDish) return;
     try {
-      generateRecipePDF(selectedDish, servings, i18n.language, {
+      await generateRecipePDF(selectedDish, servings, i18n.language, {
         ingredients: t('recipe.ingredients', 'Ingrédients'),
         instructions: t('recipe.instructions', 'Instructions'),
         step: t('recipe.step', 'Étape'),
@@ -59,7 +59,8 @@ export default function RecipeViewer({
         servings: t('dish.servings', 'Portions'),
       });
       toast.success(t('shoppingList.downloadedPDF', 'PDF téléchargé'));
-    } catch {
+    } catch (err) {
+      console.error('Erreur génération PDF recette:', err);
       toast.error(t('common.error', 'Erreur'));
     }
   };
