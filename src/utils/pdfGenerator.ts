@@ -311,7 +311,7 @@ export const generateShoppingListPDF = async (
   doc.setTextColor(...COLOR_MUTED);
   doc.text("Kitchen Menu — Planifiez. Cuisinez. Savourez.", pageWidth / 2, footerY, { align: "center" });
 
-  doc.save(`${title.replace(/\s+/g, "-").toLowerCase()}.pdf`);
+  await savePdf(doc, `${title.replace(/\s+/g, "-").toLowerCase()}.pdf`);
 };
 
 // Enhanced recipe PDF generation
