@@ -54,24 +54,29 @@ export default function PrintMealCalendarModal({ isOpen, onClose }: PrintMealCal
   const formatDate = (date: Date) =>
     date.toLocaleDateString(i18n.language, { weekday: "long", day: "numeric", month: "long" });
 
-  const handleDownloadPDF = () => {
+  const handleDownloadPDF = async () => {
     if (filteredMeals.length === 0) { toast.error(t("mealPlan.print.noMealsInRange")); return; }
-    generateMealCalendarPDF(startDate, endDate, mealsByDate, i18n.language, {
-      title: t("mealPlan.print.title"),
-      dateRange: t("mealPlan.print.dateRange"),
-      generatedOn: t("common.generatedOn"),
-      totalMeals: t("mealPlan.totalMeals"),
-      breakfast: t("mealPlan.breakfast"),
-      lunch: t("mealPlan.lunch"),
-      dinner: t("mealPlan.dinner"),
-      snack: t("mealPlan.snack"),
-      servings: t("dish.servings"),
-      cookingTime: t("dish.cookingTime"),
-      noMeals: t("mealPlan.print.noMealsForDay"),
-      tagline: t("brand.tagline"),
-      mealPlanFilename: t("mealPlan.print.filename", { defaultValue: "meal-plan" }),
-    });
-    toast.success(t("mealPlan.print.downloaded", { defaultValue: "PDF downloaded!" }));
+    try {
+      await generateMealCalendarPDF(startDate, endDate, mealsByDate, i18n.language, {
+        title: t("mealPlan.print.title"),
+        dateRange: t("mealPlan.print.dateRange"),
+        generatedOn: t("common.generatedOn"),
+        totalMeals: t("mealPlan.totalMeals"),
+        breakfast: t("mealPlan.breakfast"),
+        lunch: t("mealPlan.lunch"),
+        dinner: t("mealPlan.dinner"),
+        snack: t("mealPlan.snack"),
+        servings: t("dish.servings"),
+        cookingTime: t("dish.cookingTime"),
+        noMeals: t("mealPlan.print.noMealsForDay"),
+        tagline: t("brand.tagline"),
+        mealPlanFilename: t("mealPlan.print.filename", { defaultValue: "meal-plan" }),
+      });
+      toast.success(t("mealPlan.print.downloaded", { defaultValue: "PDF downloaded!" }));
+    } catch (err) {
+      console.error('Erreur génération PDF planning:', err);
+      toast.error(t('common.error'));
+    }
   };
 
   const handlePrint = () => {
