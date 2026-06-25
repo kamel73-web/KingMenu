@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useApp } from '../../context/AppContext';
 import { MealPlan } from '../../types';
 import { generateMealCalendarPDF } from '../../utils/pdfGenerator';
+import { Capacitor } from '@capacitor/core';
 import toast from 'react-hot-toast';
 
 interface PrintMealCalendarModalProps {
