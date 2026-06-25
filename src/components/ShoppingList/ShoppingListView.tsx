@@ -28,7 +28,7 @@ export default function ShoppingListView() {
       d.ingredients.some(i => i.name.toLowerCase() === ingredientName.toLowerCase())
     ) || null;
 
-  const generatePDF = () => {
+  const generatePDF = async () => {
     const title = t('shoppingList.title');
     const translations = {
       generatedOn: t('common.generatedOn'),
@@ -38,8 +38,13 @@ export default function ShoppingListView() {
       uncategorized: t('shoppingList.uncategorized', { defaultValue: 'Other' }),
     };
 
-    generateShoppingListPDF(title, unownedIngredients, i18n.language, translations);
-    toast.success(t('shoppingList.downloadedPDF'));
+    try {
+      await generateShoppingListPDF(title, unownedIngredients, i18n.language, translations);
+      toast.success(t('shoppingList.downloadedPDF'));
+    } catch (err) {
+      console.error('Erreur génération PDF liste de courses:', err);
+      toast.error(t('common.error'));
+    }
   };
 
   const generateTextList = () => {
