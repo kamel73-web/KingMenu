@@ -250,14 +250,17 @@ export default function PrintMealCalendarModal({ isOpen, onClose }: PrintMealCal
               className="flex-1 py-3 border-2 border-gray-200 text-gray-600 rounded-2xl font-semibold hover:bg-gray-100 transition-all text-sm">
               Annuler
             </button>
-            <button onClick={handleDownloadPDF} disabled={filteredMeals.length === 0}
+             <button onClick={handleDownloadPDF} disabled={filteredMeals.length === 0}
               className="flex-1 py-3 bg-violet-600 text-white rounded-2xl font-semibold hover:bg-violet-700 transition-all text-sm flex items-center justify-center gap-2 disabled:opacity-40 shadow-md shadow-violet-200">
               <Download className="h-4 w-4" />PDF
             </button>
-            <button onClick={handlePrint} disabled={filteredMeals.length === 0}
-              className="flex-1 py-3 bg-orange-500 text-white rounded-2xl font-semibold hover:bg-orange-600 transition-all text-sm flex items-center justify-center gap-2 disabled:opacity-40 shadow-md shadow-orange-200">
-              <Printer className="h-4 w-4" />Imprimer
-            </button>
+            {!Capacitor.isNativePlatform() && (
+              <button onClick={handlePrint} disabled={filteredMeals.length === 0}
+                className="flex-1 py-3 bg-orange-500 text-white rounded-2xl font-semibold hover:bg-orange-600 transition-all text-sm flex items-center justify-center gap-2 disabled:opacity-40 shadow-md shadow-orange-200">
+                <Printer className="h-4 w-4" />Imprimer
+              </button>
+            )}           )}
+
           </div>
         </div>
       </div>
