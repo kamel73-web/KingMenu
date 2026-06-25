@@ -317,7 +317,7 @@ export const generateShoppingListPDF = async (
 // Enhanced recipe PDF generation
 
 // Enhanced recipe PDF generation with RTL support
-export const generateRecipePDF = (
+export const generateRecipePDF = async (
   dish: any,
   servings: number,
   language: string,
@@ -461,11 +461,11 @@ export const generateRecipePDF = (
   
   // Generate filename
   const filename = `${dish.title.replace(/\s+/g, '-').toLowerCase()}-recipe.pdf`;
-  doc.save(filename);
+  await savePdf(doc, filename);
 };
 
 // Meal calendar PDF — 1 semaine par page, grille 7 colonnes
-export const generateMealCalendarPDF = (
+export const generateMealCalendarPDF = async (
   startDate: string,
   endDate: string,
   mealsByDate: Record<string, MealPlan[]>,
@@ -584,5 +584,5 @@ export const generateMealCalendarPDF = (
   };
 
   weeks.forEach((wd,wi) => { if(wi>0) doc.addPage(); drawWeek(wd); });
-  doc.save(`planning-repas-${startDate}-${endDate}.pdf`);
+  await savePdf(doc, `planning-repas-${startDate}-${endDate}.pdf`);
 };
