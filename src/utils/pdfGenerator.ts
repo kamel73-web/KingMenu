@@ -1,5 +1,38 @@
 import jsPDF from 'jspdf';
 import { MealPlan } from '../types';
+import { Capacitor } from '@capacitor/core';
+import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
+
+/**
+ * Sauvegarde un document jsPDF de façon cross-platform.
+ * - Web : déclenche le téléchargement classique du navigateur (inchangé).
+ * - Natif (Android/iOS) : écrit le fichier dans le cache de l'app, puis
+ *   ouvre la feuille de partage système pour que l'utilisateur choisisse
+ *   où l'enregistrer, l'imprimer ou l'envoyer — jsPDF.save() ne fonctionne
+ *   pas dans une WebView Capacitor.
+ */
+const savePdf = async (doc: jsPDF, filename: string): Promise<void> => {
+  if (!Capacitor.isNativePlatform()) {
+    doc.save(filename);
+    return;
+  }
+
+  const dataUri = doc.output('datauristring');
+  const base64 = dataUri.split(',')[1];
+
+  const written = await Filesystem.writeFile({
+    path: filename,
+    data: base64,
+    directory: Directory.Cache,
+  });
+
+  await Share.share({
+    title: filename,
+    url: written.uri,
+    dialogTitle: filename,
+  });
+};
 
 // Arabic text processing utilities
 export const reverseArabicText = (text: string): string => {
