@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Clock, Users, ChefHat, Printer, Download, Share2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Dish, Ingredient } from '../../types';
@@ -36,7 +36,8 @@ export default function RecipeViewer({
   const setSelectedDish = externalSetSelectedDish ?? setInternalDish;
   const setServings = externalSetServings ?? setInternalServings;
 
-  const handleDishSelection = async (dish: Dish) => {
+  // useCallback pour stabiliser la référence et satisfaire noUnusedLocals/react-hooks
+  const handleDishSelection = useCallback(async (dish: Dish) => {
     setLoadingIngredients(true);
     try {
       const ingredients = await getIngredientsForDish(dish.id, i18n.language);
@@ -45,9 +46,15 @@ export default function RecipeViewer({
     } finally {
       setLoadingIngredients(false);
     }
-  };
+  }, [i18n.language, setSelectedDish, setServings]);
 
-const handleDownload = async () => {
+  useEffect(() => {
+    if (dishes.length > 0 && !selectedDish) {
+      handleDishSelection(dishes[0]);
+    }
+  }, [dishes, selectedDish, handleDishSelection]);
+
+  const handleDownload = async () => {
     if (!selectedDish) return;
     try {
       await generateRecipePDF(selectedDish, servings, i18n.language, {
@@ -82,13 +89,6 @@ const handleDownload = async () => {
       toast.success(t('shoppingList.copied', 'Copié'));
     }
   };
-
-  useEffect(() => {
-    if (dishes.length > 0 && !selectedDish) {
-      handleDishSelection(dishes[0]);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dishes, i18n.language]);
 
   if (!selectedDish) {
     return <div className="p-4 text-gray-500">{t('common.loading', 'Chargement...')}</div>;
