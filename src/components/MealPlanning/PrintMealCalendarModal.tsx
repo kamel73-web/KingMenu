@@ -259,7 +259,7 @@ export default function PrintMealCalendarModal({ isOpen, onClose }: PrintMealCal
                 className="flex-1 py-3 bg-orange-500 text-white rounded-2xl font-semibold hover:bg-orange-600 transition-all text-sm flex items-center justify-center gap-2 disabled:opacity-40 shadow-md shadow-orange-200">
                 <Printer className="h-4 w-4" />Imprimer
               </button>
-            )}           )}
+            )}
 
           </div>
         </div>
