@@ -45,7 +45,9 @@ export default function ScheduleDishModal({
       const { error } = await saveMealPlan(newEntry);
 
       if (error) {
-        alert(`Erreur Supabase (meal_plans):\n${error.message}\n${(error as any).details || ''}\n${(error as any).hint || ''}`);
+        toast.error(t('common.error'));
+        console.error('Erreur sauvegarde meal_plan:', error);
+        return;
       }
 
       toast.success(t('mealPlan.dishScheduled', { title: dish.title }));
