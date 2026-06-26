@@ -474,6 +474,8 @@ export const generateMealCalendarPDF = async (
     title: string; dateRange: string; generatedOn: string; totalMeals: string;
     breakfast: string; lunch: string; dinner: string; snack: string;
     servings: string; cookingTime: string; noMeals: string;
+    tagline?: string;
+    mealPlanFilename?: string;
   }
 ) => {
   const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
