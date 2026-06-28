@@ -13,6 +13,7 @@ export default function LoginForm() {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
@@ -67,53 +68,45 @@ export default function LoginForm() {
      GOOGLE OAUTH — VERSION CORRECTE
   ========================= */
   const handleSocialLogin = async (provider: "google") => {
-  try {
-    setError(null);
-    setIsLoading(true);
+    try {
+      setError(null);
+      setIsGoogleLoading(true);
 
-    const isNative = Capacitor.isNativePlatform();
+      const isNative = Capacitor.isNativePlatform();
 
-    console.log("========== OAUTH DEBUG ==========");
-    console.log("isNative =", isNative);
+      const redirectTo = isNative
+        ? "app.kingmenu://auth"
+        : `${window.location.origin}/KingMenu/#/login`;
 
-    const redirectTo = isNative
-      ? "app.kingmenu://auth"
-      : `${window.location.origin}/KingMenu/#/login`;
-
-    console.log("redirectTo =", redirectTo);
-    alert(`isNative: ${isNative}\nredirectTo: ${redirectTo}`);
-
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo,
-        skipBrowserRedirect: isNative,
-        queryParams: {
-          access_type: "offline",
-          prompt: "consent",
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo,
+          skipBrowserRedirect: isNative,
+          queryParams: {
+            access_type: "offline",
+            prompt: "consent",
+          },
         },
-      },
-    });
-
-    console.log("OAuth URL =", data?.url);
-
-    if (error) throw error;
-
-    if (isNative && data?.url) {
-      await Browser.open({
-        url: data.url,
       });
-    }
-  } catch (err: any) {
-    console.error("OAuth ERROR:", err);
 
-    const msg = err?.message || t("auth.googleConnectionError");
-    setError(msg);
-    toast.error(msg);
-  } finally {
-    setIsLoading(false);
-  }
-};
+      if (error) throw error;
+
+      if (isNative && data?.url) {
+        await Browser.open({
+          url: data.url,
+        });
+      }
+    } catch (err: any) {
+      console.error("OAuth ERROR:", err);
+
+      const msg = err?.message || t("auth.googleConnectionError");
+      setError(msg);
+      toast.error(msg);
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 via-white to-yellow-50 p-4">
@@ -225,15 +218,17 @@ export default function LoginForm() {
 
           <button
             onClick={() => handleSocialLogin("google")}
-            disabled={isLoading}
-            className="w-full border border-gray-300 py-3 rounded-lg font-medium flex items-center justify-center gap-2 hover:bg-gray-50"
+            disabled={isGoogleLoading}
+            className={`w-full border border-gray-300 py-3 rounded-lg font-medium flex items-center justify-center gap-2 ${
+              isGoogleLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50"
+            }`}
           >
             <img
               src="https://www.google.com/favicon.ico"
               alt="Google"
               className="w-5 h-5"
             />
-            {t("auth.continueWithGoogle")}
+            {isGoogleLoading ? t("auth.loading") : t("auth.continueWithGoogle")}
           </button>
         </div>
       </div>

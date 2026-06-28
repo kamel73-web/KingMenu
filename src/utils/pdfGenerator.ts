@@ -1,5 +1,38 @@
 import jsPDF from 'jspdf';
 import { MealPlan } from '../types';
+import { Capacitor } from '@capacitor/core';
+import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
+
+/**
+ * Sauvegarde un document jsPDF de façon cross-platform.
+ * - Web : déclenche le téléchargement classique du navigateur (inchangé).
+ * - Natif (Android/iOS) : écrit le fichier dans le cache de l'app, puis
+ *   ouvre la feuille de partage système pour que l'utilisateur choisisse
+ *   où l'enregistrer, l'imprimer ou l'envoyer — jsPDF.save() ne fonctionne
+ *   pas dans une WebView Capacitor.
+ */
+const savePdf = async (doc: jsPDF, filename: string): Promise<void> => {
+  if (!Capacitor.isNativePlatform()) {
+    doc.save(filename);
+    return;
+  }
+
+  const dataUri = doc.output('datauristring');
+  const base64 = dataUri.split(',')[1];
+
+  const written = await Filesystem.writeFile({
+    path: filename,
+    data: base64,
+    directory: Directory.Cache,
+  });
+
+  await Share.share({
+    title: filename,
+    url: written.uri,
+    dialogTitle: filename,
+  });
+};
 
 // Arabic text processing utilities
 export const reverseArabicText = (text: string): string => {
@@ -28,7 +61,7 @@ export const formatTextForPDF = (text: string, language: string): string => {
 };
 
 // Shopping list PDF — mise en page moderne 2 colonnes
-export const generateShoppingListPDF = (
+export const generateShoppingListPDF = async (
   title: string,
   items: Array<{ name: string; amount: string; unit: string; category: string }>,
   language: string,
@@ -278,13 +311,13 @@ export const generateShoppingListPDF = (
   doc.setTextColor(...COLOR_MUTED);
   doc.text("Kitchen Menu — Planifiez. Cuisinez. Savourez.", pageWidth / 2, footerY, { align: "center" });
 
-  doc.save(`${title.replace(/\s+/g, "-").toLowerCase()}.pdf`);
+  await savePdf(doc, `${title.replace(/\s+/g, "-").toLowerCase()}.pdf`);
 };
 
 // Enhanced recipe PDF generation
 
 // Enhanced recipe PDF generation with RTL support
-export const generateRecipePDF = (
+export const generateRecipePDF = async (
   dish: any,
   servings: number,
   language: string,
@@ -428,11 +461,11 @@ export const generateRecipePDF = (
   
   // Generate filename
   const filename = `${dish.title.replace(/\s+/g, '-').toLowerCase()}-recipe.pdf`;
-  doc.save(filename);
+  await savePdf(doc, filename);
 };
 
 // Meal calendar PDF — 1 semaine par page, grille 7 colonnes
-export const generateMealCalendarPDF = (
+export const generateMealCalendarPDF = async (
   startDate: string,
   endDate: string,
   mealsByDate: Record<string, MealPlan[]>,
@@ -441,6 +474,8 @@ export const generateMealCalendarPDF = (
     title: string; dateRange: string; generatedOn: string; totalMeals: string;
     breakfast: string; lunch: string; dinner: string; snack: string;
     servings: string; cookingTime: string; noMeals: string;
+    tagline?: string;
+    mealPlanFilename?: string;
   }
 ) => {
   const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
@@ -551,5 +586,5 @@ export const generateMealCalendarPDF = (
   };
 
   weeks.forEach((wd,wi) => { if(wi>0) doc.addPage(); drawWeek(wd); });
-  doc.save(`planning-repas-${startDate}-${endDate}.pdf`);
+  await savePdf(doc, `planning-repas-${startDate}-${endDate}.pdf`);
 };

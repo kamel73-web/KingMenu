@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useApp } from '../../context/AppContext';
 import { MealPlan } from '../../types';
 import { generateMealCalendarPDF } from '../../utils/pdfGenerator';
+import { Capacitor } from '@capacitor/core';
 import toast from 'react-hot-toast';
 
 interface PrintMealCalendarModalProps {
@@ -53,24 +54,29 @@ export default function PrintMealCalendarModal({ isOpen, onClose }: PrintMealCal
   const formatDate = (date: Date) =>
     date.toLocaleDateString(i18n.language, { weekday: "long", day: "numeric", month: "long" });
 
-  const handleDownloadPDF = () => {
+   const handleDownloadPDF = async () => {
     if (filteredMeals.length === 0) { toast.error(t("mealPlan.print.noMealsInRange")); return; }
-    generateMealCalendarPDF(startDate, endDate, mealsByDate, i18n.language, {
-      title: t("mealPlan.print.title"),
-      dateRange: t("mealPlan.print.dateRange"),
-      generatedOn: t("common.generatedOn"),
-      totalMeals: t("mealPlan.totalMeals"),
-      breakfast: t("mealPlan.breakfast"),
-      lunch: t("mealPlan.lunch"),
-      dinner: t("mealPlan.dinner"),
-      snack: t("mealPlan.snack"),
-      servings: t("dish.servings"),
-      cookingTime: t("dish.cookingTime"),
-      noMeals: t("mealPlan.print.noMealsForDay"),
-      tagline: t("brand.tagline"),
-      mealPlanFilename: t("mealPlan.print.filename", { defaultValue: "meal-plan" }),
-    });
-    toast.success(t("mealPlan.print.downloaded", { defaultValue: "PDF downloaded!" }));
+    try {
+      await generateMealCalendarPDF(startDate, endDate, mealsByDate, i18n.language, {
+        title: t("mealPlan.print.title"),
+        dateRange: t("mealPlan.print.dateRange"),
+        generatedOn: t("common.generatedOn"),
+        totalMeals: t("mealPlan.totalMeals"),
+        breakfast: t("mealPlan.breakfast"),
+        lunch: t("mealPlan.lunch"),
+        dinner: t("mealPlan.dinner"),
+        snack: t("mealPlan.snack"),
+        servings: t("dish.servings"),
+        cookingTime: t("dish.cookingTime"),
+        noMeals: t("mealPlan.print.noMealsForDay"),
+        tagline: t("brand.tagline"),
+        mealPlanFilename: t("mealPlan.print.filename", { defaultValue: "meal-plan" }),
+      });
+      toast.success(t("mealPlan.print.downloaded", { defaultValue: "PDF downloaded!" }));
+    } catch (err) {
+      console.error('Erreur génération PDF planning:', err);
+      toast.error(t('common.error'));
+    }
   };
 
   const handlePrint = () => {
@@ -248,10 +254,13 @@ export default function PrintMealCalendarModal({ isOpen, onClose }: PrintMealCal
               className="flex-1 py-3 bg-violet-600 text-white rounded-2xl font-semibold hover:bg-violet-700 transition-all text-sm flex items-center justify-center gap-2 disabled:opacity-40 shadow-md shadow-violet-200">
               <Download className="h-4 w-4" />PDF
             </button>
-            <button onClick={handlePrint} disabled={filteredMeals.length === 0}
-              className="flex-1 py-3 bg-orange-500 text-white rounded-2xl font-semibold hover:bg-orange-600 transition-all text-sm flex items-center justify-center gap-2 disabled:opacity-40 shadow-md shadow-orange-200">
-              <Printer className="h-4 w-4" />Imprimer
-            </button>
+            {!Capacitor.isNativePlatform() && (
+              <button onClick={handlePrint} disabled={filteredMeals.length === 0}
+                className="flex-1 py-3 bg-orange-500 text-white rounded-2xl font-semibold hover:bg-orange-600 transition-all text-sm flex items-center justify-center gap-2 disabled:opacity-40 shadow-md shadow-orange-200">
+                <Printer className="h-4 w-4" />Imprimer
+              </button>
+            )}
+
           </div>
         </div>
       </div>
