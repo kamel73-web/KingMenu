@@ -54,7 +54,7 @@ export default function PrintMealCalendarModal({ isOpen, onClose }: PrintMealCal
   const formatDate = (date: Date) =>
     date.toLocaleDateString(i18n.language, { weekday: "long", day: "numeric", month: "long" });
 
-   const handleDownloadPDF = async () => {
+  const handleDownloadPDF = async () => {
     if (filteredMeals.length === 0) { toast.error(t("mealPlan.print.noMealsInRange")); return; }
     try {
       await generateMealCalendarPDF(startDate, endDate, mealsByDate, i18n.language, {
@@ -250,7 +250,7 @@ export default function PrintMealCalendarModal({ isOpen, onClose }: PrintMealCal
               className="flex-1 py-3 border-2 border-gray-200 text-gray-600 rounded-2xl font-semibold hover:bg-gray-100 transition-all text-sm">
               Annuler
             </button>
-            <button onClick={handleDownloadPDF} disabled={filteredMeals.length === 0}
+             <button onClick={handleDownloadPDF} disabled={filteredMeals.length === 0}
               className="flex-1 py-3 bg-violet-600 text-white rounded-2xl font-semibold hover:bg-violet-700 transition-all text-sm flex items-center justify-center gap-2 disabled:opacity-40 shadow-md shadow-violet-200">
               <Download className="h-4 w-4" />PDF
             </button>

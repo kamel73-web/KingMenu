@@ -587,4 +587,5 @@ export const generateMealCalendarPDF = async (
 
   weeks.forEach((wd,wi) => { if(wi>0) doc.addPage(); drawWeek(wd); });
   await savePdf(doc, `planning-repas-${startDate}-${endDate}.pdf`);
+
 };
